@@ -5,61 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Tools Hub</title>
     <style>
-        /* AI Badge animations */
-.ai-face {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 1.5rem;
-    position: relative;
-    filter: drop-shadow(0 12px 22px rgba(74, 222, 128, 0.3));
-    animation: floatY 6s ease-in-out infinite;
-}
-
-.ai-face img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border-radius: 24px;
-    animation: slow-rotate 6.6s linear infinite;
-}
-
-/* Sheen overlay for moving highlight */
-.ai-face::after {
-    content: '';
-    position: absolute;
-    left: -30%;
-    top: -30%;
-    width: 160%;
-    height: 160%;
-    pointer-events: none;
-    background: linear-gradient(120deg, 
-        rgba(255,255,255,0.14) 0%, 
-        rgba(255,255,255,0.04) 45%, 
-        rgba(255,255,255,0.18) 60%, 
-        rgba(255,255,255,0.0) 100%);
-    transform: rotate(-20deg);
-    mix-blend-mode: overlay;
-    animation: slide 4.2s ease-in-out infinite;
-    border-radius: 32px;
-}
-
-@keyframes floatY {
-    0%   { transform: translateY(0px) rotateX(0deg); }
-    50%  { transform: translateY(-12px) rotateX(2deg); }
-    100% { transform: translateY(0px) rotateX(0deg); }
-}
-
-@keyframes slow-rotate {
-    0%   { transform: rotate(0deg) scale(1); }
-    50%  { transform: rotate(6deg) scale(1.012); }
-    100% { transform: rotate(0deg) scale(1); }
-}
-
-@keyframes slide {
-    0%   { transform: translateX(-35%) rotate(-20deg); opacity: 0.18; }
-    50%  { transform: translateX(35%) rotate(-20deg); opacity: 0.9; }
-    100% { transform: translateX(135%) rotate(-20deg); opacity: 0.18; }
-}
         * {
             margin: 0;
             padding: 0;
@@ -73,9 +18,194 @@
             color: #fff;
         }
 
-        /* Smooth scroll */
         html {
             scroll-behavior: smooth;
+        }
+
+        /* AI Logo Styles */
+        .ai-logo-container {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin: 0 auto 1.5rem;
+            filter: drop-shadow(0 12px 22px rgba(74, 222, 128, 0.4));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+            50% { transform: translateY(-12px) rotateZ(3deg); }
+        }
+
+        .ai-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top-color: #4ade80;
+            border-right-color: #4ade80;
+            border-radius: 50%;
+            animation: rotate 8s linear infinite;
+        }
+
+        .ai-ring:nth-child(2) {
+            width: 85%;
+            height: 85%;
+            top: 7.5%;
+            left: 7.5%;
+            border-top-color: #a855f7;
+            border-left-color: #a855f7;
+            animation: rotate-reverse 6s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate-reverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        .ai-core {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            background: linear-gradient(135deg, #4ade80 0%, #a855f7 100%);
+            border-radius: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .node:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }
+        .node:nth-child(2) { top: 20%; right: 20%; animation-delay: 0.3s; }
+        .node:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 0.6s; }
+        .node:nth-child(4) { bottom: 20%; right: 20%; animation-delay: 0.9s; }
+        .node:nth-child(5) { top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 1.2s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+
+        .ai-core::before,
+        .ai-core::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            animation: line-pulse 3s ease-in-out infinite;
+        }
+
+        .ai-core::before {
+            width: 60%;
+            height: 2px;
+            top: 50%;
+            left: 20%;
+            transform: rotate(45deg);
+        }
+
+        .ai-core::after {
+            width: 60%;
+            height: 2px;
+            top: 50%;
+            left: 20%;
+            transform: rotate(-45deg);
+        }
+
+        @keyframes line-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #4ade80;
+            border-radius: 50%;
+            opacity: 0;
+            animation: particle-float 4s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { top: 10%; left: 50%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 30%; left: 80%; animation-delay: 0.8s; }
+        .particle:nth-child(3) { top: 60%; left: 10%; animation-delay: 1.6s; }
+        .particle:nth-child(4) { top: 80%; left: 60%; animation-delay: 2.4s; }
+        .particle:nth-child(5) { top: 50%; left: 30%; animation-delay: 3.2s; }
+
+        @keyframes particle-float {
+            0% { opacity: 0; transform: translateY(0) scale(0); }
+            20% { opacity: 1; transform: translateY(-20px) scale(1); }
+            80% { opacity: 1; transform: translateY(-40px) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(0); }
+        }
+
+        .ai-glow {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            top: -5%;
+            left: -5%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74, 222, 128, 0.3) 0%, transparent 70%);
+            animation: glow-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .scanline {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            top: 0;
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            from { top: 0%; }
+            to { top: 100%; }
+        }
+
+        .binary {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 8px;
+            color: rgba(74, 222, 128, 0.3);
+            font-weight: bold;
+            animation: binary-fall 5s linear infinite;
+            white-space: nowrap;
+        }
+
+        .binary:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .binary:nth-child(2) { left: 30%; animation-delay: 1s; }
+        .binary:nth-child(3) { left: 50%; animation-delay: 2s; }
+        .binary:nth-child(4) { left: 70%; animation-delay: 3s; }
+        .binary:nth-child(5) { left: 90%; animation-delay: 4s; }
+
+        @keyframes binary-fall {
+            0% { top: -10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 110%; opacity: 0; }
         }
 
         /* Hero Section */
@@ -199,7 +329,7 @@
             text-align: center;
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            image-rendering: pixelated;
+            text-decoration: none;
         }
 
         .nether-section .tool-card {
@@ -263,8 +393,7 @@
             align-items: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: relative;
-            image-rendering: pixelated;
+            text-decoration: none;
         }
 
         .hotbar-slot:hover {
@@ -290,7 +419,6 @@
             text-align: center;
         }
 
-        /* Animations */
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -354,37 +482,6 @@
             }
         }
 
-        .ai-face {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 1.5rem;
-            animation: float 3s ease-in-out infinite, rotate 8s linear infinite;
-        }
-
-        .ai-face img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .ai-message {
             font-size: 1.8rem;
             color: #4ade80;
@@ -408,38 +505,13 @@
             transition: all 0.3s ease;
             font-size: 1.2rem;
             color: #fff;
+            text-decoration: none;
         }
 
         .ai-option:hover {
             background: rgba(74, 222, 128, 0.3);
             transform: translateX(10px);
             border-color: #fff;
-        }
-
-        .ai-search-container {
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        .ai-search {
-            width: 100%;
-            padding: 1rem;
-            font-size: 1.1rem;
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid #4ade80;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .ai-search:focus {
-            border-color: #fff;
-        }
-
-        .ai-search::placeholder {
-            color: #4ade80;
-            opacity: 0.6;
         }
 
         /* Scroll fade effect */
@@ -476,7 +548,29 @@
     <!-- AI Welcome Screen -->
     <div class="ai-welcome" id="aiWelcome">
         <div class="ai-container">
-            <div class="ai-face" id="aiFace">🤖</div>
+            <div class="ai-logo-container">
+                <div class="ai-glow"></div>
+                <div class="ai-ring"></div>
+                <div class="ai-ring"></div>
+                <div class="ai-core">
+                    <div class="node"></div>
+                    <div class="node"></div>
+                    <div class="node"></div>
+                    <div class="node"></div>
+                    <div class="node"></div>
+                </div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="scanline"></div>
+                <div class="binary">01001</div>
+                <div class="binary">11010</div>
+                <div class="binary">10110</div>
+                <div class="binary">01101</div>
+                <div class="binary">10011</div>
+            </div>
             <div class="ai-message">Welcome! Where would you like to go today?</div>
             <div class="ai-options">
                 <a href="enchantment_calculator.html" class="ai-option">📘 Enchantment Calculator</a>
@@ -550,7 +644,7 @@
 
     <!-- Hotbar Navigation -->
     <div class="hotbar" id="hotbar">
-        <a href="minecraft_tools_hub.html" class="hotbar-slot active" title="Home">
+        <a href="index.html" class="hotbar-slot active" title="Home">
             <div class="hotbar-icon">🏠</div>
             <div class="hotbar-label">HOME</div>
         </a>
@@ -577,35 +671,6 @@
     </div>
 
     <script>
-        // Load custom logo if available
-        async function loadLogo() {
-    try {
-        const possibleNames = ['ai_badge_purple.png', 'logo.png', 'claude.png', 'ClaudeAI.png'];
-        
-        for (const filename of possibleNames) {
-            try {
-                const logoData = await window.fs.readFile(filename);
-                const blob = new Blob([logoData], { type: 'image/png' });
-                const url = URL.createObjectURL(blob);
-                
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = 'AI Logo';
-                
-                // Clear default emoji and add image
-                document.getElementById('aiFace').innerHTML = '';
-                document.getElementById('aiFace').appendChild(img);
-                return;
-            } catch (e) {
-                continue;
-            }
-        }
-    } catch (error) {
-        console.log('No logo found, using default icon');
-        // Keep the emoji that's already in the HTML
-    }
-}
-
         // Hide welcome screen and show hotbar
         function hideWelcome() {
             const aiWelcome = document.getElementById('aiWelcome');
@@ -617,9 +682,6 @@
                 hotbar.classList.add('visible');
             }, 500);
         }
-
-        // Load logo on page load
-        loadLogo();
 
         // Scroll animations
         const observerOptions = {
