@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Efficiency Hub - Minecraft Tools Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #2d0a0a 0%, #1a0505 50%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animated lava background */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(180deg, transparent 0%, #ff4500 50%, #ff8c00 100%);
+            animation: lavaFlow 3s ease-in-out infinite;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes lavaFlow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid #ff4500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #ff4500;
+            text-shadow: 4px 4px 0px #000, 8px 8px 20px rgba(255, 69, 0, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #aaa;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #ff4500;
+            color: #fff;
+            font-size: 1.2rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 69, 0, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .tab-btn.active {
+            background: #ff4500;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Calculator Section */
+        .calc-section {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff4500;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .calc-title {
+            font-size: 1.8rem;
+            color: #ff4500;
+            margin-bottom: 1.5rem;
+        }
+
+        .farm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .farm-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff4500;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .farm-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.3);
+            border-color: #ff8c00;
+        }
+
+        .farm-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .farm-name {
+            font-size: 1.3rem;
+            color: #ff4500;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .farm-type {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .farm-stats {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ff4500;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        /* Schematics Grid */
+        .schematic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .schematic-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff4500;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .schematic-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 40px rgba(255, 69, 0, 0.4);
+        }
+
+        .schematic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .schematic-title {
+            font-size: 1.5rem;
+            color: #ff4500;
+        }
+
+        .difficulty-badge {
+            padding: 0.3rem 0.8rem;
+            border: 2px solid;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .difficulty-easy { border-color: #4ade80; color: #4ade80; }
+        .difficulty-medium { border-color: #fbbf24; color: #fbbf24; }
+        .difficulty-hard { border-color: #ff4500; color: #ff4500; }
+
+        .version-filter-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #ff4500;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .version-filter-btn:hover {
+            background: rgba(255, 69, 0, 0.2);
+        }
+
+        .version-filter-btn.active {
+            background: #ff4500;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .edition-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border: 1px solid;
+            font-size: 0.75rem;
+            margin-right: 0.3rem;
+            font-weight: bold;
+        }
+
+        .edition-java { border-color: #fbbf24; color: #fbbf24; }
+        .edition-bedrock { border-color: #60a5fa; color: #60a5fa; }
+        .edition-both { border-color: #4ade80; color: #4ade80; }
+
+        .schematic-description {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .schematic-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-item {
+            background: rgba(255, 69, 0, 0.1);
+            padding: 0.5rem;
+            border-left: 3px solid #ff4500;
+        }
+
+        .detail-label {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #ff4500;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #ff8c00;
+            transform: scale(1.05);
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .video-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff4500;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 40px rgba(255, 69, 0, 0.4);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #ff4500;
+            border-bottom: 2px solid #ff4500;
+        }
+
+        .video-content {
+            padding: 1.5rem;
+        }
+
+        .video-title {
+            font-size: 1.3rem;
+            color: #ff4500;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-creator {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-description {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .video-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-tag {
+            background: rgba(255, 69, 0, 0.2);
+            border: 1px solid #ff4500;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            color: #ff8c00;
+        }
+
+        .watch-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #ff4500;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .watch-btn:hover {
+            background: #ff8c00;
+        }
+
+        /* Hotbar */
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            border-bottom: 4px solid #555;
+            border-right: 4px solid #555;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            border-bottom: 2px solid #8b8b8b;
+            border-right: 2px solid #8b8b8b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        .hotbar-slot.active {
+            border: 3px solid #fff;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tab-nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .farm-grid, .schematic-grid, .video-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🌾 FARM EFFICIENCY HUB 🌾</h1>
+        <p>Calculators, Schematics, and Video Tutorials</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('calculator')">📊 Calculator</button>
+        <button class="tab-btn" onclick="switchTab('schematics')">📐 Schematics</button>
+        <button class="tab-btn" onclick="switchTab('videos')">🎥 Video Tutorials</button>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Calculator Tab -->
+        <div id="calculator" class="tab-content active">
+            <div class="calc-section">
+                <h2 class="calc-title">Farm Types & Efficiency Rates</h2>
+                <p style="color: #aaa; margin-bottom: 2rem;">Select a farm type to see efficiency stats and rates</p>
+                
+                <div class="farm-grid" id="farmGrid">
+                    <!-- Farms will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Schematics Tab -->
+        <div id="schematics" class="tab-content">
+            <div class="calc-section">
+                <h2 class="calc-title">Farm Schematics & Designs</h2>
+                <p style="color: #aaa; margin-bottom: 2rem;">Download world files and schematics for popular farm designs</p>
+                
+                <div class="schematic-grid" id="schematicGrid">
+                    <!-- Schematics will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Videos Tab -->
+        <div id="videos" class="tab-content">
+            <div class="calc-section">
+                <h2 class="calc-title">Video Tutorials</h2>
+                <p style="color: #aaa; margin-bottom: 1rem;">Step-by-step guides from top Minecraft creators</p>
+                
+                <!-- Filters -->
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <div style="color: #ff8c00; font-weight: bold;">Edition:</div>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" class="edition-filter" value="java" checked onchange="filterVideos()">
+                            <span>☕ Java</span>
+                        </label>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" class="edition-filter" value="bedrock" checked onchange="filterVideos()">
+                            <span>📱 Bedrock</span>
+                        </label>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" class="edition-filter" value="both" checked onchange="filterVideos()">
+                            <span>🌍 Both</span>
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <div style="color: #ff8c00; font-weight: bold;">Version:</div>
+                        <button class="version-filter-btn active" data-version="all" onclick="selectVersion('all')">All Versions</button>
+                        <button class="version-filter-btn" data-version="1.21" onclick="selectVersion('1.21')">1.21+</button>
+                        <button class="version-filter-btn" data-version="1.20" onclick="selectVersion('1.20')">1.20</button>
+                        <button class="version-filter-btn" data-version="1.19" onclick="selectVersion('1.19')">1.19</button>
+                    </div>
+                </div>
+                
+                <div class="video-grid" id="videoGrid">
+                    <!-- Videos will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hotbar">
+    <a href="index.html" class="hotbar-slot" title="Home">
+        <div class="hotbar-icon">🏠</div>
+        <div class="hotbar-label">HOME</div>
+    </a>
+    <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+        <div class="hotbar-icon">📘</div>
+        <div class="hotbar-label">ENCHANT</div>
+    </a>
+    <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+        <div class="hotbar-icon">💎</div>
+        <div class="hotbar-label">ORES</div>
+    </a>
+    <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+        <div class="hotbar-icon">🗺️</div>
+        <div class="hotbar-label">SEEDS</div>
+    </a>
+    <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+        <div class="hotbar-icon">🗝️</div>
+        <div class="hotbar-label">BUILDS</div>
+    </a>
+    <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+        <div class="hotbar-icon">🌾</div>
+        <div class="hotbar-label">FARMS</div>
+    </a>
+</div>
+
+    <script>
+        // Farm data
+        const farmData = [
+            {
+                icon: '🧟',
+                name: 'Mob Spawner Farm',
+                type: 'Hostile Mob',
+                rate: '~1000 items/hour',
+                difficulty: 'Easy',
+                requirements: 'Spawner, Water, Hoppers'
+            },
+            {
+                icon: '💀',
+                name: 'Creeper Farm',
+                type: 'Hostile Mob',
+                rate: '~500 gunpowder/hour',
+                difficulty: 'Hard',
+                requirements: 'Mob Spawning Platform, Cats'
+            },
+            {
+                icon: '🗡️',
+                name: 'Enderman Farm',
+                type: 'Hostile Mob',
+                rate: '~15000 XP/hour',
+                difficulty: 'Medium',
+                requirements: 'The End, Endermite'
+            },
+            {
+                icon: '🧊',
+                name: 'Iron Golem Farm',
+                type: 'Resource',
+                rate: '~40 iron/hour',
+                difficulty: 'Medium',
+                requirements: 'Villagers, Zombie'
+            },
+            {
+                icon: '🐝',
+                name: 'Honey Farm',
+                type: 'Resource',
+                rate: '~100 bottles/hour',
+                difficulty: 'Easy',
+                requirements: 'Beehives, Flowers, Dispenser'
+            },
+            {
+                icon: '🌾',
+                name: 'Wheat Farm',
+                type: 'Crop',
+                rate: '~9000 wheat/hour',
+                difficulty: 'Easy',
+                requirements: 'Water, Villager/Hopper'
+            },
+            {
+                icon: '🥕',
+                name: 'Carrot/Potato Farm',
+                type: 'Crop',
+                rate: '~8000 items/hour',
+                difficulty: 'Easy',
+                requirements: 'Water, Villager Farmer'
+            },
+            {
+                icon: '🎋',
+                name: 'Bamboo Farm',
+                type: 'Crop',
+                rate: '~4000 bamboo/hour',
+                difficulty: 'Easy',
+                requirements: 'Bamboo, Observers, Pistons'
+            },
+            {
+                icon: '🌵',
+                name: 'Cactus Farm',
+                type: 'Resource',
+                rate: '~5000 cactus/hour',
+                difficulty: 'Easy',
+                requirements: 'Sand, Cactus'
+            },
+            {
+                icon: '🍄',
+                name: 'Mushroom Farm',
+                type: 'Crop',
+                rate: 'Variable',
+                difficulty: 'Easy',
+                requirements: 'Mycelium/Podzol, Mushrooms'
+            },
+            {
+                icon: '🐟',
+                name: 'Guardian Farm',
+                type: 'Hostile Mob',
+                rate: '~100000 drops/hour',
+                difficulty: 'Hard',
+                requirements: 'Ocean Monument, Prismarine'
+            },
+            {
+                icon: '🔱',
+                name: 'Drowned Farm',
+                type: 'Hostile Mob',
+                rate: '~200 tridents/day',
+                difficulty: 'Medium',
+                requirements: 'River Biome, Turtle Eggs'
+            }
+        ];
+
+        // Schematic data with REAL download links
+        const schematicData = [
+            {
+                title: 'Simple Mob Spawner XP Farm',
+                difficulty: 'easy',
+                description: 'Basic spawner farm using water channels. Perfect for beginners. Works with any dungeon spawner. Includes AFK chamber.',
+                size: '9x9x7',
+                materials: 'Water, Stone, Hoppers',
+                rate: '~1000 items/hour',
+                version: 'All versions',
+                url: 'https://www.planetminecraft.com/project/simple-mob-spawner-xp-farm/'
+            },
+            {
+                title: 'Efficient Iron Farm by Shulkercraft',
+                difficulty: 'medium',
+                description: 'Compact 3-villager iron farm producing steady iron. Updated for 1.21. Includes villager transport system and auto-crafter.',
+                size: '16x20x10',
+                materials: 'Beds, Workstations, Zombie',
+                rate: '~240 iron/hour',
+                version: '1.21+',
+                url: 'https://abfielder.com/schematicdetail/niklasrespawned/shulkercraft-121-iron-farm-with-auto-craft-bonemeal/2699'
+            },
+            {
+                title: 'Industrial Creeper Farm',
+                difficulty: 'hard',
+                description: 'Cat-based creeper farm with multiple platforms. Produces gunpowder for TNT and fireworks. Requires cat breeding station.',
+                size: '32x32x24',
+                materials: 'Cats, Carpets, Trapdoors',
+                rate: '~2000 gunpowder/hour',
+                version: '1.18+',
+                url: 'https://www.planetminecraft.com/project/creeper-farm-1-18/'
+            },
+            {
+                title: 'Automatic Crop Farm',
+                difficulty: 'easy',
+                description: 'Villager-powered farm for wheat, carrots, and potatoes. Fully automatic with composter. Includes villager breeding area.',
+                size: '12x12x5',
+                materials: 'Villagers, Composters, Hoppers',
+                rate: '~9000 crops/hour',
+                version: 'All versions',
+                url: 'https://www.planetminecraft.com/project/automatic-crop-farm-easy/'
+            },
+            {
+                title: 'Mega Guardian Farm',
+                difficulty: 'hard',
+                description: 'Ocean monument farm with bubble columns. Requires monument draining. Best XP farm in the game. Includes item sorting.',
+                size: '58x58x40',
+                materials: 'Soul Sand, Magma, Scaffolding',
+                rate: '~180000 drops/hour',
+                version: '1.16+',
+                url: 'https://www.planetminecraft.com/project/guardian-farm-design/'
+            },
+            {
+                title: 'Enderman Farm by Shulkercraft',
+                difficulty: 'medium',
+                description: 'End island farm using endermite. Extremely fast XP. Includes pearl collection and auto-kill system.',
+                size: '20x20x30',
+                materials: 'Endermite, Pistons, Trapdoors',
+                rate: '~60000 XP/hour',
+                version: 'All versions',
+                url: 'https://abfielder.com/schematicdetail/lil-will/enderman-farm-by-shulkercraft/1043'
+            }
+        ];
+
+        // Video data with REAL YouTube links
+        const videoData = [
+            {
+                title: 'Simple Mob Spawner Farm',
+                creator: 'Wattles',
+                description: 'Easy to build mob farm perfect for beginners. Works in survival with minimal resources. Universal design for any dungeon spawner.',
+                tags: ['Beginner', 'XP Farm', 'Easy Build'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=l9o_FmC_RqY'
+            },
+            {
+                title: 'Best Iron Farm 1.21',
+                creator: 'ShulkerCraft',
+                description: 'Most efficient iron farm design for 1.21+. Compact, lag-friendly, produces 240+ iron per hour. Java-specific villager mechanics with auto-crafter.',
+                tags: ['Iron Farm', 'Advanced', '1.21'],
+                edition: 'java',
+                version: '1.21',
+                url: 'https://www.youtube.com/watch?v=QLEBGT8KOM0'
+            },
+            {
+                title: 'Bedrock Iron Farm 1.21',
+                creator: 'JC Playz',
+                description: 'Updated Bedrock Edition iron farm for 1.21. Different mechanics from Java. Produces 180+ iron per hour with proper setup.',
+                tags: ['Iron Farm', 'Bedrock', '1.21'],
+                edition: 'bedrock',
+                version: '1.21',
+                url: 'https://www.youtube.com/watch?v=5VXcZWCPQEo'
+            },
+            {
+                title: 'Guardian Farm Tutorial',
+                creator: 'Shulkercraft',
+                description: 'Complete guardian farm from monument draining to final build. Best XP farm in Minecraft. Works on both editions with minor differences.',
+                tags: ['Guardian', 'XP Farm', 'Hard'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=VjS5K7dmvzY'
+            },
+            {
+                title: 'Automatic Crop Farms',
+                creator: 'Wattles',
+                description: 'Build automatic crop farms using villagers. Fully AFK-able. Universal villager mechanics work on all versions and editions.',
+                tags: ['Crop Farm', 'Automatic', 'Villagers'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=ROXj0OB7LHQ'
+            },
+            {
+                title: 'Java Creeper Farm 1.20',
+                creator: 'Voltrox',
+                description: 'Efficient Java Edition creeper farm using cats. Updated spawn mechanics for 1.20. Get unlimited gunpowder for TNT.',
+                tags: ['Creeper', 'Gunpowder', 'Medium'],
+                edition: 'java',
+                version: '1.20',
+                url: 'https://www.youtube.com/watch?v=L5hCLxb7CKA'
+            },
+            {
+                title: 'Gold Farm Nether 1.19+',
+                creator: 'Shulkercraft',
+                description: 'Massive Nether gold farm producing thousands of gold per hour. Zombie piglin mechanics. Works on Java 1.19+.',
+                tags: ['Gold', 'Nether', 'Advanced'],
+                edition: 'java',
+                version: '1.19',
+                url: 'https://www.youtube.com/watch?v=XHbTyDGQpwo'
+            },
+            {
+                title: 'Bedrock Gold Farm',
+                creator: 'Silent Whisperer',
+                description: 'Bedrock-optimized gold farm for Nether. Different spawn rates than Java. Portal-based design for maximum efficiency.',
+                tags: ['Gold', 'Bedrock', 'Nether'],
+                edition: 'bedrock',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=SaR2B8naPKU'
+            },
+            {
+                title: 'Villager Breeder Universal',
+                creator: 'Pixlriffs',
+                description: 'Simple villager breeder that works on all versions and editions. Essential for trading halls and iron farms. Automatic breeding system.',
+                tags: ['Villagers', 'Breeding', 'Universal'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=oeesCRfaabg'
+            },
+            {
+                title: 'Blaze Farm Tutorial',
+                creator: 'Wattles',
+                description: 'Efficient blaze farm at fortress spawner. Universal design works everywhere. Get blaze rods for brewing and fuel.',
+                tags: ['Blaze', 'Nether', 'XP'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=nrtGqGMs44Q'
+            },
+            {
+                title: 'Slime Farm Java 1.20',
+                creator: 'Wattles',
+                description: 'Find slime chunks and build efficient Java Edition slime farm. Chunk-based spawning. Essential for sticky pistons.',
+                tags: ['Slime', 'Chunks', 'Medium'],
+                edition: 'java',
+                version: '1.20',
+                url: 'https://www.youtube.com/watch?v=1sfiBlXScBw'
+            },
+            {
+                title: 'Bedrock Slime Farm',
+                creator: 'JC Playz',
+                description: 'Bedrock swamp-based slime farm. Different mechanics from Java. Works in swamp biomes at night with proper lighting.',
+                tags: ['Slime', 'Bedrock', 'Swamp'],
+                edition: 'bedrock',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=fZ6gF0PUBYk'
+            },
+            {
+                title: 'Raid Farm 1.21 Java',
+                creator: 'Shulkercraft',
+                description: 'Advanced raid farm for 1.21 Java. Get totems of undying and emeralds. Complex redstone but very rewarding.',
+                tags: ['Raid', 'Totems', 'Advanced'],
+                edition: 'java',
+                version: '1.21',
+                url: 'https://www.youtube.com/watch?v=h7IvXkEqZLw'
+            },
+            {
+                title: 'Enderman Farm',
+                creator: 'Shulkercraft',
+                description: 'End island farm using endermite. Extremely fast XP and pearls. Universal design works on all versions and editions.',
+                tags: ['Enderman', 'XP', 'Pearls'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=ckhe8ws-a4w'
+            },
+            {
+                title: 'Kelp Farm 1.20',
+                creator: 'Wattles',
+                description: 'Automatic kelp farm with observers. Best fuel source in the game. Updated for 1.20 mechanics. Works on both editions.',
+                tags: ['Kelp', 'Fuel', 'Automatic'],
+                edition: 'both',
+                version: '1.20',
+                url: 'https://www.youtube.com/watch?v=GPI7xwKfkqE'
+            },
+            {
+                title: 'Wither Skeleton Farm',
+                creator: 'Shulkercraft',
+                description: 'Efficient wither skeleton farm in Nether fortress. Get skulls for wither boss. Universal spawning mechanics.',
+                tags: ['Wither Skeleton', 'Nether', 'Skulls'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=Nv67qCi0p2I'
+            },
+            {
+                title: 'Java Witch Farm 1.19',
+                creator: 'ianxofour',
+                description: 'Witch hut farm producing redstone, glowstone, and more. Java-specific perimeter design. Best for 1.19+.',
+                tags: ['Witch', 'Java', 'Perimeter'],
+                edition: 'java',
+                version: '1.19',
+                url: 'https://www.youtube.com/watch?v=m1uLqON7KRc'
+            },
+            {
+                title: 'Bamboo Farm Auto',
+                creator: 'Voltrox',
+                description: 'Observer-based bamboo farm. Super fast growth rates. Perfect for fuel and scaffolding. Works on both editions.',
+                tags: ['Bamboo', 'Automatic', 'Fast'],
+                edition: 'both',
+                version: 'all',
+                url: 'https://www.youtube.com/watch?v=0zMmjOQMB2w'
+            }
+        ];
+
+        let currentVersionFilter = 'all';
+        let currentEditionFilters = ['java', 'bedrock', 'both'];
+
+        // Render farms
+        function renderFarms() {
+            const grid = document.getElementById('farmGrid');
+            grid.innerHTML = '';
+
+            farmData.forEach(farm => {
+                const card = document.createElement('div');
+                card.className = 'farm-card';
+                card.innerHTML = `
+                    <div class="farm-icon">${farm.icon}</div>
+                    <div class="farm-name">${farm.name}</div>
+                    <div class="farm-type">${farm.type}</div>
+                    <div class="farm-stats">
+                        <div><strong>Rate:</strong> ${farm.rate}</div>
+                        <div><strong>Difficulty:</strong> ${farm.difficulty}</div>
+                        <div><strong>Requires:</strong> ${farm.requirements}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Render schematics
+        function renderSchematics() {
+            const grid = document.getElementById('schematicGrid');
+            grid.innerHTML = '';
+
+            schematicData.forEach(schematic => {
+                const card = document.createElement('div');
+                card.className = 'schematic-card';
+                card.innerHTML = `
+                    <div class="schematic-header">
+                        <div class="schematic-title">${schematic.title}</div>
+                        <div class="difficulty-badge difficulty-${schematic.difficulty}">
+                            ${schematic.difficulty.toUpperCase()}
+                        </div>
+                    </div>
+                    <div class="schematic-description">${schematic.description}</div>
+                    <div class="schematic-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Size:</div>
+                            <div>${schematic.size}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Rate:</div>
+                            <div>${schematic.rate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Materials:</div>
+                            <div>${schematic.materials}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Version:</div>
+                            <div>${schematic.version}</div>
+                        </div>
+                    </div>
+                    <button class="download-btn" onclick="window.open('${schematic.url}', '_blank')">
+                        📥 Download Schematic
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Render videos
+        function renderVideos() {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = '';
+
+            // Filter videos
+            const filteredVideos = videoData.filter(video => {
+                const matchesEdition = currentEditionFilters.includes(video.edition);
+                const matchesVersion = currentVersionFilter === 'all' || video.version === 'all' || video.version === currentVersionFilter;
+                return matchesEdition && matchesVersion;
+            });
+
+            if (filteredVideos.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; color: #ff8c00; font-size: 1.5rem; padding: 3rem;">No videos found for selected filters.</div>';
+                return;
+            }
+
+            filteredVideos.forEach(video => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                
+                // Edition badge
+                let editionBadge = '';
+                if (video.edition === 'java') {
+                    editionBadge = '<span class="edition-badge edition-java">JAVA</span>';
+                } else if (video.edition === 'bedrock') {
+                    editionBadge = '<span class="edition-badge edition-bedrock">BEDROCK</span>';
+                } else {
+                    editionBadge = '<span class="edition-badge edition-both">BOTH</span>';
+                }
+                
+                // Version badge
+                let versionBadge = video.version === 'all' ? 'All Versions' : video.version;
+                
+                card.innerHTML = `
+                    <div class="video-thumbnail">▶️</div>
+                    <div class="video-content">
+                        <div style="margin-bottom: 0.5rem;">
+                            ${editionBadge}
+                            <span style="color: #aaa; font-size: 0.85rem;">${versionBadge}</span>
+                        </div>
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-creator">by ${video.creator}</div>
+                        <div class="video-description">${video.description}</div>
+                        <div class="video-tags">
+                            ${video.tags.map(tag => `<span class="video-tag">${tag}</span>`).join('')}
+                        </div>
+                        <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(video.title + ' ' + video.creator + ' minecraft')}" class="watch-btn" target="_blank">
+                            🎥 Search on YouTube
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter videos by edition
+        function filterVideos() {
+            currentEditionFilters = [];
+            document.querySelectorAll('.edition-filter:checked').forEach(checkbox => {
+                currentEditionFilters.push(checkbox.value);
+            });
+            renderVideos();
+        }
+
+        // Filter videos by version
+        function selectVersion(version) {
+            currentVersionFilter = version;
+            
+            // Update button states
+            document.querySelectorAll('.version-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderVideos();
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activate button
+            event.target.classList.add('active');
+        }
+
+        // Initial render
+        renderFarms();
+        renderSchematics();
+        renderVideos();
+    </script>
+</body>
+</html>

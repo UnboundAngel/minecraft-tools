@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Ideas Gallery - Minecraft Tools Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #0a2f0a 0%, #1a1a1a 50%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid #4ade80;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #4ade80;
+            text-shadow: 4px 4px 0px #000, 8px 8px 20px rgba(74, 222, 128, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #aaa;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .filters-section {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #4ade80;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-title {
+            font-size: 1.5rem;
+            color: #4ade80;
+            margin-bottom: 1rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #4ade80;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: rgba(74, 222, 128, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #4ade80;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #4ade80;
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .search-input::placeholder {
+            color: #4ade80;
+            opacity: 0.6;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .build-card {
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #4ade80;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .build-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(74, 222, 128, 0.4);
+            border-color: #fff;
+        }
+
+        .build-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #1a4d1a 0%, #0a2f0a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            border-bottom: 3px solid #4ade80;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .build-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(74, 222, 128, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .build-content {
+            padding: 1.5rem;
+        }
+
+        .build-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .build-title {
+            font-size: 1.5rem;
+            color: #4ade80;
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .difficulty-badge {
+            padding: 0.4rem 0.8rem;
+            border: 2px solid;
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .difficulty-easy { border-color: #4ade80; color: #4ade80; }
+        .difficulty-medium { border-color: #fbbf24; color: #fbbf24; }
+        .difficulty-hard { border-color: #ff4500; color: #ff4500; }
+
+        .build-creator {
+            color: #aaa;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .build-description {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .build-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .build-tag {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid #4ade80;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            color: #4ade80;
+        }
+
+        .build-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #4ade80;
+        }
+
+        .stat-item {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .stat-label {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .build-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.8rem;
+            background: #4ade80;
+            color: #000;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .action-btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+
+        .action-btn.secondary {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            border: 2px solid #4ade80;
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(74, 222, 128, 0.4);
+        }
+
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            border-bottom: 4px solid #555;
+            border-right: 4px solid #555;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            border-bottom: 2px solid #8b8b8b;
+            border-right: 2px solid #8b8b8b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        .hotbar-slot.active {
+            border: 3px solid #fff;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-buttons {
+                flex-direction: column;
+            }
+            
+            .build-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗝️ BUILD IDEAS GALLERY 🗝️</h1>
+        <p>Discover amazing builds from the Minecraft community</p>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search builds by name, creator, or style...">
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Build cards will be dynamically generated -->
+        </div>
+    </div>
+
+    <div class="hotbar">
+        <a href="index.html" class="hotbar-slot" title="Home">
+            <div class="hotbar-icon">🏠</div>
+            <div class="hotbar-label">HOME</div>
+        </a>
+        <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+            <div class="hotbar-icon">📘</div>
+            <div class="hotbar-label">ENCHANT</div>
+        </a>
+        <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+            <div class="hotbar-icon">💎</div>
+            <div class="hotbar-label">ORES</div>
+        </a>
+        <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+            <div class="hotbar-icon">🗺️</div>
+            <div class="hotbar-label">SEEDS</div>
+        </a>
+        <div class="hotbar-slot active" title="Builds">
+            <div class="hotbar-icon">🗝️</div>
+            <div class="hotbar-label">BUILDS</div>
+        </div>
+        <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+            <div class="hotbar-icon">🌾</div>
+            <div class="hotbar-label">FARMS</div>
+        </a>
+    </div>
+
+    <script>
+        const buildsData = [
+            {
+                icon: '🏰',
+                title: 'Medieval Castle',
+                creator: 'Grian',
+                category: ['medieval', 'mega'],
+                difficulty: 'hard',
+                description: 'Epic medieval castle with towers, walls, and interior rooms. Perfect for roleplay servers or survival kingdoms. Includes throne room, barracks, and dungeon.',
+                tags: ['Castle', 'Medieval', 'Survival'],
+                buildTime: '10-15 hours',
+                blocks: '~50,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=grian+medieval+castle+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=medieval+castle'
+            },
+            {
+                icon: '🏡',
+                title: 'Cozy Cottage',
+                creator: 'fWhip',
+                category: ['starter', 'survival'],
+                difficulty: 'easy',
+                description: 'Perfect starter house for early survival. Cozy and functional with storage, enchanting area, and bed. Easy to gather materials for beginners.',
+                tags: ['Cottage', 'Starter', 'Easy'],
+                buildTime: '1-2 hours',
+                blocks: '~2,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=fwhip+cozy+cottage+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=starter+cottage'
+            },
+            {
+                icon: '🏙️',
+                title: 'Modern Mansion',
+                creator: 'Keralis',
+                category: ['modern', 'mega'],
+                difficulty: 'hard',
+                description: 'Luxurious modern mansion with pool, garage, and multiple floors. Features contemporary architecture with quartz and concrete. Perfect for creative mode.',
+                tags: ['Modern', 'Mansion', 'Luxury'],
+                buildTime: '8-12 hours',
+                blocks: '~40,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=keralis+modern+mansion+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=modern+mansion'
+            },
+            {
+                icon: '🗼',
+                title: 'Wizard Tower',
+                creator: 'Bdouble0100',
+                category: ['fantasy', 'survival'],
+                difficulty: 'medium',
+                description: 'Magical wizard tower with spiral staircase, potion lab, and library. Fantasy-themed with mystical details. Great for adventure maps or magic-themed builds.',
+                tags: ['Fantasy', 'Tower', 'Magic'],
+                buildTime: '4-6 hours',
+                blocks: '~8,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=bdoubleo100+wizard+tower+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=wizard+tower'
+            },
+            {
+                icon: '⚙️',
+                title: 'Redstone House',
+                creator: 'Mumbo Jumbo',
+                category: ['redstone', 'modern'],
+                difficulty: 'hard',
+                description: 'Fully automated redstone house with hidden doors, automatic farms, and item sorters. Advanced redstone knowledge required. Tutorial includes all circuits.',
+                tags: ['Redstone', 'Automated', 'Advanced'],
+                buildTime: '15-20 hours',
+                blocks: '~25,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=mumbo+jumbo+redstone+house+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=redstone+house'
+            },
+            {
+                icon: '⛏️',
+                title: 'Underground Base',
+                creator: 'Pixlriffs',
+                category: ['survival', 'starter'],
+                difficulty: 'easy',
+                description: 'Hidden underground survival base carved into mountain. Secure and mob-proof with multiple storage rooms. Perfect for hardcore survival.',
+                tags: ['Underground', 'Hidden', 'Survival'],
+                buildTime: '3-5 hours',
+                blocks: '~5,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=pixlriffs+underground+base+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=underground+base'
+            },
+            {
+                icon: '🛕',
+                title: 'Greek Temple',
+                creator: 'Trixyblox',
+                category: ['medieval', 'fantasy'],
+                difficulty: 'medium',
+                description: 'Stunning Greek-style temple with columns and statues. Perfect for spawn builds or worship areas. Includes altar and detailed floor patterns.',
+                tags: ['Greek', 'Temple', 'Ancient'],
+                buildTime: '5-7 hours',
+                blocks: '~15,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=trixyblox+greek+temple+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=greek+temple'
+            },
+            {
+                icon: '🌳',
+                title: 'Treehouse Village',
+                creator: 'GoodTimesWithScar',
+                category: ['fantasy', 'survival'],
+                difficulty: 'medium',
+                description: 'Interconnected treehouse village with bridges. Natural and organic design blending with forest. Multiple houses for different purposes.',
+                tags: ['Treehouse', 'Village', 'Nature'],
+                buildTime: '6-10 hours',
+                blocks: '~20,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=goodtimeswithscar+treehouse+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=treehouse+village'
+            },
+            {
+                icon: '🪙',
+                title: 'Medieval Marketplace',
+                creator: 'Fwhip',
+                category: ['medieval', 'survival'],
+                difficulty: 'medium',
+                description: 'Bustling medieval marketplace with stalls, shops, and villager trading area. Perfect for multiplayer servers or survival towns.',
+                tags: ['Medieval', 'Market', 'Village'],
+                buildTime: '4-6 hours',
+                blocks: '~12,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=fwhip+medieval+marketplace+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=medieval+marketplace'
+            },
+            {
+                icon: '🏢',
+                title: 'Skyscraper',
+                creator: 'Keralis',
+                category: ['modern', 'mega'],
+                difficulty: 'hard',
+                description: 'Massive modern skyscraper with office floors, penthouse, and ground lobby. Inspired by real architecture. Best for creative city builds.',
+                tags: ['Skyscraper', 'Modern', 'City'],
+                buildTime: '20+ hours',
+                blocks: '~80,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=keralis+skyscraper+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=skyscraper'
+            },
+            {
+                icon: '⛩️',
+                title: 'Japanese Temple',
+                creator: 'Trixyblox',
+                category: ['fantasy', 'medieval'],
+                difficulty: 'hard',
+                description: 'Traditional Japanese temple with curved roofs and zen garden. Intricate details with authentic architecture. Includes torii gates and koi pond.',
+                tags: ['Japanese', 'Temple', 'Zen'],
+                buildTime: '8-12 hours',
+                blocks: '~30,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=trixyblox+japanese+temple+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=japanese+temple'
+            },
+            {
+                icon: '🏖️',
+                title: 'Beach House',
+                creator: 'Bdouble0100',
+                category: ['modern', 'survival'],
+                difficulty: 'easy',
+                description: 'Tropical beach house on stilts over water. Simple yet stylish design perfect for ocean biomes. Includes dock and storage areas.',
+                tags: ['Beach', 'Tropical', 'Modern'],
+                buildTime: '2-4 hours',
+                blocks: '~4,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=bdoubleo100+beach+house+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=beach+house'
+            },
+            {
+                icon: '🎪',
+                title: 'Circus Tent',
+                creator: 'GoodTimesWithScar',
+                category: ['fantasy', 'mega'],
+                difficulty: 'medium',
+                description: 'Colorful circus tent with performance ring and seating. Fun and whimsical design. Great for theme parks or entertainment districts.',
+                tags: ['Circus', 'Colorful', 'Entertainment'],
+                buildTime: '5-8 hours',
+                blocks: '~18,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=goodtimeswithscar+circus+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=circus+tent'
+            },
+            {
+                icon: '🕌',
+                title: 'Desert Palace',
+                creator: 'Grian',
+                category: ['fantasy', 'mega'],
+                difficulty: 'hard',
+                description: 'Grand desert palace with domes and minarets. Middle Eastern inspired architecture with courtyards and fountains. Massive and impressive.',
+                tags: ['Desert', 'Palace', 'Arabian'],
+                buildTime: '15-20 hours',
+                blocks: '~60,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=grian+desert+palace+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=desert+palace'
+            },
+            {
+                icon: '🏭',
+                title: 'Industrial Factory',
+                creator: 'Tango Tek',
+                category: ['redstone', 'modern'],
+                difficulty: 'hard',
+                description: 'Working industrial factory with assembly lines and smokestacks. Includes functional redstone contraptions. Perfect for steampunk builds.',
+                tags: ['Industrial', 'Factory', 'Redstone'],
+                buildTime: '12-18 hours',
+                blocks: '~45,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=tango+tek+factory+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=industrial+factory'
+            },
+            {
+                icon: '❄️',
+                title: 'Ice Castle',
+                creator: 'fWhip',
+                category: ['fantasy', 'mega'],
+                difficulty: 'hard',
+                description: 'Frozen ice castle inspired by winter themes. Built with ice, packed ice, and blue concrete. Majestic towers and frozen throne room.',
+                tags: ['Ice', 'Castle', 'Winter'],
+                buildTime: '10-14 hours',
+                blocks: '~55,000',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=fwhip+ice+castle+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=ice+castle'
+            }
+        ];
+
+        let currentCategory = 'all';
+        let currentSearch = '';
+
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+
+            const filtered = buildsData.filter(build => {
+                const matchesCategory = currentCategory === 'all' || build.category.includes(currentCategory);
+                const matchesSearch = currentSearch === '' ||
+                    build.title.toLowerCase().includes(currentSearch) ||
+                    build.creator.toLowerCase().includes(currentSearch) ||
+                    build.description.toLowerCase().includes(currentSearch) ||
+                    build.tags.some(tag => tag.toLowerCase().includes(currentSearch));
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; color: #4ade80; font-size: 1.5rem; padding: 3rem; grid-column: 1/-1;">No builds found matching your criteria.</div>';
+                return;
+            }
+
+            filtered.forEach(build => {
+                const card = document.createElement('div');
+                card.className = 'build-card';
+                card.innerHTML = `
+                    <div class="build-image">${build.icon}</div>
+                    <div class="build-content">
+                        <div class="build-header">
+                            <div class="build-title">${build.title}</div>
+                            <div class="difficulty-badge difficulty-${build.difficulty}">
+                                ${build.difficulty.toUpperCase()}
+                            </div>
+                        </div>
+                        <div class="build-creator">by ${build.creator}</div>
+                        <div class="build-description">${build.description}</div>
+                        <div class="build-tags">
+                            ${build.tags.map(tag => `<span class="build-tag">${tag}</span>`).join('')}
+                        </div>
+                        <div class="build-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Build Time:</span> ${build.buildTime}
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Blocks:</span> ${build.blocks}
+                            </div>
+                        </div>
+                        <div class="build-actions">
+                            <a href="${build.tutorialUrl}" class="action-btn" target="_blank">
+                                🎥 Tutorial
+                            </a>
+                            <a href="${build.downloadUrl}" class="action-btn secondary" target="_blank">
+                                📥 Download
+                            </a>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderGallery();
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            currentSearch = e.target.value.toLowerCase();
+            renderGallery();
+        });
+
+        renderGallery();
+    </script>
+</body>
+</html>filters-section">
+            <div class="filter-title">Filter by Category</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">All Builds</button>
+                <button class="filter-btn" data-category="medieval">Medieval</button>
+                <button class="filter-btn" data-category="modern">Modern</button>
+                <button class="filter-btn" data-category="fantasy">Fantasy</button>
+                <button class="filter-btn" data-category="redstone">Redstone</button>
+                <button class="filter-btn" data-category="survival">Survival Base</button>
+                <button class="filter-btn" data-category="starter">Starter House</button>
+                <button class="filter-btn" data-category="mega">Mega Build</button>
+            </div>
+        </div>
+
+        <div class="

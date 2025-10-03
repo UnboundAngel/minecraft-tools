@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Seeds - Minecraft Tools Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #0a2f0a 0%, #1a1a1a 50%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid #4ade80;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #4ade80;
+            text-shadow: 4px 4px 0px #000, 8px 8px 20px rgba(74, 222, 128, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #aaa;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #4ade80;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: rgba(74, 222, 128, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #4ade80;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #4ade80;
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .search-input::placeholder {
+            color: #4ade80;
+            opacity: 0.6;
+        }
+
+        /* Seeds Grid */
+        .seeds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .seed-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #4ade80;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .seed-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(74, 222, 128, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .seed-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 40px rgba(74, 222, 128, 0.3);
+            border-color: #fff;
+        }
+
+        .seed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .seed-title {
+            font-size: 1.5rem;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .seed-version {
+            background: rgba(74, 222, 128, 0.2);
+            padding: 0.3rem 0.8rem;
+            border: 2px solid #4ade80;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .seed-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .seed-code-container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #4ade80;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .seed-code {
+            font-size: 1.2rem;
+            color: #4ade80;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .copy-btn {
+            background: #4ade80;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+        }
+
+        .seed-description {
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .seed-features {
+            margin-top: 1rem;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid #4ade80;
+            padding: 0.3rem 0.8rem;
+            margin: 0.3rem;
+            font-size: 0.85rem;
+            color: #4ade80;
+        }
+
+        .coordinates {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .coord-title {
+            color: #4ade80;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .coord-list {
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.8;
+        }
+
+        /* Hotbar */
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            border-bottom: 4px solid #555;
+            border-right: 4px solid #555;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            border-bottom: 2px solid #8b8b8b;
+            border-right: 2px solid #8b8b8b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        .hotbar-slot.active {
+            border: 3px solid #fff;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .seeds-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hotbar {
+                gap: 2px;
+                padding: 4px;
+            }
+            
+            .hotbar-slot {
+                width: 48px;
+                height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🗺️ WORLD SEED FINDER 🗺️</h1>
+        <p>Discover amazing worlds for your next adventure</p>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Search -->
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search seeds by feature (villages, mountains, desert...)">
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Seeds</button>
+            <button class="filter-btn" data-filter="java">Java Only</button>
+            <button class="filter-btn" data-filter="bedrock">Bedrock Only</button>
+            <button class="filter-btn" data-filter="both">Both Editions</button>
+            <button class="filter-btn" data-filter="survival">Survival</button>
+            <button class="filter-btn" data-filter="speedrun">Speedrun</button>
+            <button class="filter-btn" data-filter="building">Building</button>
+        </div>
+
+        <!-- Seeds Grid -->
+        <div class="seeds-grid" id="seedsGrid">
+            <!-- Seeds will be dynamically generated -->
+        </div>
+    </div>
+
+    <div class="hotbar">
+    <a href="index.html" class="hotbar-slot" title="Home">
+        <div class="hotbar-icon">🏠</div>
+        <div class="hotbar-label">HOME</div>
+    </a>
+    <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+        <div class="hotbar-icon">📘</div>
+        <div class="hotbar-label">ENCHANT</div>
+    </a>
+    <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+        <div class="hotbar-icon">💎</div>
+        <div class="hotbar-label">ORES</div>
+    </a>
+    <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+        <div class="hotbar-icon">🗺️</div>
+        <div class="hotbar-label">SEEDS</div>
+    </a>
+    <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+        <div class="hotbar-icon">🗝️</div>
+        <div class="hotbar-label">BUILDS</div>
+    </a>
+    <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+        <div class="hotbar-icon">🌾</div>
+        <div class="hotbar-label">FARMS</div>
+    </a>
+</div>
+
+    <script>
+        const seedsData = [
+            {
+                title: "Floating Desert Temple in Lava",
+                code: "2482490754905255652",
+                version: "Java",
+                category: ["survival"],
+                description: "A desert temple floating in lava inside a lush cave - directly beneath spawn! Found in 2022, still works in 1.21+. Lush caves for miles, mineshafts, amethyst geodes, and Trial Chamber only 300 blocks away. Absolutely bizarre world generation!",
+                features: ["Desert Temple in Lava", "Lush Caves", "Mineshafts", "Amethyst Geodes", "Trial Chamber"],
+                coordinates: {
+                    "Floating Temple": "Directly below spawn",
+                    "Trial Chamber": "300 blocks away"
+                }
+            },
+            {
+                title: "Triple Rare Structures",
+                code: "1669984371247603308",
+                version: "Java",
+                category: ["survival", "speedrun"],
+                description: "The three rarest overworld structures in ONE place: Ancient City, Trial Chamber, AND a Stronghold! The Stronghold is just 300 blocks northwest. This is incredibly rare - perfect for speedrunning or endgame challenges!",
+                features: ["Ancient City", "Trial Chamber", "Stronghold", "All Within 300 Blocks"],
+                coordinates: {
+                    "Ancient City + Trial": "Spawn area",
+                    "Stronghold": "300 blocks northwest"
+                }
+            },
+            {
+                title: "Village Inside Ancient City",
+                code: "8675309",
+                version: "Java",
+                category: ["survival", "building"],
+                description: "A complete village has somehow generated INSIDE an Ancient City! Clear out the sculk shriekers without spawning the Warden for a peaceful underground hideout. Amethyst Geode and Mineshaft right above you!",
+                features: ["Village in Ancient City", "Amethyst Geode", "Mineshaft", "Underground Base"],
+                coordinates: {
+                    "Underground Village": "Below spawn"
+                }
+            },
+            {
+                title: "44-Diamond Mega Vein",
+                code: "40525935656",
+                version: "Java",
+                category: ["survival"],
+                description: "Travel to the coordinates to find one of the LARGEST diamond veins ever discovered in Minecraft - a massive 44-diamond ore vein! This is an absolute jackpot for any survival world. Worth the journey!",
+                features: ["44 Diamond Ores", "Mega Vein", "Record Breaking"],
+                coordinates: {
+                    "Diamond Vein": "X: -13718752, Y: -42, Z: -22261824"
+                }
+            },
+            {
+                title: "Amplified Ice Spikes Wonderland",
+                code: "-7882587612848022640",
+                version: "Java",
+                category: ["building"],
+                description: "REQUIRES AMPLIFIED WORLD SETTING! Start in a stunning winter wonderland with towering ice spikes and dramatic mountain ranges. Perfect for ice castles or Frozen-inspired builds. The amplified mode makes this a photographer's paradise!",
+                features: ["Amplified World", "Ice Spikes", "Snow Peaks", "Dramatic Terrain"],
+                coordinates: {
+                    "Spawn": "X: -602.963, Y: 64.00, Z: 1421.899"
+                }
+            },
+            {
+                title: "Largest Cherry Blossom Biome Ever",
+                code: "8485994731059868771",
+                version: "Java",
+                category: ["building", "survival"],
+                description: "The LARGEST cherry blossom biome ever discovered! Two massive valleys connected by caves. Near spawn you'll find an Ancient City and another beautiful valley. Explorer's dream with endless pink trees!",
+                features: ["Largest Cherry Biome", "Two Valleys", "Ancient City", "Cave Connections"],
+                coordinates: {
+                    "Cherry Valleys": "X: 23127, Y: 145, Z: 7951"
+                }
+            },
+            {
+                title: "Speedrun Optimized World",
+                code: "3257840388504953787",
+                version: "Java",
+                category: ["speedrun"],
+                description: "Verified by the speedrunning community as one of the most efficient layouts ever! Everything needed for speedruns close to spawn: villages, stronghold, essential resources. Used in competitive runs!",
+                features: ["Speedrun Verified", "Near Spawn Village", "Close Stronghold", "Optimal Layout"],
+                coordinates: {
+                    "All structures": "Near spawn"
+                }
+            },
+            {
+                title: "Six Ancient Cities Cluster",
+                code: "7850499649103252114",
+                version: "Java",
+                category: ["survival"],
+                description: "SIX Ancient Cities near spawn, each in a separate area! Perfect for racing friends to see who loots them first. Tons of echo shards, disc fragments, and challenging Warden encounters. Bring iron armor minimum!",
+                features: ["6 Ancient Cities", "Racing Challenge", "Echo Shards", "Multiple Wardens"],
+                coordinates: {
+                    "Ancient Cities": "Various locations near spawn (F3 to find)"
+                }
+            },
+            {
+                title: "Cherry Blossom Paradise + Ancient City",
+                code: "4535860075751666182",
+                version: "Java",
+                category: ["building", "survival"],
+                description: "Spawn surrounded by cherry blossom trees in every direction! Perfect for pink-themed builds and collecting pink wood. Ancient City directly under the cherry grove - bring iron armor for the Warden!",
+                features: ["Cherry Grove 360°", "Pink Wood", "Ancient City Below", "Beautiful Scenery"],
+                coordinates: {
+                    "Cherry Grove": "All around spawn",
+                    "Ancient City": "Directly beneath"
+                }
+            },
+            {
+                title: "Archaeology Heaven",
+                code: "3637024161799241221",
+                version: "Java",
+                category: ["survival"],
+                description: "Numerous Trail Ruins all around spawn! Perfect for archaeology lovers. Explore hidden secrets and find buried treasure, emeralds, music discs, and armor trims. Patient explorers will be rewarded with rare items!",
+                features: ["Multiple Trail Ruins", "Emeralds", "Music Discs", "Armor Trims"],
+                coordinates: {
+                    "Trail Ruins": "Multiple locations around spawn"
+                }
+            },
+            {
+                title: "Four Villages at Spawn",
+                code: "5843588493813274316",
+                version: "Java",
+                category: ["survival"],
+                description: "Perfect for beginners! Four villages at spawn with all primary resources: food, wood, beds, and more. Mineshaft below the snow-covered region. Get equipped fast and start your adventure immediately!",
+                features: ["4 Villages", "Mineshaft", "All Resources", "Beginner Friendly"],
+                coordinates: {
+                    "Villages": "At spawn",
+                    "Mineshaft": "Below snow region"
+                }
+            },
+            {
+                title: "Ring River + Mushroom Island",
+                code: "1469872430",
+                version: "Java",
+                category: ["building", "survival"],
+                description: "Perfect castle location! Ring-shaped river surrounds a beautiful mushroom island. No hostile mobs spawn here. Head east from snowy spawn to find this incredible medieval-inspired building spot!",
+                features: ["Ring River", "Mushroom Island", "No Hostile Mobs", "Castle Location"],
+                coordinates: {
+                    "Ring River": "East from spawn"
+                }
+            },
+            {
+                title: "Cherry Valley + Five Blacksmiths",
+                code: "1015080531",
+                version: "Java",
+                category: ["survival", "speedrun"],
+                description: "Expansive village in a valley ringed by cherry blossoms with FIVE blacksmiths! Rob and trade for instant gear. Perfect foundation for your empire with style and resources!",
+                features: ["5 Blacksmiths", "Cherry Blossom Ring", "Large Village", "Instant Loot"],
+                coordinates: {
+                    "Village Valley": "Spawn area"
+                }
+            },
+            {
+                title: "Cherry Grove Lake Village",
+                code: "-2032795982907864146",
+                version: "Both",
+                category: ["survival", "building"],
+                description: "Spawn right in the middle of a stunning cherry grove biome with a beautiful lake. A massive village sits in the middle of the lake, surrounded by steep hills covered in thousands of cherry trees. Perfect for protection and scenic builds!",
+                features: ["Cherry Grove", "Lake Village", "Trial Chamber Below", "Pillager Outpost Nearby"],
+                coordinates: {
+                    "Village": "Spawn area",
+                    "Pillager Outpost": "200 blocks west"
+                }
+            },
+            {
+                title: "River Ring Island",
+                code: "6889752618198758451",
+                version: "Both",
+                category: ["survival", "building"],
+                description: "A stunning river forms a perfect ring around a central island near spawn. This remarkable natural formation has been shared widely in the Minecraft community and provides an incredible location for your next build.",
+                features: ["Circular River", "Central Island", "Close to Spawn", "Unique Geography"],
+                coordinates: {
+                    "River Ring": "Close to spawn"
+                }
+            },
+            {
+                title: "Ultimate Desert Paradise",
+                code: "5820734886255954670",
+                version: "Both",
+                category: ["survival", "speedrun"],
+                description: "Within 300 blocks from spawn, discover FOUR desert villages and TWO desert pyramids! Villages 1, 2, and the first desert temple are visible from a single location. Underground mineshafts provide even more loot. Perfect for archaeology and fast starts!",
+                features: ["4 Desert Villages", "2 Desert Temples", "Mineshafts", "Archaeology Sites"],
+                coordinates: {
+                    "All structures": "Within 300 blocks of spawn"
+                }
+            },
+            {
+                title: "Giant Cheese Cave",
+                code: "1669320484",
+                version: "Java",
+                category: ["survival", "building"],
+                description: "Just off spawn, find the biggest cheese cave since Caves & Cliffs! Daylight streams all the way down to diamond level, making it easy to navigate and perfect for players who get scared in dark caves. Build a vertical city or mine safely!",
+                features: ["Massive Cave", "Natural Lighting", "Diamond Level Access", "Easy Navigation"],
+                coordinates: {
+                    "Cave Entrance": "Near spawn"
+                }
+            },
+            {
+                title: "Mountain Village Sprawl",
+                code: "-1885296640999593081",
+                version: "Both",
+                category: ["survival", "building"],
+                description: "An incredible village sprawls across the disparate outcroppings of an icy mountain. While visiting neighbors becomes an expedition, the views are absolutely worth it. Perfect for adventure-builders!",
+                features: ["Mountain Village", "Icy Peaks", "Scattered Buildings", "Epic Views"],
+                coordinates: {
+                    "Main Village": "Spawn area mountains"
+                }
+            },
+            {
+                title: "Woodland Mansion + Village Spawn",
+                code: "4785178663264618906",
+                version: "Bedrock",
+                category: ["survival", "speedrun"],
+                description: "Spawn right next to a Woodland Mansion on top of a mountain, with a village nearby! Woodland Mansions are extremely rare, making this an incredible find for loot hunters and explorers.",
+                features: ["Woodland Mansion", "Mountain Top", "Nearby Village", "Rare Spawn"],
+                coordinates: {
+                    "Mansion": "Next to spawn",
+                    "Village": "Nearby"
+                }
+            },
+            {
+                title: "Nether Portal + Village Spawn",
+                code: "5616969252359636044",
+                version: "Bedrock",
+                category: ["survival", "speedrun"],
+                description: "Spawn near a Meadow village with a COMPLETED Nether Portal above the lake! Free transportation to the Nether from the start. Incredibly close to a Nether Fortress too - perfect for speedrunning!",
+                features: ["Complete Nether Portal", "Village", "Nether Fortress Nearby", "Meadow Biome"],
+                coordinates: {
+                    "Village": "Spawn area",
+                    "Nether Portal": "Above the lake"
+                }
+            },
+            {
+                title: "Treasure Hunter's Dream",
+                code: "1669320484",
+                version: "Bedrock",
+                category: ["survival"],
+                description: "Spawn near 2 Desert Temples, a Desert Village, Destroyed Nether Portal, AND Trail Ruins all in the same location! Perfect for ambitious archaeologists wanting a jump-start with tons of loot.",
+                features: ["2 Desert Temples", "Village", "Ruined Portal", "Trail Ruins"],
+                coordinates: {
+                    "All structures": "Immediate vicinity of spawn"
+                }
+            },
+            {
+                title: "Frozen Mountain Kingdom",
+                code: "-7781987479146007700",
+                version: "Both",
+                category: ["building", "survival"],
+                description: "Spawn in the middle of terrain entirely covered by high mountain peaks! Green forests mix with frozen ranges, creating stunning views everywhere. Perfect for mountain-lovers and epic builds.",
+                features: ["High Peaks", "Frozen Mountains", "Green Forests", "360° Views"],
+                coordinates: {
+                    "Peak Views": "All around spawn"
+                }
+            },
+            {
+                title: "Exposed Mega Mineshaft",
+                code: "8486672581758651406",
+                version: "Bedrock",
+                category: ["survival"],
+                description: "Go through a cave and mine deeper to find acres of exposed Mineshaft! Wooden pathways, spiders, and treasure chests everywhere. A village island on the surface makes the perfect base location.",
+                features: ["Massive Mineshaft", "Village Island", "Multiple Biomes", "Abundant Loot"],
+                coordinates: {
+                    "Village Island": "Surface",
+                    "Mineshaft": "Underground caves"
+                }
+            },
+            {
+                title: "All Biomes + Pale Garden",
+                code: "5904255014123720850",
+                version: "Bedrock",
+                category: ["building", "survival"],
+                description: "Spawn at Old Growth Pine Taiga with Pale Garden nearby! This seed features every biome including lush caves below Pale Garden. Trial Chambers and Pillager Outposts add extra adventure.",
+                features: ["All Biomes", "Pale Garden", "Lush Caves", "Trial Chamber"],
+                coordinates: {
+                    "Pale Garden": "Near spawn",
+                    "Trial Chamber": "Plains area"
+                }
+            },
+            {
+                title: "Sunflower Cherry Valley",
+                code: "-1098194615952430432",
+                version: "Both",
+                category: ["building"],
+                description: "A beautiful lake surrounded by massive cherry trees on mountain tops and sunflowers covering the ground! Rivers wind through the valley - perfect for boat networks or bridges. Absolutely stunning scenery!",
+                features: ["Cherry Grove", "Sunflower Fields", "Lake Center", "Rivers"],
+                coordinates: {
+                    "Lake": "Spawn center",
+                    "Cherry Mountains": "Surrounding area"
+                }
+            },
+            {
+                title: "Massive Waterfall Spire",
+                code: "506070180782346026",
+                version: "Bedrock",
+                category: ["building"],
+                description: "A massive waterfall spire at coordinates, flanked by a village and pillager outpost at its base! A ruined Nether portal rests at the foot of the lake. Truly unique world generation!",
+                features: ["Waterfall Spire", "Village", "Pillager Outpost", "Ruined Portal"],
+                coordinates: {
+                    "Spire": "X: 200, Z: 200",
+                    "Ruined Portal": "X: 206, Y: 0, Z: 175"
+                }
+            },
+            {
+                title: "Heart-Shaped Mountain",
+                code: "-1938057281",
+                version: "Bedrock",
+                category: ["building"],
+                description: "When you spawn, find a literal heart shape indented into a nearby mountain! Perfect for romantic builds or unique survival worlds you want to play with friends.",
+                features: ["Heart Mountain", "Unique Shape", "Great Starting Area"],
+                coordinates: {
+                    "Heart Mountain": "Near spawn"
+                }
+            },
+            {
+                title: "Forest Sinkhole + Lush Caves",
+                code: "2910524",
+                version: "Bedrock",
+                category: ["survival", "building"],
+                description: "Trek to the coordinates to find a huge sinkhole in a forest biome with a lush caves biome inside! Waterfalls, lava flows, and abandoned mineshaft remnants visible from the mouth of the sinkhole.",
+                features: ["Massive Sinkhole", "Lush Caves", "Waterfalls", "Mineshaft"],
+                coordinates: {
+                    "Sinkhole": "X: -323, Z: 1027",
+                    "Villages": "X: 152, Z: 296 and X: 200, Z: -328"
+                }
+            }
+        ];
+
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        function renderSeeds() {
+            const grid = document.getElementById('seedsGrid');
+            grid.innerHTML = '';
+
+            const filtered = seedsData.filter(seed => {
+                const matchesFilter = currentFilter === 'all' || 
+                                    (currentFilter === 'java' && seed.version === 'Java') ||
+                                    (currentFilter === 'bedrock' && seed.version === 'Bedrock') ||
+                                    (currentFilter === 'both' && seed.version === 'Both') ||
+                                    seed.category.includes(currentFilter);
+
+                const matchesSearch = currentSearch === '' ||
+                                     seed.title.toLowerCase().includes(currentSearch) ||
+                                     seed.description.toLowerCase().includes(currentSearch) ||
+                                     seed.features.some(f => f.toLowerCase().includes(currentSearch));
+
+                return matchesFilter && matchesSearch;
+            });
+
+            filtered.forEach(seed => {
+                const card = document.createElement('div');
+                card.className = 'seed-card';
+
+                card.innerHTML = `
+                    <div class="seed-header">
+                        <div class="seed-title">${seed.title}</div>
+                        <div class="seed-version">${seed.version}</div>
+                    </div>
+                    <div class="seed-content">
+                        <div class="seed-code-container">
+                            <div class="seed-code">${seed.code}</div>
+                            <button class="copy-btn" onclick="copySeed('${seed.code}')">COPY</button>
+                        </div>
+                        <div class="seed-description">${seed.description}</div>
+                        <div class="seed-features">
+                            ${seed.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                        </div>
+                        <div class="coordinates">
+                            <div class="coord-title">📍 Key Coordinates:</div>
+                            <div class="coord-list">
+                                ${Object.entries(seed.coordinates).map(([key, val]) => 
+                                    `<div>• ${key}: ${val}</div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; color: #4ade80; font-size: 1.5rem; padding: 3rem;">No seeds found matching your criteria. Try different filters!</div>';
+            }
+        }
+
+        function copySeed(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert(`Seed ${code} copied to clipboard!`);
+            });
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderSeeds();
+            });
+        });
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            currentSearch = e.target.value.toLowerCase();
+            renderSeeds();
+        });
+
+        // Initial render
+        renderSeeds();
+    </script>
+</body>
+</html>
