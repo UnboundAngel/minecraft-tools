@@ -197,6 +197,8 @@
             background: rgba(0, 0, 0, 0.5);
             padding: 1.5rem;
             margin-top: 1rem;
+            position: relative;
+            height: 400px;
         }
 
         .chart-title {
@@ -205,33 +207,46 @@
             color: #4ade80;
         }
 
-        .chart-bar {
-            margin-bottom: 1rem;
-        }
-
-        .chart-label {
-            font-size: 0.9rem;
-            margin-bottom: 0.3rem;
-            color: #aaa;
-        }
-
-        .bar-container {
-            background: rgba(255, 255, 255, 0.1);
-            height: 30px;
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
             position: relative;
+        }
+
+        .graph-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .bar-fill {
+        .graph-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: currentColor;
-            transition: width 1s ease;
+        }
+
+        .y-axis-labels {
+            position: absolute;
+            left: -45px;
+            top: 0;
+            height: 100%;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #000;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .x-axis-labels {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #888;
         }
 
         .mining-tips {
@@ -384,31 +399,31 @@
 
     <!-- Hotbar Navigation -->
     <div class="hotbar">
-    <a href="index.html" class="hotbar-slot" title="Home">
-        <div class="hotbar-icon">🏠</div>
-        <div class="hotbar-label">HOME</div>
-    </a>
-    <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
-        <div class="hotbar-icon">📘</div>
-        <div class="hotbar-label">ENCHANT</div>
-    </a>
-    <div class="hotbar-slot active" title="Ore Guide">
-        <div class="hotbar-icon">💎</div>
-        <div class="hotbar-label">ORES</div>
+        <a href="#" class="hotbar-slot" title="Home" onclick="alert('Return to homepage (link coming soon!)'); return false;">
+            <div class="hotbar-icon">🏠</div>
+            <div class="hotbar-label">HOME</div>
+        </a>
+        <a href="#" class="hotbar-slot" title="Enchantments" onclick="alert('Enchantment Calculator (coming soon!)'); return false;">
+            <div class="hotbar-icon">📘</div>
+            <div class="hotbar-label">ENCHANT</div>
+        </a>
+        <div class="hotbar-slot active" title="Ore Guide">
+            <div class="hotbar-icon">💎</div>
+            <div class="hotbar-label">ORES</div>
+        </div>
+        <a href="#" class="hotbar-slot" title="Seeds" onclick="alert('Seed Finder (coming soon!)'); return false;">
+            <div class="hotbar-icon">🌱</div>
+            <div class="hotbar-label">SEEDS</div>
+        </a>
+        <a href="#" class="hotbar-slot" title="Builds" onclick="alert('Build Ideas (coming soon!)'); return false;">
+            <div class="hotbar-icon">🏗️</div>
+            <div class="hotbar-label">BUILDS</div>
+        </a>
+        <a href="#" class="hotbar-slot" title="Farms" onclick="alert('Farm Efficiency (coming soon!)'); return false;">
+            <div class="hotbar-icon">🌾</div>
+            <div class="hotbar-label">FARMS</div>
+        </a>
     </div>
-    <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
-        <div class="hotbar-icon">🗺️</div>
-        <div class="hotbar-label">SEEDS</div>
-    </a>
-    <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
-        <div class="hotbar-icon">🗝️</div>
-        <div class="hotbar-label">BUILDS</div>
-    </a>
-    <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
-        <div class="hotbar-icon">🌾</div>
-        <div class="hotbar-label">FARMS</div>
-    </a>
-</div>
 
     <script>
         const oreData = {
@@ -440,6 +455,7 @@
                     class: 'ore-iron',
                     range: 'Y: -64 to 320',
                     optimal: 'Y: 16 or Y: 232',
+                    optimalNum: 16,
                     distribution: 'Two peaks: one at Y=16 and another at Y=232',
                     tips: [
                         'Essential for tools and armor',
@@ -461,6 +477,7 @@
                     class: 'ore-copper',
                     range: 'Y: -16 to 112',
                     optimal: 'Y: 48',
+                    optimalNum: 48,
                     distribution: 'Peaks at Y=48, common in dripstone caves',
                     tips: [
                         'Used for lightning rods and spyglasses',
@@ -481,6 +498,7 @@
                     class: 'ore-gold',
                     range: 'Y: -64 to 32',
                     optimal: 'Y: -16 (Badlands: any level)',
+                    optimalNum: -16,
                     distribution: 'Peaks at Y=-16, extra common in Badlands',
                     tips: [
                         'Most common in the deepslate layer',
@@ -500,6 +518,7 @@
                     class: 'ore-redstone',
                     range: 'Y: -64 to 16',
                     optimal: 'Y: -59',
+                    optimalNum: -59,
                     distribution: 'Increases as you go deeper, peaks near bedrock',
                     tips: [
                         'Essential for all redstone contraptions',
@@ -520,6 +539,7 @@
                     class: 'ore-lapis',
                     range: 'Y: -64 to 64',
                     optimal: 'Y: 0',
+                    optimalNum: 0,
                     distribution: 'Centers around Y=0, spreads evenly',
                     tips: [
                         'Used for enchanting and decoration',
@@ -540,6 +560,7 @@
                     class: 'ore-diamond',
                     range: 'Y: -64 to 16',
                     optimal: 'Y: -59',
+                    optimalNum: -59,
                     distribution: 'Increases as you go deeper',
                     tips: [
                         'Most valuable ore for tools and armor',
@@ -560,6 +581,7 @@
                     class: 'ore-emerald',
                     range: 'Y: -16 to 320 (Mountains only)',
                     optimal: 'Y: 232',
+                    optimalNum: 232,
                     distribution: 'Only in mountain biomes, peaks high up',
                     tips: [
                         'ONLY generates in mountain biomes',
@@ -580,6 +602,7 @@
                     class: 'ore-ancient',
                     range: 'Y: 8 to 119 (Nether)',
                     optimal: 'Y: 15',
+                    optimalNum: 15,
                     distribution: 'Peaks at Y=15 in the Nether',
                     tips: [
                         'Found ONLY in the Nether',
@@ -603,6 +626,7 @@
                     class: 'ore-coal',
                     range: 'Y: 0 to 320',
                     optimal: 'Y: 96',
+                    optimalNum: 96,
                     distribution: 'Uniform distribution, peaks at Y=96',
                     tips: [
                         'Identical to Java Edition distribution',
@@ -623,6 +647,7 @@
                     class: 'ore-iron',
                     range: 'Y: -64 to 320',
                     optimal: 'Y: 16 or Y: 232',
+                    optimalNum: 16,
                     distribution: 'Similar to Java, two peaks',
                     tips: [
                         'Distribution matches Java Edition',
@@ -644,6 +669,7 @@
                     class: 'ore-copper',
                     range: 'Y: -16 to 112',
                     optimal: 'Y: 48',
+                    optimalNum: 48,
                     distribution: 'Peaks at Y=48, very common',
                     tips: [
                         'Same as Java Edition',
@@ -664,6 +690,7 @@
                     class: 'ore-gold',
                     range: 'Y: -64 to 32',
                     optimal: 'Y: -16 (Badlands: any)',
+                    optimalNum: -16,
                     distribution: 'Deepest layers, extra in Badlands',
                     tips: [
                         'Matches Java distribution',
@@ -683,6 +710,7 @@
                     class: 'ore-redstone',
                     range: 'Y: -64 to 16',
                     optimal: 'Y: -59',
+                    optimalNum: -59,
                     distribution: 'More common as you go deeper',
                     tips: [
                         'Identical to Java Edition',
@@ -703,6 +731,7 @@
                     class: 'ore-lapis',
                     range: 'Y: -64 to 64',
                     optimal: 'Y: 0',
+                    optimalNum: 0,
                     distribution: 'Centers at Y=0',
                     tips: [
                         'Same as Java Edition',
@@ -723,6 +752,7 @@
                     class: 'ore-diamond',
                     range: 'Y: -64 to 16',
                     optimal: 'Y: -59',
+                    optimalNum: -59,
                     distribution: 'Increases with depth',
                     tips: [
                         'Same distribution as Java',
@@ -743,6 +773,7 @@
                     class: 'ore-emerald',
                     range: 'Y: -16 to 320 (Mountains only)',
                     optimal: 'Y: 232',
+                    optimalNum: 232,
                     distribution: 'Mountains only, peaks high',
                     tips: [
                         'Exclusive to mountain biomes',
@@ -763,6 +794,7 @@
                     class: 'ore-ancient',
                     range: 'Y: 8 to 119 (Nether)',
                     optimal: 'Y: 15',
+                    optimalNum: 15,
                     distribution: 'Nether only, peaks at Y=15',
                     tips: [
                         'Nether exclusive - same as Java',
@@ -799,9 +831,12 @@
             
             grid.innerHTML = '';
             
-            Object.keys(ores).forEach(oreKey => {
-                const ore = ores[oreKey];
-                
+            // Sort ores by optimal Y-level (descending - highest first, lowest last)
+            const sortedOres = Object.entries(ores).sort((a, b) => {
+                return b[1].optimalNum - a[1].optimalNum;
+            });
+            
+            sortedOres.forEach(([oreKey, ore]) => {
                 const card = document.createElement('div');
                 card.className = `ore-card ${ore.class}`;
                 
@@ -827,17 +862,28 @@
                         </div>
                         
                         <div class="y-level-chart">
-                            <div class="chart-title">📊 Distribution Chart</div>
-                            ${ore.chart.map(bar => `
-                                <div class="chart-bar">
-                                    <div class="chart-label">${bar.label}</div>
-                                    <div class="bar-container">
-                                        <div class="bar-fill" style="width: ${bar.value}%">
-                                            ${bar.value}%
-                                        </div>
-                                    </div>
+                            <div class="chart-title">📊 Distribution Graph</div>
+                            <div class="graph-container">
+                                <div class="y-axis-labels">
+                                    <div>100%</div>
+                                    <div>75%</div>
+                                    <div>50%</div>
+                                    <div>25%</div>
+                                    <div>0%</div>
                                 </div>
-                            `).join('')}
+                                <svg class="graph-line" viewBox="0 0 400 300" preserveAspectRatio="none">
+                                    <polyline
+                                        fill="currentColor"
+                                        fill-opacity="0.3"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        points="${generateGraphPoints(ore.chart)}"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="x-axis-labels">
+                                ${ore.chart.map(point => `<div>${point.label}</div>`).join('')}
+                            </div>
                         </div>
                         
                         <div class="mining-tips">
@@ -851,13 +897,27 @@
                 
                 grid.appendChild(card);
             });
+        }
+
+        function generateGraphPoints(chartData) {
+            const width = 400;
+            const height = 300;
+            const points = [];
             
-            // Animate bars
-            setTimeout(() => {
-                document.querySelectorAll('.bar-fill').forEach(bar => {
-                    bar.style.width = bar.style.width;
-                });
-            }, 100);
+            // Start from bottom left
+            points.push(`0,${height}`);
+            
+            // Generate points for each data segment
+            chartData.forEach((point, index) => {
+                const x = (index / (chartData.length - 1)) * width;
+                const y = height - (point.value / 100) * height;
+                points.push(`${x},${y}`);
+            });
+            
+            // End at bottom right
+            points.push(`${width},${height}`);
+            
+            return points.join(' ');
         }
 
         // Initial render
