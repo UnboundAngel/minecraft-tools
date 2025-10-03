@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Tools Hub</title>
+    <style>
+        /* AI Badge animations */
+.ai-face {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.5rem;
+    position: relative;
+    filter: drop-shadow(0 12px 22px rgba(74, 222, 128, 0.3));
+    animation: floatY 6s ease-in-out infinite;
+}
+
+.ai-face img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 24px;
+    animation: slow-rotate 6.6s linear infinite;
+}
+
+/* Sheen overlay for moving highlight */
+.ai-face::after {
+    content: '';
+    position: absolute;
+    left: -30%;
+    top: -30%;
+    width: 160%;
+    height: 160%;
+    pointer-events: none;
+    background: linear-gradient(120deg, 
+        rgba(255,255,255,0.14) 0%, 
+        rgba(255,255,255,0.04) 45%, 
+        rgba(255,255,255,0.18) 60%, 
+        rgba(255,255,255,0.0) 100%);
+    transform: rotate(-20deg);
+    mix-blend-mode: overlay;
+    animation: slide 4.2s ease-in-out infinite;
+    border-radius: 32px;
+}
+
+@keyframes floatY {
+    0%   { transform: translateY(0px) rotateX(0deg); }
+    50%  { transform: translateY(-12px) rotateX(2deg); }
+    100% { transform: translateY(0px) rotateX(0deg); }
+}
+
+@keyframes slow-rotate {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(6deg) scale(1.012); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+@keyframes slide {
+    0%   { transform: translateX(-35%) rotate(-20deg); opacity: 0.18; }
+    50%  { transform: translateX(35%) rotate(-20deg); opacity: 0.9; }
+    100% { transform: translateX(135%) rotate(-20deg); opacity: 0.18; }
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            background: #000;
+            color: #fff;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(180deg, #0a2f0a 0%, #000 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            text-shadow: 4px 4px 0px #000, 8px 8px 20px rgba(0, 255, 0, 0.5);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            animation: fadeInDown 1s ease-out;
+            text-align: center;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #4ade80;
+            text-shadow: 2px 2px 4px #000;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* Overworld Section */
+        .overworld-section {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #0a2f0a 0%, #1a1a1a 50%, #000 100%);
+            padding: 4rem 2rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .overworld-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Nether Section */
+        .nether-section {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #2d0a0a 0%, #1a0505 50%, #000 100%);
+            padding: 4rem 2rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .nether-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nether-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(180deg, transparent 0%, #ff4500 50%, #ff8c00 100%);
+            animation: lavaFlow 3s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes lavaFlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-shadow: 4px 4px 0px #000;
+        }
+
+        .overworld-section .section-title {
+            color: #4ade80;
+        }
+
+        .nether-section .section-title {
+            color: #ff4500;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-card {
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #4ade80;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            image-rendering: pixelated;
+        }
+
+        .nether-section .tool-card {
+            border-color: #ff4500;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(74, 222, 128, 0.5);
+        }
+
+        .nether-section .tool-card:hover {
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.5);
+        }
+
+        .tool-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-card p {
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        /* Hotbar Navigation */
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            border-bottom: 4px solid #555;
+            border-right: 4px solid #555;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .hotbar.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            border-bottom: 2px solid #8b8b8b;
+            border-right: 2px solid #8b8b8b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            image-rendering: pixelated;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        .hotbar-slot.active {
+            border: 3px solid #fff;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* AI Welcome Screen */
+        .ai-welcome {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #0a2f0a 0%, #000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .ai-welcome.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .ai-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 4px solid #4ade80;
+            padding: 3rem;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 0 40px rgba(74, 222, 128, 0.3);
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes aiPulse {
+            0%, 100% {
+                box-shadow: 0 0 40px rgba(74, 222, 128, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 60px rgba(74, 222, 128, 0.6);
+            }
+        }
+
+        .ai-face {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            animation: float 3s ease-in-out infinite, rotate 8s linear infinite;
+        }
+
+        .ai-face img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .ai-message {
+            font-size: 1.8rem;
+            color: #4ade80;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .ai-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .ai-option {
+            background: rgba(74, 222, 128, 0.1);
+            border: 2px solid #4ade80;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .ai-option:hover {
+            background: rgba(74, 222, 128, 0.3);
+            transform: translateX(10px);
+            border-color: #fff;
+        }
+
+        .ai-search-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .ai-search {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #4ade80;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .ai-search:focus {
+            border-color: #fff;
+        }
+
+        .ai-search::placeholder {
+            color: #4ade80;
+            opacity: 0.6;
+        }
+
+        /* Scroll fade effect */
+        .fade-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .fade-overlay.visible {
+            opacity: 1;
+        }
+
+        .fade-overlay-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 998;
+        }
+    </style>
+</head>
+<body>
+    <!-- AI Welcome Screen -->
+    <div class="ai-welcome" id="aiWelcome">
+        <div class="ai-container">
+            <div class="ai-face" id="aiFace">🤖</div>
+            <div class="ai-message">Welcome! Where would you like to go today?</div>
+            <div class="ai-options">
+                <a href="enchantment_calculator.html" class="ai-option">📘 Enchantment Calculator</a>
+                <a href="ore_guide_page.html" class="ai-option">💎 Ore Coordinate Guide</a>
+                <a href="world_seeds_page.html" class="ai-option">🗺️ Seed Finder</a>
+                <a href="build_ideas_gallery.html" class="ai-option">🗝️ Build Ideas Gallery</a>
+                <a href="farm_efficiency_page.html" class="ai-option">🌾 Farm Efficiency</a>
+                <div class="ai-option" onclick="hideWelcome()">🌍 Browse All Tools</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll fade overlays -->
+    <div class="fade-overlay" id="topFade"></div>
+    <div class="fade-overlay-bottom"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>⛏️ MINECRAFT TOOLS HUB ⛏️</h1>
+        <p>Your Ultimate Resource for Java & Bedrock</p>
+    </section>
+
+    <!-- Overworld Section -->
+    <section class="overworld-section" id="overworld">
+        <h2 class="section-title">🌲 OVERWORLD TOOLS 🌲</h2>
+        <div class="tools-grid">
+            <a href="enchantment_calculator.html" class="tool-card">
+                <div class="hotbar-icon">📘</div>
+                <h3>Enchantment Calculator</h3>
+                <p>Calculate XP costs and optimal enchanting strategies for all your gear</p>
+            </a>
+            <a href="ore_guide_page.html" class="tool-card">
+                <div class="hotbar-icon">💎</div>
+                <h3>Ore Coordinate Guide</h3>
+                <p>Find the best Y-levels for mining diamonds, iron, copper, and more</p>
+            </a>
+            <a href="build_ideas_gallery.html" class="tool-card">
+                <div class="hotbar-icon">🗝️</div>
+                <h3>Build Ideas Gallery</h3>
+                <p>Browse creative builds and architectural inspiration</p>
+            </a>
+            <a href="world_seeds_page.html" class="tool-card">
+                <div class="hotbar-icon">🗺️</div>
+                <h3>Seed Finder</h3>
+                <p>Discover amazing world seeds for your next adventure</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Nether Section -->
+    <section class="nether-section" id="nether">
+        <h2 class="section-title">🔥 NETHER TOOLS 🔥</h2>
+        <div class="tools-grid">
+            <a href="farm_efficiency_page.html" class="tool-card">
+                <div class="hotbar-icon">🌾</div>
+                <h3>Farm Efficiency Hub</h3>
+                <p>Calculate rates for mob farms, crop farms, and automated systems</p>
+            </a>
+            <div class="tool-card" onclick="alert('Coming in future update!')">
+                <div class="hotbar-icon">🧪</div>
+                <h3>Potion Brewing Guide</h3>
+                <p>Master the art of brewing with recipes and effects</p>
+            </div>
+            <div class="tool-card" onclick="alert('Coming in future update!')">
+                <div class="hotbar-icon">🚇</div>
+                <h3>Nether Hub Calculator</h3>
+                <p>Plan your nether highway network and portal coordinates</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hotbar Navigation -->
+    <div class="hotbar" id="hotbar">
+        <a href="minecraft_tools_hub.html" class="hotbar-slot active" title="Home">
+            <div class="hotbar-icon">🏠</div>
+            <div class="hotbar-label">HOME</div>
+        </a>
+        <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+            <div class="hotbar-icon">📘</div>
+            <div class="hotbar-label">ENCHANT</div>
+        </a>
+        <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+            <div class="hotbar-icon">💎</div>
+            <div class="hotbar-label">ORES</div>
+        </a>
+        <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+            <div class="hotbar-icon">🗺️</div>
+            <div class="hotbar-label">SEEDS</div>
+        </a>
+        <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+            <div class="hotbar-icon">🗝️</div>
+            <div class="hotbar-label">BUILDS</div>
+        </a>
+        <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+            <div class="hotbar-icon">🌾</div>
+            <div class="hotbar-label">FARMS</div>
+        </a>
+    </div>
+
+    <script>
+        // Load custom logo if available
+        async function loadLogo() {
+    try {
+        const possibleNames = ['ai_badge_purple.png', 'logo.png', 'claude.png', 'ClaudeAI.png'];
+        
+        for (const filename of possibleNames) {
+            try {
+                const logoData = await window.fs.readFile(filename);
+                const blob = new Blob([logoData], { type: 'image/png' });
+                const url = URL.createObjectURL(blob);
+                
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'AI Logo';
+                
+                // Clear default emoji and add image
+                document.getElementById('aiFace').innerHTML = '';
+                document.getElementById('aiFace').appendChild(img);
+                return;
+            } catch (e) {
+                continue;
+            }
+        }
+    } catch (error) {
+        console.log('No logo found, using default icon');
+        // Keep the emoji that's already in the HTML
+    }
+}
+
+        // Hide welcome screen and show hotbar
+        function hideWelcome() {
+            const aiWelcome = document.getElementById('aiWelcome');
+            const hotbar = document.getElementById('hotbar');
+            
+            aiWelcome.classList.add('hidden');
+            
+            setTimeout(() => {
+                hotbar.classList.add('visible');
+            }, 500);
+        }
+
+        // Load logo on page load
+        loadLogo();
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.overworld-section, .nether-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Top fade effect on scroll
+        window.addEventListener('scroll', () => {
+            const topFade = document.getElementById('topFade');
+            if (topFade && window.scrollY > 100) {
+                topFade.classList.add('visible');
+            } else if (topFade) {
+                topFade.classList.remove('visible');
+            }
+        });
+    </script>
+</body>
+</html>

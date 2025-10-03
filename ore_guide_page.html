@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ore Coordinate Guide - Minecraft Tools Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #0a2f0a 0%, #1a1a1a 50%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid #4ade80;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #4ade80;
+            text-shadow: 4px 4px 0px #000, 8px 8px 20px rgba(74, 222, 128, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #aaa;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Version Toggle */
+        .version-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem auto;
+            max-width: 400px;
+        }
+
+        .version-btn {
+            flex: 1;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 3px solid #4ade80;
+            color: #fff;
+            font-size: 1.2rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .version-btn:hover {
+            background: rgba(74, 222, 128, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .version-btn.active {
+            background: #4ade80;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .intro-text {
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #4ade80;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            color: #aaa;
+        }
+
+        .intro-text strong {
+            color: #4ade80;
+        }
+
+        /* Ore Cards */
+        .ores-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .ore-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 4px solid;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ore-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.1;
+            background: linear-gradient(135deg, transparent 0%, currentColor 100%);
+            pointer-events: none;
+        }
+
+        .ore-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .ore-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ore-icon {
+            font-size: 3rem;
+        }
+
+        .ore-title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .ore-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ore-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            border-left: 4px solid currentColor;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .y-level-chart {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #4ade80;
+        }
+
+        .chart-bar {
+            margin-bottom: 1rem;
+        }
+
+        .chart-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: #aaa;
+        }
+
+        .bar-container {
+            background: rgba(255, 255, 255, 0.1);
+            height: 30px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: currentColor;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .mining-tips {
+            background: rgba(74, 222, 128, 0.1);
+            border: 2px solid #4ade80;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mining-tips h4 {
+            color: #4ade80;
+            margin-bottom: 0.5rem;
+        }
+
+        .mining-tips ul {
+            margin-left: 1.5rem;
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        /* Ore specific colors */
+        .ore-coal { border-color: #2c2c2c; color: #5a5a5a; }
+        .ore-iron { border-color: #d8af93; color: #d8af93; }
+        .ore-copper { border-color: #ff7f50; color: #ff7f50; }
+        .ore-gold { border-color: #ffd700; color: #ffd700; }
+        .ore-redstone { border-color: #ff0000; color: #ff0000; }
+        .ore-lapis { border-color: #4169e1; color: #4169e1; }
+        .ore-diamond { border-color: #00ffff; color: #00ffff; }
+        .ore-emerald { border-color: #00ff00; color: #00ff00; }
+        .ore-ancient { border-color: #8b4513; color: #cd853f; }
+
+        /* Hotbar Navigation */
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            border-bottom: 4px solid #555;
+            border-right: 4px solid #555;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            border-bottom: 2px solid #8b8b8b;
+            border-right: 2px solid #8b8b8b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        .hotbar-slot.active {
+            border: 3px solid #fff;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .ore-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .hotbar {
+                gap: 2px;
+                padding: 4px;
+            }
+            
+            .hotbar-slot {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .hotbar-icon {
+                font-size: 1.5rem;
+            }
+            
+            .hotbar-label {
+                font-size: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>💎 ORE COORDINATE GUIDE 💎</h1>
+        <p>Find the best Y-levels for mining every ore</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Version Toggle -->
+        <div class="version-toggle">
+            <button class="version-btn active" onclick="switchVersion('java')" id="javaBtn">
+                ☕ JAVA EDITION
+            </button>
+            <button class="version-btn" onclick="switchVersion('bedrock')" id="bedrockBtn">
+                📱 BEDROCK EDITION
+            </button>
+        </div>
+
+        <!-- Intro Text -->
+        <div class="intro-text">
+            <strong>Welcome to the Ore Guide!</strong> This guide shows you the optimal Y-levels for mining each ore type. 
+            The data is updated for Minecraft 1.21+. Remember: Y-levels changed significantly in the Caves & Cliffs update! 
+            <strong>Tip:</strong> Press F3 (Java) or enable coordinates (Bedrock) to see your current Y-level.
+        </div>
+
+        <!-- Ores Grid -->
+        <div class="ores-grid" id="oresGrid">
+            <!-- Ores will be dynamically generated -->
+        </div>
+    </div>
+
+    <!-- Hotbar Navigation -->
+    <div class="hotbar">
+    <a href="index.html" class="hotbar-slot" title="Home">
+        <div class="hotbar-icon">🏠</div>
+        <div class="hotbar-label">HOME</div>
+    </a>
+    <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+        <div class="hotbar-icon">📘</div>
+        <div class="hotbar-label">ENCHANT</div>
+    </a>
+    <div class="hotbar-slot active" title="Ore Guide">
+        <div class="hotbar-icon">💎</div>
+        <div class="hotbar-label">ORES</div>
+    </div>
+    <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+        <div class="hotbar-icon">🗺️</div>
+        <div class="hotbar-label">SEEDS</div>
+    </a>
+    <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+        <div class="hotbar-icon">🗝️</div>
+        <div class="hotbar-label">BUILDS</div>
+    </a>
+    <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+        <div class="hotbar-icon">🌾</div>
+        <div class="hotbar-label">FARMS</div>
+    </a>
+</div>
+
+    <script>
+        const oreData = {
+            java: {
+                coal: {
+                    icon: '⚫',
+                    name: 'Coal',
+                    class: 'ore-coal',
+                    range: 'Y: 0 to 320',
+                    optimal: 'Y: 96',
+                    optimalNum: 96,
+                    distribution: 'Uniform above Y=0, peaks around Y=96',
+                    tips: [
+                        'Most common ore in the game',
+                        'Found in both stone and deepslate',
+                        'Generate in two overlapping distributions',
+                        'Higher elevations = more coal'
+                    ],
+                    chart: [
+                        { label: 'Y: 0-64', value: 60 },
+                        { label: 'Y: 64-96 (Peak)', value: 100 },
+                        { label: 'Y: 96-192', value: 80 },
+                        { label: 'Y: 192-320', value: 40 }
+                    ]
+                },
+                iron: {
+                    icon: '🔘',
+                    name: 'Iron',
+                    class: 'ore-iron',
+                    range: 'Y: -64 to 320',
+                    optimal: 'Y: 16 or Y: 232',
+                    distribution: 'Two peaks: one at Y=16 and another at Y=232',
+                    tips: [
+                        'Essential for tools and armor',
+                        'Lower peak (Y=16) is in deepslate',
+                        'Upper peak (Y=232) in mountains is easier to mine',
+                        'Mountains are best for iron farming'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to 0', value: 50 },
+                        { label: 'Y: 0-16 (Peak)', value: 100 },
+                        { label: 'Y: 16-128', value: 60 },
+                        { label: 'Y: 128-232 (Peak)', value: 95 },
+                        { label: 'Y: 232-320', value: 40 }
+                    ]
+                },
+                copper: {
+                    icon: '🟠',
+                    name: 'Copper',
+                    class: 'ore-copper',
+                    range: 'Y: -16 to 112',
+                    optimal: 'Y: 48',
+                    distribution: 'Peaks at Y=48, common in dripstone caves',
+                    tips: [
+                        'Used for lightning rods and spyglasses',
+                        'Very common in dripstone caves',
+                        'Generates in large veins',
+                        'Oxidizes over time when placed'
+                    ],
+                    chart: [
+                        { label: 'Y: -16 to 0', value: 40 },
+                        { label: 'Y: 0-48 (Peak)', value: 100 },
+                        { label: 'Y: 48-96', value: 70 },
+                        { label: 'Y: 96-112', value: 30 }
+                    ]
+                },
+                gold: {
+                    icon: '🟡',
+                    name: 'Gold',
+                    class: 'ore-gold',
+                    range: 'Y: -64 to 32',
+                    optimal: 'Y: -16 (Badlands: any level)',
+                    distribution: 'Peaks at Y=-16, extra common in Badlands',
+                    tips: [
+                        'Most common in the deepslate layer',
+                        'Badlands biome has gold at all Y-levels',
+                        'Nether gold ore is more common than overworld',
+                        'Requires iron pickaxe or better'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -16 (Peak)', value: 100 },
+                        { label: 'Y: -16 to 0', value: 70 },
+                        { label: 'Y: 0-32', value: 40 }
+                    ]
+                },
+                redstone: {
+                    icon: '🔴',
+                    name: 'Redstone',
+                    class: 'ore-redstone',
+                    range: 'Y: -64 to 16',
+                    optimal: 'Y: -59',
+                    distribution: 'Increases as you go deeper, peaks near bedrock',
+                    tips: [
+                        'Essential for all redstone contraptions',
+                        'Mine at the lowest possible Y-levels',
+                        'Each ore drops 4-5 redstone dust',
+                        'Requires iron pickaxe or better'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -59 (Peak)', value: 100 },
+                        { label: 'Y: -59 to -32', value: 80 },
+                        { label: 'Y: -32 to 0', value: 50 },
+                        { label: 'Y: 0-16', value: 20 }
+                    ]
+                },
+                lapis: {
+                    icon: '🔵',
+                    name: 'Lapis Lazuli',
+                    class: 'ore-lapis',
+                    range: 'Y: -64 to 64',
+                    optimal: 'Y: 0',
+                    distribution: 'Centers around Y=0, spreads evenly',
+                    tips: [
+                        'Used for enchanting and decoration',
+                        'Mine around Y=0 for best results',
+                        'Drops 4-9 lapis lazuli per ore',
+                        'Relatively rare compared to other ores'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -32', value: 50 },
+                        { label: 'Y: -32 to 0 (Peak)', value: 100 },
+                        { label: 'Y: 0-32', value: 90 },
+                        { label: 'Y: 32-64', value: 40 }
+                    ]
+                },
+                diamond: {
+                    icon: '💎',
+                    name: 'Diamond',
+                    class: 'ore-diamond',
+                    range: 'Y: -64 to 16',
+                    optimal: 'Y: -59',
+                    distribution: 'Increases as you go deeper',
+                    tips: [
+                        'Most valuable ore for tools and armor',
+                        'Mine at Y=-59 for maximum diamonds',
+                        'Avoid Y=-59 exactly due to bedrock',
+                        'Branch mining at Y=-58 is recommended'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -59 (Peak)', value: 100 },
+                        { label: 'Y: -59 to -32', value: 85 },
+                        { label: 'Y: -32 to 0', value: 50 },
+                        { label: 'Y: 0-16', value: 20 }
+                    ]
+                },
+                emerald: {
+                    icon: '💚',
+                    name: 'Emerald',
+                    class: 'ore-emerald',
+                    range: 'Y: -16 to 320 (Mountains only)',
+                    optimal: 'Y: 232',
+                    distribution: 'Only in mountain biomes, peaks high up',
+                    tips: [
+                        'ONLY generates in mountain biomes',
+                        'Rarest ore in the game',
+                        'Used primarily for trading with villagers',
+                        'Mountain peaks have highest concentration'
+                    ],
+                    chart: [
+                        { label: 'Y: -16 to 32', value: 20 },
+                        { label: 'Y: 32-128', value: 40 },
+                        { label: 'Y: 128-232 (Peak)', value: 100 },
+                        { label: 'Y: 232-320', value: 60 }
+                    ]
+                },
+                ancient: {
+                    icon: '🟤',
+                    name: 'Ancient Debris',
+                    class: 'ore-ancient',
+                    range: 'Y: 8 to 119 (Nether)',
+                    optimal: 'Y: 15',
+                    distribution: 'Peaks at Y=15 in the Nether',
+                    tips: [
+                        'Found ONLY in the Nether',
+                        'Used to craft Netherite',
+                        'Extremely rare - most valuable item',
+                        'Immune to explosions (TNT mining works!)',
+                        'Mine at Y=15 with beds or TNT'
+                    ],
+                    chart: [
+                        { label: 'Y: 8-15 (Peak)', value: 100 },
+                        { label: 'Y: 15-30', value: 60 },
+                        { label: 'Y: 30-60', value: 30 },
+                        { label: 'Y: 60-119', value: 15 }
+                    ]
+                }
+            },
+            bedrock: {
+                coal: {
+                    icon: '⚫',
+                    name: 'Coal',
+                    class: 'ore-coal',
+                    range: 'Y: 0 to 320',
+                    optimal: 'Y: 96',
+                    distribution: 'Uniform distribution, peaks at Y=96',
+                    tips: [
+                        'Identical to Java Edition distribution',
+                        'Most common ore in the game',
+                        'Found everywhere above Y=0',
+                        'Essential early-game fuel source'
+                    ],
+                    chart: [
+                        { label: 'Y: 0-64', value: 60 },
+                        { label: 'Y: 64-96 (Peak)', value: 100 },
+                        { label: 'Y: 96-192', value: 80 },
+                        { label: 'Y: 192-320', value: 40 }
+                    ]
+                },
+                iron: {
+                    icon: '🔘',
+                    name: 'Iron',
+                    class: 'ore-iron',
+                    range: 'Y: -64 to 320',
+                    optimal: 'Y: 16 or Y: 232',
+                    distribution: 'Similar to Java, two peaks',
+                    tips: [
+                        'Distribution matches Java Edition',
+                        'Mountain biomes are excellent for iron',
+                        'Lower peak requires more digging',
+                        'Upper peak is more accessible'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to 0', value: 50 },
+                        { label: 'Y: 0-16 (Peak)', value: 100 },
+                        { label: 'Y: 16-128', value: 60 },
+                        { label: 'Y: 128-232 (Peak)', value: 95 },
+                        { label: 'Y: 232-320', value: 40 }
+                    ]
+                },
+                copper: {
+                    icon: '🟠',
+                    name: 'Copper',
+                    class: 'ore-copper',
+                    range: 'Y: -16 to 112',
+                    optimal: 'Y: 48',
+                    distribution: 'Peaks at Y=48, very common',
+                    tips: [
+                        'Same as Java Edition',
+                        'Abundant in dripstone caves',
+                        'Used for building and lightning rods',
+                        'Generates in large ore veins'
+                    ],
+                    chart: [
+                        { label: 'Y: -16 to 0', value: 40 },
+                        { label: 'Y: 0-48 (Peak)', value: 100 },
+                        { label: 'Y: 48-96', value: 70 },
+                        { label: 'Y: 96-112', value: 30 }
+                    ]
+                },
+                gold: {
+                    icon: '🟡',
+                    name: 'Gold',
+                    class: 'ore-gold',
+                    range: 'Y: -64 to 32',
+                    optimal: 'Y: -16 (Badlands: any)',
+                    distribution: 'Deepest layers, extra in Badlands',
+                    tips: [
+                        'Matches Java distribution',
+                        'Badlands have gold at all heights',
+                        'Best found in deep caves',
+                        'Nether gold is more plentiful'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -16 (Peak)', value: 100 },
+                        { label: 'Y: -16 to 0', value: 70 },
+                        { label: 'Y: 0-32', value: 40 }
+                    ]
+                },
+                redstone: {
+                    icon: '🔴',
+                    name: 'Redstone',
+                    class: 'ore-redstone',
+                    range: 'Y: -64 to 16',
+                    optimal: 'Y: -59',
+                    distribution: 'More common as you go deeper',
+                    tips: [
+                        'Identical to Java Edition',
+                        'Essential for redstone builds',
+                        'Mine deep for best results',
+                        'Each ore drops multiple dust'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -59 (Peak)', value: 100 },
+                        { label: 'Y: -59 to -32', value: 80 },
+                        { label: 'Y: -32 to 0', value: 50 },
+                        { label: 'Y: 0-16', value: 20 }
+                    ]
+                },
+                lapis: {
+                    icon: '🔵',
+                    name: 'Lapis Lazuli',
+                    class: 'ore-lapis',
+                    range: 'Y: -64 to 64',
+                    optimal: 'Y: 0',
+                    distribution: 'Centers at Y=0',
+                    tips: [
+                        'Same as Java Edition',
+                        'Mine around sea level (Y=0)',
+                        'Used for enchanting tables',
+                        'Drops multiple lapis per ore'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -32', value: 50 },
+                        { label: 'Y: -32 to 0 (Peak)', value: 100 },
+                        { label: 'Y: 0-32', value: 90 },
+                        { label: 'Y: 32-64', value: 40 }
+                    ]
+                },
+                diamond: {
+                    icon: '💎',
+                    name: 'Diamond',
+                    class: 'ore-diamond',
+                    range: 'Y: -64 to 16',
+                    optimal: 'Y: -59',
+                    distribution: 'Increases with depth',
+                    tips: [
+                        'Same distribution as Java',
+                        'Best at Y=-58 to Y=-59',
+                        'Strip mining is most efficient',
+                        'Essential for best gear'
+                    ],
+                    chart: [
+                        { label: 'Y: -64 to -59 (Peak)', value: 100 },
+                        { label: 'Y: -59 to -32', value: 85 },
+                        { label: 'Y: -32 to 0', value: 50 },
+                        { label: 'Y: 0-16', value: 20 }
+                    ]
+                },
+                emerald: {
+                    icon: '💚',
+                    name: 'Emerald',
+                    class: 'ore-emerald',
+                    range: 'Y: -16 to 320 (Mountains only)',
+                    optimal: 'Y: 232',
+                    distribution: 'Mountains only, peaks high',
+                    tips: [
+                        'Exclusive to mountain biomes',
+                        'Rarest overworld ore',
+                        'Trade with villagers primarily',
+                        'Best found on mountain peaks'
+                    ],
+                    chart: [
+                        { label: 'Y: -16 to 32', value: 20 },
+                        { label: 'Y: 32-128', value: 40 },
+                        { label: 'Y: 128-232 (Peak)', value: 100 },
+                        { label: 'Y: 232-320', value: 60 }
+                    ]
+                },
+                ancient: {
+                    icon: '🟤',
+                    name: 'Ancient Debris',
+                    class: 'ore-ancient',
+                    range: 'Y: 8 to 119 (Nether)',
+                    optimal: 'Y: 15',
+                    distribution: 'Nether only, peaks at Y=15',
+                    tips: [
+                        'Nether exclusive - same as Java',
+                        'Creates Netherite when smelted',
+                        'Blast resistant - TNT mining viable',
+                        'Y=15 is the sweet spot for mining'
+                    ],
+                    chart: [
+                        { label: 'Y: 8-15 (Peak)', value: 100 },
+                        { label: 'Y: 15-30', value: 60 },
+                        { label: 'Y: 30-60', value: 30 },
+                        { label: 'Y: 60-119', value: 15 }
+                    ]
+                }
+            }
+        };
+
+        let currentVersion = 'java';
+
+        function switchVersion(version) {
+            currentVersion = version;
+            
+            // Update button states
+            document.getElementById('javaBtn').classList.toggle('active', version === 'java');
+            document.getElementById('bedrockBtn').classList.toggle('active', version === 'bedrock');
+            
+            // Render ores
+            renderOres();
+        }
+
+        function renderOres() {
+            const grid = document.getElementById('oresGrid');
+            const ores = oreData[currentVersion];
+            
+            grid.innerHTML = '';
+            
+            Object.keys(ores).forEach(oreKey => {
+                const ore = ores[oreKey];
+                
+                const card = document.createElement('div');
+                card.className = `ore-card ${ore.class}`;
+                
+                card.innerHTML = `
+                    <div class="ore-header">
+                        <div class="ore-icon">${ore.icon}</div>
+                        <div class="ore-title">${ore.name}</div>
+                    </div>
+                    <div class="ore-content">
+                        <div class="ore-info">
+                            <div class="info-box">
+                                <div class="info-label">Y-Level Range</div>
+                                <div class="info-value">${ore.range}</div>
+                            </div>
+                            <div class="info-box">
+                                <div class="info-label">Optimal Level</div>
+                                <div class="info-value">${ore.optimal}</div>
+                            </div>
+                            <div class="info-box">
+                                <div class="info-label">Distribution</div>
+                                <div class="info-value" style="font-size: 1rem;">${ore.distribution}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="y-level-chart">
+                            <div class="chart-title">📊 Distribution Chart</div>
+                            ${ore.chart.map(bar => `
+                                <div class="chart-bar">
+                                    <div class="chart-label">${bar.label}</div>
+                                    <div class="bar-container">
+                                        <div class="bar-fill" style="width: ${bar.value}%">
+                                            ${bar.value}%
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="mining-tips">
+                            <h4>⛏️ Mining Tips</h4>
+                            <ul>
+                                ${ore.tips.map(tip => `<li>${tip}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+            
+            // Animate bars
+            setTimeout(() => {
+                document.querySelectorAll('.bar-fill').forEach(bar => {
+                    bar.style.width = bar.style.width;
+                });
+            }, 100);
+        }
+
+        // Initial render
+        renderOres();
+    </script>
