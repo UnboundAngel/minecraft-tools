@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potion Brewing Guide - Minecraft Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #2d0a0a 0%, #1a0505 50%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            border: 4px solid #ff4500;
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ff4500;
+            text-shadow: 4px 4px 0px #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ff8c00;
+        }
+
+        .filter-section {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff4500;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: rgba(255, 69, 0, 0.2);
+            border: 2px solid #ff4500;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(255, 69, 0, 0.5);
+            border-color: #fff;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ff4500;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+        }
+
+        .brewing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .potion-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff4500;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .potion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.5);
+        }
+
+        .potion-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #ff4500;
+        }
+
+        .potion-icon {
+            font-size: 2.5rem;
+        }
+
+        .potion-name {
+            font-size: 1.5rem;
+            color: #ff8c00;
+        }
+
+        .potion-type {
+            display: inline-block;
+            background: rgba(255, 69, 0, 0.3);
+            border: 1px solid #ff4500;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .recipe-section {
+            margin: 1rem 0;
+        }
+
+        .recipe-title {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .recipe-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .recipe-step {
+            background: rgba(255, 69, 0, 0.1);
+            padding: 0.5rem;
+            border-left: 3px solid #ff4500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-number {
+            background: #ff4500;
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .effects-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #ff4500;
+        }
+
+        .effect {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .effect-label {
+            color: #ff8c00;
+            font-weight: bold;
+        }
+
+        .duration {
+            color: #4ade80;
+            font-style: italic;
+        }
+
+        .brewing-stand {
+            background: rgba(0, 0, 0, 0.9);
+            border: 4px solid #ff4500;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .brewing-stand h2 {
+            color: #ff4500;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .base-ingredients {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .ingredient {
+            background: rgba(255, 69, 0, 0.2);
+            border: 2px solid #ff4500;
+            padding: 1rem;
+            min-width: 150px;
+        }
+
+        .ingredient-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredient-name {
+            color: #ff8c00;
+        }
+
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .brewing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hotbar {
+                flex-wrap: wrap;
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 POTION BREWING GUIDE 🧪</h1>
+            <p class="subtitle">Master the Art of Alchemy</p>
+        </header>
+
+        <div class="brewing-stand">
+            <h2>Base Ingredients</h2>
+            <p style="color: #aaa; margin-bottom: 1rem;">All potions start with one of these bases</p>
+            <div class="base-ingredients">
+                <div class="ingredient">
+                    <div class="ingredient-icon">🧪</div>
+                    <div class="ingredient-name">Water Bottle</div>
+                    <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.5rem;">Fill glass bottles at water source</div>
+                </div>
+                <div class="ingredient">
+                    <div class="ingredient-icon">🔥</div>
+                    <div class="ingredient-name">Blaze Powder</div>
+                    <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.5rem;">Fuel for brewing stand</div>
+                </div>
+                <div class="ingredient">
+                    <div class="ingredient-icon">🍄</div>
+                    <div class="ingredient-name">Nether Wart</div>
+                    <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.5rem;">Creates Awkward Potion base</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-group">
+                <span style="color: #ff8c00;">Filter:</span>
+                <button class="filter-btn active" onclick="filterPotions('all')">All</button>
+                <button class="filter-btn" onclick="filterPotions('positive')">Positive</button>
+                <button class="filter-btn" onclick="filterPotions('negative')">Negative</button>
+                <button class="filter-btn" onclick="filterPotions('splash')">Splash</button>
+            </div>
+            <input type="text" class="search-box" placeholder="Search potions..." id="searchBox" oninput="searchPotions()">
+        </div>
+
+        <div class="brewing-grid" id="potionsGrid">
+            <!-- Positive Effect Potions -->
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">💪</div>
+                    <div>
+                        <div class="potion-name">Strength</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Phantom Membrane</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Fall slowly and take no fall damage</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">1:30</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">4:00</span> (add Redstone)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="brewing-stand" style="margin-top: 3rem;">
+            <h2>💥 Making Splash & Lingering Potions</h2>
+            <div class="base-ingredients">
+                <div class="ingredient">
+                    <div class="ingredient-icon">💣</div>
+                    <div class="ingredient-name">Splash Potion</div>
+                    <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.5rem;">Add Gunpowder to any potion</div>
+                </div>
+                <div class="ingredient">
+                    <div class="ingredient-icon">☁️</div>
+                    <div class="ingredient-name">Lingering Potion</div>
+                    <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.5rem;">Add Dragon's Breath to splash potion</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="hotbar">
+    <a href="index.html" class="hotbar-slot" title="Home">
+        <div class="hotbar-icon">🏠</div>
+        <div class="hotbar-label">HOME</div>
+    </a>
+    <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+        <div class="hotbar-icon">📘</div>
+        <div class="hotbar-label">ENCHANT</div>
+    </a>
+    <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+        <div class="hotbar-icon">💎</div>
+        <div class="hotbar-label">ORES</div>
+    </a>
+    <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+        <div class="hotbar-icon">🗺️</div>
+        <div class="hotbar-label">SEEDS</div>
+    </a>
+    <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+        <div class="hotbar-icon">🗝️</div>
+        <div class="hotbar-label">BUILDS</div>
+    </a>
+    <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+        <div class="hotbar-icon">🌾</div>
+        <div class="hotbar-label">FARMS</div>
+    </a>
+    <a href="potion_brewing_guide.html" class="hotbar-slot" title="Potions">
+        <div class="hotbar-icon">🧪</div>
+        <div class="hotbar-label">POTIONS</div>
+    </a>
+    <a href="nether_hub_calculator.html" class="hotbar-slot" title="Nether Hub">
+        <div class="hotbar-icon">🚇</div>
+        <div class="hotbar-label">NETHER</div>
+    </a>
+</div>
+
+    <script>
+        function filterPotions(category) {
+            const cards = document.querySelectorAll('.potion-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                if (category === 'all') {
+                    card.style.display = 'block';
+                } else if (category === 'splash') {
+                    card.style.display = 'block';
+                } else {
+                    if (card.dataset.category === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function searchPotions() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const cards = document.querySelectorAll('.potion-card');
+            
+            cards.forEach(card => {
+                const name = card.querySelector('.potion-name').textContent.toLowerCase();
+                const effects = card.querySelector('.effects-section').textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || effects.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html><div class="step-number">1</div>
+                            <div>Awkward Potion (Water + Nether Wart)</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Blaze Powder</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Increases melee damage by 3 (♥♥) per level</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">3:00</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">8:00</span> (add Redstone)</div>
+                    <div class="effect"><span class="effect-label">Enhanced:</span> Strength II (add Glowstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">💙</div>
+                    <div>
+                        <div class="potion-name">Regeneration</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Ghast Tear</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Restores ½ health every 2.5 seconds</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">0:45</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">1:30</span> (add Redstone)</div>
+                    <div class="effect"><span class="effect-label">Enhanced:</span> Regeneration II (add Glowstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">🛡️</div>
+                    <div>
+                        <div class="potion-name">Fire Resistance</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Magma Cream</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Immunity to fire, lava, and blaze fireballs</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">3:00</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">8:00</span> (add Redstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">⚡</div>
+                    <div>
+                        <div class="potion-name">Swiftness</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Sugar</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Increases movement speed by 20%</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">3:00</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">8:00</span> (add Redstone)</div>
+                    <div class="effect"><span class="effect-label">Enhanced:</span> Swiftness II, +40% speed (add Glowstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">🌙</div>
+                    <div>
+                        <div class="potion-name">Night Vision</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Golden Carrot</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> See clearly in darkness and underwater</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">3:00</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">8:00</span> (add Redstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">👻</div>
+                    <div>
+                        <div class="potion-name">Invisibility</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Night Vision Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Fermented Spider Eye</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Makes player invisible (armor still visible)</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">3:00</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">8:00</span> (add Redstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">🐠</div>
+                    <div>
+                        <div class="potion-name">Water Breathing</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Pufferfish</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Prevents oxygen bar from depleting underwater</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">3:00</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">8:00</span> (add Redstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">🦘</div>
+                    <div>
+                        <div class="potion-name">Leaping</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Rabbit's Foot</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Jump ½ block higher; reduces fall damage</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">3:00</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">8:00</span> (add Redstone)</div>
+                    <div class="effect"><span class="effect-label">Enhanced:</span> Leaping II (add Glowstone)</div>
+                </div>
+            </div>
+
+            <!-- Negative Effect Potions -->
+            <div class="potion-card" data-category="negative">
+                <div class="potion-header">
+                    <div class="potion-icon">☠️</div>
+                    <div>
+                        <div class="potion-name">Poison</div>
+                        <div class="potion-type">Negative Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Spider Eye</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Deals ½ damage every 1.25 seconds (won't kill)</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">0:45</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">1:30</span> (add Redstone)</div>
+                    <div class="effect"><span class="effect-label">Enhanced:</span> Poison II (add Glowstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="negative">
+                <div class="potion-header">
+                    <div class="potion-icon">🐌</div>
+                    <div>
+                        <div class="potion-name">Slowness</div>
+                        <div class="potion-type">Negative Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Swiftness Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Fermented Spider Eye</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Decreases movement speed by 15%</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">1:30</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">4:00</span> (add Redstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="negative">
+                <div class="potion-header">
+                    <div class="potion-icon">💀</div>
+                    <div>
+                        <div class="potion-name">Harming</div>
+                        <div class="potion-type">Negative Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Poison or Healing Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Fermented Spider Eye</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Instant damage of 3 hearts</div>
+                    <div class="effect"><span class="effect-label">Enhanced:</span> Harming II, 6 hearts damage (add Glowstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="negative">
+                <div class="potion-header">
+                    <div class="potion-icon">🤢</div>
+                    <div>
+                        <div class="potion-name">Weakness</div>
+                        <div class="potion-type">Negative Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Water Bottle (no Awkward Potion needed!)</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Fermented Spider Eye</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Reduces melee damage by 0.5 hearts</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">1:30</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">4:00</span> (add Redstone)</div>
+                </div>
+            </div>
+
+            <!-- Special Potions -->
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">🐢</div>
+                    <div>
+                        <div class="potion-name">Turtle Master</div>
+                        <div class="potion-type">Mixed Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            <div class="step-number">2</div>
+                            <div>Add Turtle Shell</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="effects-section">
+                    <div class="effect"><span class="effect-label">Effect:</span> Slowness IV + Resistance III</div>
+                    <div class="effect"><span class="effect-label">Duration:</span> <span class="duration">0:20</span></div>
+                    <div class="effect"><span class="effect-label">Extended:</span> <span class="duration">0:40</span> (add Redstone)</div>
+                </div>
+            </div>
+
+            <div class="potion-card" data-category="positive">
+                <div class="potion-header">
+                    <div class="potion-icon">🏃</div>
+                    <div>
+                        <div class="potion-name">Slow Falling</div>
+                        <div class="potion-type">Positive Effect</div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-title">Recipe:</div>
+                    <div class="recipe-steps">
+                        <div class="recipe-step">
+                            <div class="step-number">1</div>
+                            <div>Awkward Potion</div>
+                        </div>
+                        <div class="recipe-step">
+                            
