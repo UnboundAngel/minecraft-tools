@@ -5,23 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ore Coordinate Guide - Minecraft Tools Hub</title>
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        font-family: 'Courier New', monospace;
-        background: linear-gradient(180deg, #0a2f0a 0%, #1a1a1a 50%, #000 100%);
-        color: #fff;
-        min-height: 100vh;
-        padding-bottom: 120px;
-    }
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #0a2f0a 0%, #1a1a1a 50%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
 
-    html {
-        scroll-behavior: smooth;
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
         /* Header */
         .header {
@@ -398,7 +398,7 @@
     </div>
 
     <!-- Hotbar Navigation -->
-    <div class="hotbar">
+        <div class="hotbar">
         <a href="index.html" class="hotbar-slot" title="Home">
             <div class="hotbar-icon">🏠</div>
             <div class="hotbar-label">HOME</div>
@@ -426,30 +426,6 @@
     </div>
 
     <script>
-        const out = document.getElementById('oresGrid'); // or your specific container
-        const e = ores.emerald; // your emerald object
-
-        const card = document.createElement('div');
-        card.className = `ore-card ${e.class || ''}`;
-        card.innerHTML = `
-        <div class="ore-header">
-            <div class="ore-icon"><img src="${e.iconPath}" alt="Emerald" class="emerald-icon" style="width:32px;height:32px;"></div>
-            <div class="ore-title">${e.name}</div>
-        </div>
-        <div class="ore-content">
-            <div class="info-box">
-            <div class="info-label">Y-Level Range</div>
-            <div class="info-value">${e.range}</div>
-            </div>
-            <div class="info-box">
-            <div class="info-label">Optimal Level</div>
-            <div class="info-value">${e.optimal}</div>
-            </div>
-        </div>
-        `;
-
-        out.appendChild(card);
-
         const oreData = {
             java: {
                 coal: {
@@ -600,7 +576,7 @@
                     ]
                 },
                 emerald: {
-                    iconPath: 'images/emerald.png',
+                    icon: '💚',
                     name: 'Emerald',
                     class: 'ore-emerald',
                     range: 'Y: -16 to 320 (Mountains only)',
@@ -608,16 +584,16 @@
                     optimalNum: 232,
                     distribution: 'Only in mountain biomes, peaks high up',
                     tips: [
-                    'ONLY generates in mountain biomes',
-                    'Rarest ore in the game',
-                    'Used primarily for trading with villagers',
-                    'Mountain peaks have highest concentration'
+                        'ONLY generates in mountain biomes',
+                        'Rarest ore in the game',
+                        'Used primarily for trading with villagers',
+                        'Mountain peaks have highest concentration'
                     ],
                     chart: [
-                    { label: 'Y: -16 to 32', value: 20 },
-                    { label: 'Y: 32-128', value: 40 },
-                    { label: 'Y: 128-232 (Peak)', value: 100 },
-                    { label: 'Y: 232-320', value: 60 }
+                        { label: 'Y: -16 to 32', value: 20 },
+                        { label: 'Y: 32-128', value: 40 },
+                        { label: 'Y: 128-232 (Peak)', value: 100 },
+                        { label: 'Y: 232-320', value: 60 }
                     ]
                 },
                 ancient: {
