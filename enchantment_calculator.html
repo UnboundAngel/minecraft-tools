@@ -332,6 +332,61 @@
             color: #a855f7;
         }
 
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            border-bottom: 4px solid #555;
+            border-right: 4px solid #555;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            border-bottom: 2px solid #8b8b8b;
+            border-right: 2px solid #8b8b8b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        .hotbar-slot.active {
+            border: 3px solid #fff;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+        }
+
         @media (max-width: 968px) {
             .enchant-columns {
                 grid-template-columns: 1fr;
@@ -402,6 +457,33 @@
             <h2 class="results-title">Enchanting Plan</h2>
             <div id="resultsContent"></div>
         </div>
+    </div>
+
+    <div class="hotbar">
+        <a href="index.html" class="hotbar-slot" title="Home">
+            <div class="hotbar-icon">🏠</div>
+            <div class="hotbar-label">HOME</div>
+        </a>
+        <a href="enchantment_calculator.html" class="hotbar-slot active" title="Enchantments">
+            <div class="hotbar-icon">📘</div>
+            <div class="hotbar-label">ENCHANT</div>
+        </a>
+        <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+            <div class="hotbar-icon">💎</div>
+            <div class="hotbar-label">ORES</div>
+        </a>
+        <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+            <div class="hotbar-icon">🗺️</div>
+            <div class="hotbar-label">SEEDS</div>
+        </a>
+        <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+            <div class="hotbar-icon">🏗️</div>
+            <div class="hotbar-label">BUILDS</div>
+        </a>
+        <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+            <div class="hotbar-icon">🌾</div>
+            <div class="hotbar-label">FARMS</div>
+        </a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
