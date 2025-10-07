@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enchantment Table Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(167, 139, 250, 0.1));
+            border-radius: 15px;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+        }
+
+        h1 {
+            color: #a78bfa;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #c4b5fd;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        .edition-toggle {
+            margin: 25px 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+            color: #e0e0e0;
+            border: 2px solid #6b7280;
+            padding: 12px 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.05em;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border-color: #a78bfa;
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.5);
+        }
+
+        .controls {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            padding: 35px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #4a5568;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #c4b5fd;
+            font-weight: 600;
+            font-size: 1.15em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2d3748, #1a202c);
+            border: 2px solid #6b7280;
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1.05em;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        select:hover, input:hover {
+            border-color: #9ca3af;
+        }
+
+        .bookshelf-display {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1.3em;
+            color: #a78bfa;
+            font-weight: bold;
+            text-shadow: 0 2px 8px rgba(167, 139, 250, 0.5);
+            padding: 12px;
+            background: rgba(139, 92, 246, 0.15);
+            border-radius: 10px;
+            border: 1px solid #8b5cf6;
+        }
+
+        .results {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            padding: 35px;
+            border-radius: 15px;
+            border: 2px solid #4a5568;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .results h2 {
+            color: #a78bfa;
+            margin-bottom: 25px;
+            font-size: 2em;
+            text-shadow: 0 0 15px rgba(167, 139, 250, 0.5);
+        }
+
+        .enchant-slots {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .slot {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(109, 40, 217, 0.1));
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s;
+        }
+
+        .slot:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .slot h3 {
+            color: #c4b5fd;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            text-shadow: 0 2px 8px rgba(196, 181, 253, 0.5);
+        }
+
+        .slot-info {
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .slot-info strong {
+            color: #ddd6fe;
+        }
+
+        .probability-bars {
+            margin-top: 20px;
+        }
+
+        .prob-item {
+            margin-bottom: 18px;
+        }
+
+        .prob-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-weight: 600;
+        }
+
+        .prob-bar {
+            height: 28px;
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #4a5568;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .prob-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #a78bfa, #c4b5fd);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.95em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        .note {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #fbbf24;
+            margin-top: 25px;
+            color: #fcd34d;
+            line-height: 1.7;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2);
+        }
+
+        .note strong {
+            color: #fde68a;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2em;
+            }
+            
+            .controls, .results {
+                padding: 25px;
+            }
+
+            .edition-toggle {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .toggle-btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ Enchantment Table Calculator ✨</h1>
+            <p class="subtitle">Calculate enchantment probabilities for Minecraft 1.21+</p>
+        </header>
+
+        <div class="edition-toggle">
+            <button class="toggle-btn active" onclick="setEdition('java')" id="javaBtn">☕ Java Edition</button>
+            <button class="toggle-btn" onclick="setEdition('bedrock')" id="bedrockBtn">🪨 Bedrock Edition</button>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="itemType">🔧 Item Type:</label>
+                <select id="itemType" onchange="updateCalculations()">
+                    <option value="15">💎 Diamond Sword</option>
+                    <option value="15">⛏️ Diamond Pickaxe</option>
+                    <option value="15">🪓 Diamond Axe</option>
+                    <option value="15">🥄 Diamond Shovel</option>
+                    <option value="15">🔱 Diamond Hoe</option>
+                    <option value="14">⚔️ Iron Sword</option>
+                    <option value="14">⛏️ Iron Pickaxe</option>
+                    <option value="14">🪓 Iron Axe</option>
+                    <option value="14">🥄 Iron Shovel</option>
+                    <option value="14">🔱 Iron Hoe</option>
+                    <option value="12">🗿 Stone Sword</option>
+                    <option value="12">⛏️ Stone Pickaxe</option>
+                    <option value="12">🪓 Stone Axe</option>
+                    <option value="12">🥄 Stone Shovel</option>
+                    <option value="12">🔱 Stone Hoe</option>
+                    <option value="10">💎 Diamond Armor</option>
+                    <option value="9">🛡️ Iron Armor</option>
+                    <option value="5">🧥 Leather Armor</option>
+                    <option value="22">⚱️ Gold Tools</option>
+                    <option value="25">👑 Gold Armor</option>
+                    <option value="1">📖 Book</option>
+                    <option value="1">🏹 Bow</option>
+                    <option value="1">🎯 Crossbow</option>
+                    <option value="1">🎣 Fishing Rod</option>
+                    <option value="1">🔱 Trident</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="bookshelves">📚 Number of Bookshelves (0-15):</label>
+                <input type="number" id="bookshelves" min="0" max="15" value="15" onchange="updateCalculations()">
+                <div class="bookshelf-display" id="bookshelfDisplay">Maximum enchantment level: 30</div>
+            </div>
+        </div>
+
+        <div class="results">
+            <h2>📊 Enchantment Slot Levels & Probabilities</h2>
+            <div class="enchant-slots" id="enchantSlots"></div>
+
+            <div class="note">
+                <strong>ℹ️ How it works:</strong> The enchantment table uses complex RNG. These probabilities show the likelihood of getting 1, 2, or 3+ enchantments at different levels. Actual enchantments depend on item type, enchantability, and available enchantments. Books have a special rule where one enchantment is randomly removed from the final list.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEdition = 'java';
+
+        function setEdition(edition) {
+            currentEdition = edition;
+            document.getElementById('javaBtn').classList.toggle('active', edition === 'java');
+            document.getElementById('bedrockBtn').classList.toggle('active', edition === 'bedrock');
+            updateCalculations();
+        }
+
+        function calculateBaseLevel(bookshelves) {
+            let avgRandom1 = 4.5;
+            let avgRandom2 = bookshelves / 2;
+            return avgRandom1 + Math.floor(bookshelves / 2) + avgRandom2;
+        }
+
+        function getSlotLevel(baseLevel, bookshelves, slot) {
+            switch(slot) {
+                case 1:
+                    return Math.max(Math.floor(baseLevel / 3), 1);
+                case 2:
+                    return Math.floor((baseLevel * 2) / 3 + 1);
+                case 3:
+                    return Math.max(baseLevel, bookshelves * 2);
+            }
+        }
+
+        function calculateEnchantProbabilities(level, enchantability) {
+            let avgBonus = enchantability / 4;
+            let modifiedLevel = level + avgBonus + 1;
+
+            let prob1 = 1.0;
+            let continueProbability = Math.min((modifiedLevel + 1) / 50, 1.0);
+            let prob2 = continueProbability;
+            let prob3plus = prob2 * continueProbability;
+
+            return {
+                one: (prob1 - prob2) * 100,
+                two: (prob2 - prob3plus) * 100,
+                threePlus: prob3plus * 100,
+                modifiedLevel: Math.round(modifiedLevel)
+            };
+        }
+
+        function updateCalculations() {
+            let bookshelves = parseInt(document.getElementById('bookshelves').value) || 0;
+            bookshelves = Math.max(0, Math.min(15, bookshelves));
+            document.getElementById('bookshelves').value = bookshelves;
+
+            let enchantability = parseInt(document.getElementById('itemType').value);
+            
+            let maxLevel = Math.min(30, bookshelves * 2);
+            document.getElementById('bookshelfDisplay').textContent = 
+                `${bookshelves} bookshelves → Maximum enchantment level: ${maxLevel}`;
+
+            let baseLevel = calculateBaseLevel(bookshelves);
+            let slotsHTML = '';
+
+            const slotIcons = ['🔝', '⏺️', '🔻'];
+            const slotNames = ['Top Slot', 'Middle Slot', 'Bottom Slot'];
+
+            for (let slot = 1; slot <= 3; slot++) {
+                let slotLevel = getSlotLevel(baseLevel, bookshelves, slot);
+                let probs = calculateEnchantProbabilities(slotLevel, enchantability);
+                
+                let cost = slot;
+
+                slotsHTML += `
+                    <div class="slot">
+                        <h3>${slotIcons[slot-1]} ${slotNames[slot-1]}</h3>
+                        <div class="slot-info">
+                            <strong>Level Requirement:</strong> ~${slotLevel} (costs ${cost} levels + ${cost} lapis)
+                        </div>
+                        <div class="slot-info">
+                            <strong>Modified Level:</strong> ~${probs.modifiedLevel} (with enchantability bonus)
+                        </div>
+                        
+                        <div class="probability-bars">
+                            <div class="prob-item">
+                                <div class="prob-label">
+                                    <span>1️⃣ One Enchantment</span>
+                                    <span>${probs.one.toFixed(1)}%</span>
+                                </div>
+                                <div class="prob-bar">
+                                    <div class="prob-fill" style="width: ${probs.one}%">
+                                        ${probs.one > 10 ? probs.one.toFixed(1) + '%' : ''}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="prob-item">
+                                <div class="prob-label">
+                                    <span>2️⃣ Two Enchantments</span>
+                                    <span>${probs.two.toFixed(1)}%</span>
+                                </div>
+                                <div class="prob-bar">
+                                    <div class="prob-fill" style="width: ${probs.two}%">
+                                        ${probs.two > 10 ? probs.two.toFixed(1) + '%' : ''}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="prob-item">
+                                <div class="prob-label">
+                                    <span>3️⃣+ Three+ Enchantments</span>
+                                    <span>${probs.threePlus.toFixed(1)}%</span>
+                                </div>
+                                <div class="prob-bar">
+                                    <div class="prob-fill" style="width: ${probs.threePlus}%">
+                                        ${probs.threePlus > 10 ? probs.threePlus.toFixed(1) + '%' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('enchantSlots').innerHTML = slotsHTML;
+        }
+
+        updateCalculations();
+    </script>
+</body>
+</html>

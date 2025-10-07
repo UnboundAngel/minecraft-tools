@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villager Trading Hub - Minecraft Tools</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a472a 0%, #0f3d1f 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 3px solid #4ade80;
+        }
+        h1 {
+            color: #4ade80;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0 #000;
+        }
+        .subtitle { color: #a0aec0; font-size: 1.1em; margin-top: 5px; }
+        
+        .edition-toggle {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .toggle-btn {
+            background: #2d5438;
+            color: #e0e0e0;
+            border: 2px solid #4a7c59;
+            padding: 12px 35px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+        .toggle-btn.active {
+            background: #4ade80;
+            color: #000;
+            border-color: #4ade80;
+            transform: scale(1.05);
+        }
+        
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: #cbd5e0;
+            border: 2px solid #4a7c59;
+            padding: 15px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+        }
+        .tab-btn.active {
+            background: #4ade80;
+            color: #000;
+            border-color: #4ade80;
+        }
+        .tab-btn:hover:not(.active) {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: #4ade80;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .controls {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #4a7c59;
+        }
+        .control-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #cbd5e0;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            background: #1a472a;
+            border: 2px solid #4a7c59;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4ade80;
+        }
+        
+        .results {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #4a7c59;
+        }
+        .results h2 {
+            color: #4ade80;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .trade-info {
+            background: rgba(74, 222, 128, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #4ade80;
+            margin-bottom: 30px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            color: #cbd5e0;
+            font-weight: 600;
+        }
+        .info-value {
+            color: #4ade80;
+            font-weight: bold;
+        }
+        
+        .chart-container {
+            background: rgba(26, 71, 42, 0.5);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .chart-title {
+            text-align: center;
+            color: #4ade80;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 300px;
+            padding: 10px;
+            border-left: 2px solid #4a7c59;
+            border-bottom: 2px solid #4a7c59;
+        }
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 2px;
+        }
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #4ade80, #22c55e);
+            border-radius: 3px 3px 0 0;
+            transition: all 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+        .bar:hover {
+            background: linear-gradient(180deg, #86efac, #4ade80);
+        }
+        .bar-label {
+            color: #cbd5e0;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .bar-value {
+            color: white;
+            font-size: 0.75em;
+            font-weight: bold;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+        
+        .trade-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .trade-item {
+            background: rgba(26, 71, 42, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #4a7c59;
+            transition: all 0.3s;
+        }
+        .trade-item:hover {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+        }
+        .trade-name {
+            color: #4ade80;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        .trade-detail {
+            color: #cbd5e0;
+            font-size: 0.9em;
+            margin: 4px 0;
+        }
+        
+        .note {
+            background: rgba(74, 222, 128, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #4ade80;
+            margin-top: 20px;
+            color: #cbd5e0;
+            line-height: 1.6;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: #2d5438;
+            color: #e0e0e0;
+            border: 2px solid #4a7c59;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+        .back-btn:hover {
+            background: #4ade80;
+            color: #000;
+            border-color: #4ade80;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .controls, .results { padding: 20px; }
+            .tab-btn { font-size: 0.9em; padding: 12px 15px; }
+            .bar-label { font-size: 0.65em; }
+            .trade-list { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">⬅ Back to Hub</a>
+        
+        <header>
+            <h1>🧑‍🌾 Villager Trading Hub</h1>
+            <p class="subtitle">Complete trading information for Minecraft 1.21+ (Vanilla)</p>
+        </header>
+        
+        <div class="edition-toggle">
+            <button class="toggle-btn active" id="javaBtn">Java Edition</button>
+            <button class="toggle-btn" id="bedrockBtn">Bedrock Edition</button>
+        </div>
+        
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="librarian">📚 Librarian</button>
+            <button class="tab-btn" data-tab="armorer">🛡️ Armorer</button>
+            <button class="tab-btn" data-tab="weaponsmith">⚔️ Weaponsmith</button>
+            <button class="tab-btn" data-tab="toolsmith">⛏️ Toolsmith</button>
+            <button class="tab-btn" data-tab="farmer">🌾 Farmer</button>
+            <button class="tab-btn" data-tab="all">📋 All Trades</button>
+        </div>
+        
+        <!-- LIBRARIAN TAB -->
+        <div id="librarian" class="tab-content active">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="enchantment">Select Enchanted Book:</label>
+                    <select id="enchantment">
+                        <optgroup label="Level I Only">
+                            <option value="1-false">Aqua Affinity I</option>
+                            <option value="1-false">Channeling I</option>
+                            <option value="1-false">Flame I</option>
+                            <option value="1-false">Infinity I</option>
+                            <option value="1-false">Multishot I</option>
+                            <option value="1-false">Silk Touch I</option>
+                        </optgroup>
+                        <optgroup label="Level I-II">
+                            <option value="1-false">Fire Aspect I</option>
+                            <option value="2-false">Fire Aspect II</option>
+                            <option value="1-false">Knockback I</option>
+                            <option value="2-false">Knockback II</option>
+                            <option value="1-false">Punch I</option>
+                            <option value="2-false">Punch II</option>
+                        </optgroup>
+                        <optgroup label="Level I-III">
+                            <option value="1-false">Depth Strider I</option>
+                            <option value="2-false">Depth Strider II</option>
+                            <option value="3-false">Depth Strider III</option>
+                            <option value="1-false">Fortune I</option>
+                            <option value="2-false">Fortune II</option>
+                            <option value="3-false">Fortune III</option>
+                            <option value="1-false">Looting I</option>
+                            <option value="2-false">Looting II</option>
+                            <option value="3-false">Looting III</option>
+                            <option value="1-false">Loyalty I</option>
+                            <option value="2-false">Loyalty II</option>
+                            <option value="3-false">Loyalty III</option>
+                            <option value="1-false">Luck of the Sea I</option>
+                            <option value="2-false">Luck of the Sea II</option>
+                            <option value="3-false">Luck of the Sea III</option>
+                            <option value="1-false">Lure I</option>
+                            <option value="2-false">Lure II</option>
+                            <option value="3-false">Lure III</option>
+                            <option value="1-false">Piercing I</option>
+                            <option value="2-false">Piercing II</option>
+                            <option value="3-false">Piercing III</option>
+                            <option value="4-false">Piercing IV</option>
+                            <option value="1-false">Quick Charge I</option>
+                            <option value="2-false">Quick Charge II</option>
+                            <option value="3-false">Quick Charge III</option>
+                            <option value="1-false">Respiration I</option>
+                            <option value="2-false">Respiration II</option>
+                            <option value="3-false">Respiration III</option>
+                            <option value="1-false">Riptide I</option>
+                            <option value="2-false">Riptide II</option>
+                            <option value="3-false">Riptide III</option>
+                            <option value="1-false">Sweeping Edge I (Java)</option>
+                            <option value="2-false">Sweeping Edge II (Java)</option>
+                            <option value="3-false">Sweeping Edge III (Java)</option>
+                            <option value="1-false">Thorns I</option>
+                            <option value="2-false">Thorns II</option>
+                            <option value="3-false">Thorns III</option>
+                            <option value="1-false">Unbreaking I</option>
+                            <option value="2-false">Unbreaking II</option>
+                            <option value="3-false">Unbreaking III</option>
+                        </optgroup>
+                        <optgroup label="Level I-IV">
+                            <option value="1-false">Blast Protection I</option>
+                            <option value="2-false">Blast Protection II</option>
+                            <option value="3-false">Blast Protection III</option>
+                            <option value="4-false">Blast Protection IV</option>
+                            <option value="1-false">Feather Falling I</option>
+                            <option value="2-false">Feather Falling II</option>
+                            <option value="3-false">Feather Falling III</option>
+                            <option value="4-false">Feather Falling IV</option>
+                            <option value="1-false">Fire Protection I</option>
+                            <option value="2-false">Fire Protection II</option>
+                            <option value="3-false">Fire Protection III</option>
+                            <option value="4-false">Fire Protection IV</option>
+                            <option value="1-false">Projectile Protection I</option>
+                            <option value="2-false">Projectile Protection II</option>
+                            <option value="3-false">Projectile Protection III</option>
+                            <option value="4-false">Projectile Protection IV</option>
+                            <option value="1-false">Protection I</option>
+                            <option value="2-false">Protection II</option>
+                            <option value="3-false">Protection III</option>
+                            <option value="4-false">Protection IV</option>
+                        </optgroup>
+                        <optgroup label="Level I-V">
+                            <option value="1-false">Bane of Arthropods I</option>
+                            <option value="2-false">Bane of Arthropods II</option>
+                            <option value="3-false">Bane of Arthropods III</option>
+                            <option value="4-false">Bane of Arthropods IV</option>
+                            <option value="5-false">Bane of Arthropods V</option>
+                            <option value="1-false">Efficiency I</option>
+                            <option value="2-false">Efficiency II</option>
+                            <option value="3-false">Efficiency III</option>
+                            <option value="4-false">Efficiency IV</option>
+                            <option value="5-false">Efficiency V</option>
+                            <option value="1-false">Impaling I</option>
+                            <option value="2-false">Impaling II</option>
+                            <option value="3-false">Impaling III</option>
+                            <option value="4-false">Impaling IV</option>
+                            <option value="5-false">Impaling V</option>
+                            <option value="1-false">Power I</option>
+                            <option value="2-false">Power II</option>
+                            <option value="3-false">Power III</option>
+                            <option value="4-false">Power IV</option>
+                            <option value="5-false">Power V</option>
+                            <option value="1-false">Sharpness I</option>
+                            <option value="2-false">Sharpness II</option>
+                            <option value="3-false">Sharpness III</option>
+                            <option value="4-false">Sharpness IV</option>
+                            <option value="5-false">Sharpness V</option>
+                            <option value="1-false">Smite I</option>
+                            <option value="2-false">Smite II</option>
+                            <option value="3-false">Smite III</option>
+                            <option value="4-false">Smite IV</option>
+                            <option value="5-false">Smite V</option>
+                        </optgroup>
+                        <optgroup label="Treasure (2x Price)">
+                            <option value="1-true">Curse of Binding I</option>
+                            <option value="1-true">Curse of Vanishing I</option>
+                            <option value="1-true">Frost Walker I</option>
+                            <option value="2-true">Frost Walker II</option>
+                            <option value="1-true">Mending I</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="results">
+                <h2>💎 Trade Price Distribution</h2>
+                <div class="trade-info">
+                    <div class="info-row">
+                        <span class="info-label">Enchantment Level:</span>
+                        <span class="info-value" id="enchantLevel">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Treasure Status:</span>
+                        <span class="info-value" id="treasureStatus">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Minimum Price:</span>
+                        <span class="info-value" id="minPrice">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Maximum Price:</span>
+                        <span class="info-value" id="maxPrice">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Average Price:</span>
+                        <span class="info-value" id="avgPrice">-</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">Probability of Each Emerald Cost</div>
+                    <div class="bar-chart" id="barChart"></div>
+                </div>
+                
+                <div class="note">
+                    <strong>Formula:</strong> Min = 2 + 3×level (×2 if treasure), Max = 6 + 13×level (×2 if treasure, cap 64). Uniform distribution - each price has equal probability. Librarians cannot trade Soul Speed, Swift Sneak, or Wind Burst.
+                </div>
+            </div>
+        </div>
+        
+        <!-- ARMORER TAB -->
+        <div id="armorer" class="tab-content">
+            <div class="results">
+                <h2>🛡️ Armorer Trades</h2>
+                <div class="trade-list" id="armorerTrades"></div>
+            </div>
+        </div>
+        
+        <!-- WEAPONSMITH TAB -->
+        <div id="weaponsmith" class="tab-content">
+            <div class="results">
+                <h2>⚔️ Weaponsmith Trades</h2>
+                <div class="trade-list" id="weaponsmithTrades"></div>
+            </div>
+        </div>
+        
+        <!-- TOOLSMITH TAB -->
+        <div id="toolsmith" class="tab-content">
+            <div class="results">
+                <h2>⛏️ Toolsmith Trades</h2>
+                <div class="trade-list" id="toolsmithTrades"></div>
+            </div>
+        </div>
+        
+        <!-- FARMER TAB -->
+        <div id="farmer" class="tab-content">
+            <div class="results">
+                <h2>🌾 Farmer Trades</h2>
+                <div class="trade-list" id="farmerTrades"></div>
+            </div>
+        </div>
+        
+        <!-- ALL TRADES TAB -->
+        <div id="all" class="tab-content">
+            <div class="results">
+                <h2>📋 All Villager Trades</h2>
+                <div class="trade-list" id="allTrades"></div>
+            </div>
+        </div>
+    </div>
+    
+<script>
+let currentEdition = 'java';
+
+const tradeData = {
+  java: {
+    armorer: [
+      {level: 'Novice', trades: ['5 Coal → 1 Emerald', '1 Emerald → Iron Helmet', '4 Emeralds → Iron Chestplate', '7 Emeralds → Iron Leggings', '4 Emeralds → Iron Boots']},
+      {level: 'Apprentice', trades: ['4 Iron Ingot → 1 Emerald', '36 Emeralds → Chainmail Leggings', '5 Emeralds → Chainmail Boots', '1 Emerald + Lava Bucket → Shield']},
+      {level: 'Journeyman', trades: ['1 Lava Bucket → 1 Emerald', '1 Diamond → 1 Emerald', '16 Emeralds → Chainmail Helmet', '12 Emeralds → Chainmail Chestplate', '4 Emeralds → Bell']},
+      {level: 'Expert', trades: ['5-9 Emeralds → Enchanted Diamond Leggings', '8-12 Emeralds → Enchanted Diamond Boots']},
+      {level: 'Master', trades: ['13-27 Emeralds → Enchanted Diamond Chestplate', '9-21 Emeralds → Enchanted Diamond Helmet']}
+    ],
+    weaponsmith: [
+      {level: 'Novice', trades: ['15 Coal → 1 Emerald', '3 Emeralds → Iron Axe', '7-21 Emeralds → Enchanted Iron Sword']},
+      {level: 'Apprentice', trades: ['4 Iron Ingot → 1 Emerald', '3 Emeralds → Bell']},
+      {level: 'Journeyman', trades: ['1 Flint → 1 Emerald']},
+      {level: 'Expert', trades: ['7-21 Emeralds → Enchanted Diamond Sword']},
+      {level: 'Master', trades: ['13-27 Emeralds → Enchanted Diamond Axe']}
+    ],
+    toolsmith: [
+      {level: 'Novice', trades: ['4 Coal → 1 Emerald', '1 Emerald → Stone Axe', '1 Emerald → Stone Shovel', '1 Emerald → Stone Pickaxe', '1 Emerald → Stone Hoe']},
+      {level: 'Apprentice', trades: ['4 Iron Ingot → 1 Emerald', '36 Emeralds → Bell']},
+      {level: 'Journeyman', trades: ['1 Flint → 1 Emerald', '4 Emeralds → Diamond Hoe']},
+      {level: 'Expert', trades: ['1 Diamond → 1 Emerald', '7-21 Emeralds → Enchanted Diamond Axe']},
+      {level: 'Master', trades: ['13-27 Emeralds → Enchanted Diamond Pickaxe', '4-6 Emeralds → Enchanted Diamond Shovel']}
+    ],
+    farmer: [
+      {level: 'Novice', trades: ['20 Wheat → 1 Emerald', '26 Potato → 1 Emerald', '22 Carrot → 1 Emerald', '15 Beetroot → 1 Emerald', '1 Emerald → 6 Bread']},
+      {level: 'Apprentice', trades: ['15 Pumpkin → 1 Emerald', '1 Emerald → Pumpkin Pie', '1 Emerald → 4 Apple']},
+      {level: 'Journeyman', trades: ['3 Emeralds → Cookie', '1 Emerald → Suspicious Stew']},
+      {level: 'Expert', trades: ['4 Melon → 1 Emerald', '3 Emeralds → Cake', '1 Emerald → Golden Carrot']},
+      {level: 'Master', trades: ['3 Emeralds → Glistering Melon Slice']}
+    ]
+  },
+  bedrock: {
+    armorer: [
+      {level: 'Novice', trades: ['5 Coal → 1 Emerald', '1 Emerald → Iron Helmet', '4 Emeralds → Iron Chestplate', '7 Emeralds → Iron Leggings', '4 Emeralds → Iron Boots']},
+      {level: 'Apprentice', trades: ['4 Iron Ingot → 1 Emerald', '1 Emerald + Lava Bucket → Shield', '5 Emeralds → Chainmail Boots', '36 Emeralds → Chainmail Leggings']},
+      {level: 'Journeyman', trades: ['1 Lava Bucket → 1 Emerald', '1 Diamond → 1 Emerald', '4 Emeralds → Bell', '16 Emeralds → Chainmail Helmet', '12 Emeralds → Chainmail Chestplate']},
+      {level: 'Expert', trades: ['8-12 Emeralds → Enchanted Diamond Boots', '5-9 Emeralds → Enchanted Diamond Leggings']},
+      {level: 'Master', trades: ['9-21 Emeralds → Enchanted Diamond Helmet', '13-27 Emeralds → Enchanted Diamond Chestplate']}
+    ],
+    weaponsmith: [
+      {level: 'Novice', trades: ['15 Coal → 1 Emerald', '3 Emeralds → Iron Axe', '7-21 Emeralds → Enchanted Iron Sword']},
+      {level: 'Apprentice', trades: ['4 Iron Ingot → 1 Emerald', '3 Emeralds → Bell']},
+      {level: 'Journeyman', trades: ['1 Flint → 1 Emerald']},
+      {level: 'Expert', trades: ['7-21 Emeralds → Enchanted Diamond Sword']},
+      {level: 'Master', trades: ['13-27 Emeralds → Enchanted Diamond Axe']}
+    ],
+    toolsmith: [
+      {level: 'Novice', trades: ['4 Coal → 1 Emerald', '1 Emerald → Stone Axe', '1 Emerald → Stone Shovel', '1 Emerald → Stone Pickaxe', '1 Emerald → Stone Hoe']},
+      {level: 'Apprentice', trades: ['4 Iron Ingot → 1 Emerald', '36 Emeralds → Bell']},
+      {level: 'Journeyman', trades: ['1 Flint → 1 Emerald', '4 Emeralds → Diamond Hoe']},
+      {level: 'Expert', trades: ['1 Diamond → 1 Emerald', '7-21 Emeralds → Enchanted Diamond Axe']},
+      {level: 'Master', trades: ['13-27 Emeralds → Enchanted Diamond Pickaxe', '4-6 Emeralds → Enchanted Diamond Shovel']}
+    ],
+    farmer: [
+      {level: 'Novice', trades: ['20 Wheat → 1 Emerald', '26 Potato → 1 Emerald', '22 Carrot → 1 Emerald', '15 Beetroot → 1 Emerald', '1 Emerald → 6 Bread']},
+      {level: 'Apprentice', trades: ['15 Pumpkin → 1 Emerald', '1 Emerald → Pumpkin Pie', '1 Emerald → 4 Apple']},
+      {level: 'Journeyman', trades: ['3 Emeralds → Cookie', '1 Emerald → Suspicious Stew']},
+      {level: 'Expert', trades: ['4 Melon → 1 Emerald', '3 Emeralds → Cake', '1 Emerald → Golden Carrot']},
+      {level: 'Master', trades: ['3 Emeralds → Glistering Melon Slice']}
+    ]
+  }
+};
+
+function setEdition(edition) {
+  currentEdition = edition;
+  document.getElementById('javaBtn').classList.toggle('active', edition === 'java');
+  document.getElementById('bedrockBtn').classList.toggle('active', edition === 'bedrock');
+
+  const activeTab = document.querySelector('.tab-content.active');
+  if (!activeTab) return;
+  if (activeTab.id === 'librarian') {
+    updateLibrarianCalc();
+  } else if (activeTab.id === 'all') {
+    displayAllTrades();
+  } else {
+    displayTrades(activeTab.id);
+  }
+}
+
+function switchTab(e, tabName) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+  if (e && e.currentTarget) e.currentTarget.classList.add('active');
+  const content = document.getElementById(tabName);
+  if (content) content.classList.add('active');
+
+  if (tabName === 'librarian') {
+    updateLibrarianCalc();
+  } else if (tabName === 'all') {
+    displayAllTrades();
+  } else {
+    displayTrades(tabName);
+  }
+}
+
+function calculatePrice(level, isTreasure) {
+  let min = 2 + 3 * level;
+  let max = 6 + 13 * level;
+  if (isTreasure) {
+    min *= 2;
+    max *= 2;
+  }
+  max = Math.min(max, 64);
+  return {min, max};
+}
+
+function updateLibrarianCalc() {
+  const select = document.getElementById('enchantment');
+  let [level, treasureStr] = select.value.split('-');
+  level = parseInt(level, 10) || 1;
+  const isTreasure = treasureStr === 'true';
+
+  const {min, max} = calculatePrice(level, isTreasure);
+  const avg = ((min + max) / 2).toFixed(1);
+
+  document.getElementById('enchantLevel').textContent = `Level ${level}`;
+  document.getElementById('treasureStatus').textContent = isTreasure ? 'Treasure (2x price)' : 'Normal';
+  document.getElementById('minPrice').textContent = `${min} emeralds`;
+  document.getElementById('maxPrice').textContent = `${max} emeralds`;
+  document.getElementById('avgPrice').textContent = `${avg} emeralds`;
+
+  const range = max - min + 1;
+  const probability = (100 / range).toFixed(2);
+  const chart = document.getElementById('barChart');
+  chart.innerHTML = '';
+
+  const maxBarHeight = 260;
+  const barHeight = Math.max(8, Math.round(maxBarHeight / range));
+
+  for (let price = min; price <= max; price++) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'bar-wrapper';
+    wrapper.innerHTML = `
+      <div class="bar" style="height:${barHeight}px;">
+        <div class="bar-value">${probability}%</div>
+      </div>
+      <div class="bar-label">${price}</div>
+    `;
+    chart.appendChild(wrapper);
+  }
+}
+
+function displayTrades(profession) {
+  const container = document.getElementById(profession + 'Trades');
+  if (!container) return;
+  const data = tradeData[currentEdition][profession];
+  if (!data) {
+    container.innerHTML = '<div class="trade-item">No data available</div>';
+    return;
+  }
+
+  let html = '';
+  data.forEach(tier => {
+    html += `<div class="trade-item"><div class="trade-name">${tier.level}</div>`;
+    tier.trades.forEach(tr => html += `<div class="trade-detail">• ${tr}</div>`);
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+function displayAllTrades() {
+  const container = document.getElementById('allTrades');
+  if (!container) return;
+  let html = '';
+  Object.keys(tradeData[currentEdition]).forEach(profession => {
+    html += `<div class="trade-item"><div class="trade-name" style="font-size: 1.2em; margin-bottom: 15px;">${profession.charAt(0).toUpperCase() + profession.slice(1)}</div>`;
+    tradeData[currentEdition][profession].forEach(tier => {
+      html += `<div style="margin: 10px 0;"><strong>${tier.level}:</strong></div>`;
+      tier.trades.forEach(tr => html += `<div class="trade-detail">• ${tr}</div>`);
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('javaBtn').addEventListener('click', () => setEdition('java'));
+  document.getElementById('bedrockBtn').addEventListener('click', () => setEdition('bedrock'));
+  document.getElementById('enchantment').addEventListener('change', updateLibrarianCalc);
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => switchTab(e, btn.dataset.tab));
+  });
+
+  // initial render
+  updateLibrarianCalc();
+});
+</script>
+</body>
+</html>
