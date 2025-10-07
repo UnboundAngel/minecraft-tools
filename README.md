@@ -1,6 +1,6 @@
-# Minecraft Tools Hub
+# This is my all-in-one Minecraft tools hub!
 
-A collection of interactive tools for Minecraft Java and Bedrock Edition players. Calculate enchantments, find ore coordinates, discover seeds, browse builds, and optimize farms.
+It's a collection of interactive tools for Minecraft Java and Bedrock Edition players.
 
 ## Live Demo
 
@@ -10,6 +10,9 @@ Visit the live site: https://unboundangel.github.io/minecraft-tools
 
 ### Enchantment Calculator
 Calculate XP costs for all enchantments, optimize enchanting strategies, avoid incompatible enchantments, and plan anvil combinations. Works for all tools, weapons, and armor.
+
+### Villager trading hub
+Only for 1.21+. Includes the max and minimum emerald values for librarian villagers, as well as lists the possible trades you can get from other villagers. (as of right 10/7/25, I have NOT added every villager)
 
 ### Ore Coordinate Guide
 Updated for Minecraft 1.21+ with the best Y-levels for every ore type. Includes separate guides for Java and Bedrock editions, distribution charts, and mining strategies.
@@ -59,4 +62,5 @@ Tutorial links via YouTube, schematics via Planet Minecraft community, seed data
 License
 MIT License
 Note
+
 This is a fan-made tool. Minecraft is a trademark of Mojang Studios. This project is not affiliated with or endorsed by Mojang Studios or Microsoft.
