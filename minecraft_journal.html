@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Journal - Minecraft Tools Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(180deg, #2a1810 0%, #1a0f08 50%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Floating particles */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(139, 90, 43, 0.3);
+            border-radius: 50%;
+            animation: float-particle 15s infinite;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid #8b5a2b;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 90, 43, 0.03) 2px, rgba(139, 90, 43, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #d4a574;
+            text-shadow: 4px 4px 0px #000, 8px 8px 20px rgba(212, 165, 116, 0.5);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #aaa;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 3D Book Container */
+        .book-scene {
+            perspective: 2000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            padding: 2rem 0;
+        }
+
+        .book-container {
+            position: relative;
+            transform-style: preserve-3d;
+            animation: book-entrance 1s ease-out;
+        }
+
+        @keyframes book-entrance {
+            from {
+                opacity: 0;
+                transform: translateY(50px) rotateX(-20deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        .book {
+            display: flex;
+            position: relative;
+            transform-style: preserve-3d;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.8));
+        }
+
+        .book-spine {
+            width: 40px;
+            height: 600px;
+            background: linear-gradient(90deg, #3d2817 0%, #5a3d25 50%, #3d2817 100%);
+            position: relative;
+            transform: translateZ(20px);
+            border-top: 4px solid #2a1810;
+            border-bottom: 4px solid #2a1810;
+        }
+
+        .book-spine::before {
+            content: '📖';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .book-page {
+            width: 400px;
+            height: 600px;
+            background: linear-gradient(135deg, #f4e4c1 0%, #e8d4a8 100%);
+            border: 3px solid #8b5a2b;
+            position: relative;
+            padding: 2rem;
+            box-shadow:
+                inset 0 0 20px rgba(139, 90, 43, 0.1),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-left {
+            border-right: none;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            transform: rotateY(-2deg);
+            transform-origin: right;
+            background: linear-gradient(135deg, #e8d4a8 0%, #f4e4c1 100%);
+        }
+
+        .page-right {
+            border-left: none;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            transform: rotateY(2deg);
+            transform-origin: left;
+        }
+
+        .page-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(0deg, transparent 0px, transparent 29px, rgba(139, 90, 43, 0.1) 29px, rgba(139, 90, 43, 0.1) 30px);
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .page-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #3d2817;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid #8b5a2b;
+            padding-bottom: 0.5rem;
+        }
+
+        .journal-textarea {
+            flex: 1;
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            color: #2a1810;
+            resize: none;
+            line-height: 1.8;
+            padding: 0.5rem;
+        }
+
+        .journal-textarea::placeholder {
+            color: rgba(42, 24, 16, 0.4);
+            font-style: italic;
+        }
+
+        .page-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(139, 90, 43, 0.3);
+            font-size: 0.8rem;
+            color: #5a3d25;
+        }
+
+        .char-count {
+            font-size: 0.75rem;
+        }
+
+        .page-number {
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: rgba(139, 90, 43, 0.8);
+            border: 3px solid #8b5a2b;
+            color: #fff;
+            padding: 1rem 2rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 4px #000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn:hover {
+            background: rgba(139, 90, 43, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(139, 90, 43, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.danger {
+            background: rgba(139, 0, 0, 0.8);
+            border-color: #8b0000;
+        }
+
+        .btn.danger:hover {
+            background: rgba(139, 0, 0, 1);
+            box-shadow: 0 6px 15px rgba(139, 0, 0, 0.5);
+        }
+
+        .entries-section {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #8b5a2b;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .entries-title {
+            font-size: 2rem;
+            color: #d4a574;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .entry-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .entry-item {
+            background: rgba(139, 90, 43, 0.2);
+            border: 2px solid #8b5a2b;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .entry-item:hover {
+            background: rgba(139, 90, 43, 0.4);
+            transform: translateX(10px);
+            border-color: #d4a574;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .entry-date {
+            font-size: 1.1rem;
+            color: #d4a574;
+            font-weight: bold;
+        }
+
+        .entry-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .entry-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #8b5a2b;
+            color: #fff;
+            padding: 0.3rem 0.8rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .entry-btn:hover {
+            background: rgba(139, 90, 43, 0.8);
+            transform: scale(1.05);
+        }
+
+        .entry-preview {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-height: 3.6em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(74, 222, 128, 0.9);
+            color: #000;
+            padding: 1rem 1.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            transform: translateX(300px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .save-indicator.show {
+            transform: translateX(0);
+        }
+
+        /* Hotbar Navigation */
+        .hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px;
+            border: 4px solid #8b8b8b;
+            border-bottom: 4px solid #555;
+            border-right: 4px solid #555;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .hotbar-slot {
+            width: 64px;
+            height: 64px;
+            background: rgba(139, 139, 139, 0.3);
+            border: 2px solid #373737;
+            border-bottom: 2px solid #8b8b8b;
+            border-right: 2px solid #8b8b8b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .hotbar-slot:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        .hotbar-slot.active {
+            border: 3px solid #fff;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 2rem;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-label {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .book {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .book-spine {
+                width: 400px;
+                height: 30px;
+                order: 1;
+            }
+
+            .book-spine::before {
+                content: '📖 Minecraft Journal 📖';
+            }
+
+            .page-left {
+                order: 2;
+                border-right: 3px solid #8b5a2b;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+                transform: rotateY(0) rotateX(2deg);
+                margin-bottom: 1rem;
+            }
+
+            .page-right {
+                order: 3;
+                border-left: 3px solid #8b5a2b;
+                border-top-right-radius: 0;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                transform: rotateY(0) rotateX(-2deg);
+            }
+
+            .book-page {
+                width: 90%;
+                max-width: 400px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .hotbar {
+                flex-wrap: wrap;
+                max-width: 90%;
+            }
+
+            .hotbar-slot {
+                width: 50px;
+                height: 50px;
+            }
+
+            .hotbar-icon {
+                font-size: 1.5rem;
+            }
+
+            .hotbar-label {
+                font-size: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles -->
+    <div class="particle-container" id="particles"></div>
+
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="saveIndicator">✓ Saved!</div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>📖 MINECRAFT JOURNAL 📖</h1>
+        <p>Your Personal Adventure Log</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Book Scene -->
+        <div class="book-scene">
+            <div class="book-container">
+                <div class="book">
+                    <!-- Left Page -->
+                    <div class="book-page page-left">
+                        <div class="page-texture"></div>
+                        <div class="page-content">
+                            <div class="page-title">✒️ Current Entry ✒️</div>
+                            <textarea
+                                class="journal-textarea"
+                                id="leftPage"
+                                placeholder="Write your Minecraft adventures here...&#10;&#10;What did you build today?&#10;What resources did you find?&#10;Any epic moments?"
+                                maxlength="1000"
+                            ></textarea>
+                            <div class="page-info">
+                                <span class="char-count" id="leftCharCount">0 / 1000</span>
+                                <span class="page-number">Left Page</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spine -->
+                    <div class="book-spine"></div>
+
+                    <!-- Right Page -->
+                    <div class="book-page page-right">
+                        <div class="page-texture"></div>
+                        <div class="page-content">
+                            <div class="page-title">🗺️ Notes & Plans 🗺️</div>
+                            <textarea
+                                class="journal-textarea"
+                                id="rightPage"
+                                placeholder="Plan your next adventure...&#10;&#10;Todo list:&#10;- Explore new biomes&#10;- Build a farm&#10;- Defeat the Ender Dragon"
+                                maxlength="1000"
+                            ></textarea>
+                            <div class="page-info">
+                                <span class="char-count" id="rightCharCount">0 / 1000</span>
+                                <span class="page-number">Right Page</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn" onclick="saveEntry()">💾 Save Entry</button>
+            <button class="btn" onclick="newEntry()">📝 New Entry</button>
+            <button class="btn danger" onclick="clearCurrent()">🗑️ Clear Current</button>
+        </div>
+
+        <!-- Saved Entries Section -->
+        <div class="entries-section">
+            <h2 class="entries-title">📚 Saved Entries 📚</h2>
+            <div class="entry-list" id="entryList">
+                <div class="empty-state">No entries yet. Start writing your first adventure!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotbar Navigation -->
+    <div class="hotbar">
+        <a href="index.html" class="hotbar-slot" title="Home">
+            <div class="hotbar-icon">🏠</div>
+            <div class="hotbar-label">HOME</div>
+        </a>
+        <a href="minecraft_journal.html" class="hotbar-slot active" title="Journal">
+            <div class="hotbar-icon">📖</div>
+            <div class="hotbar-label">JOURNAL</div>
+        </a>
+        <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+            <div class="hotbar-icon">📘</div>
+            <div class="hotbar-label">ENCHANT</div>
+        </a>
+        <a href="villager_trading_hub.html" class="hotbar-slot" title="Villagers">
+            <div class="hotbar-icon">🧑‍🌾</div>
+            <div class="hotbar-label">VILLAGER</div>
+        </a>
+        <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+            <div class="hotbar-icon">💎</div>
+            <div class="hotbar-label">ORES</div>
+        </a>
+        <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+            <div class="hotbar-icon">🗺️</div>
+            <div class="hotbar-label">SEEDS</div>
+        </a>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = Math.random() * 10 + 10 + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Local Storage Keys
+        const CURRENT_LEFT = 'minecraft_journal_current_left';
+        const CURRENT_RIGHT = 'minecraft_journal_current_right';
+        const ENTRIES_KEY = 'minecraft_journal_entries';
+
+        // Get elements
+        const leftPage = document.getElementById('leftPage');
+        const rightPage = document.getElementById('rightPage');
+        const leftCharCount = document.getElementById('leftCharCount');
+        const rightCharCount = document.getElementById('rightCharCount');
+        const saveIndicator = document.getElementById('saveIndicator');
+        const entryList = document.getElementById('entryList');
+
+        // Load current pages
+        function loadCurrent() {
+            const savedLeft = localStorage.getItem(CURRENT_LEFT);
+            const savedRight = localStorage.getItem(CURRENT_RIGHT);
+
+            if (savedLeft) leftPage.value = savedLeft;
+            if (savedRight) rightPage.value = savedRight;
+
+            updateCharCount();
+        }
+
+        // Auto-save current pages
+        function autoSaveCurrent() {
+            localStorage.setItem(CURRENT_LEFT, leftPage.value);
+            localStorage.setItem(CURRENT_RIGHT, rightPage.value);
+        }
+
+        // Update character count
+        function updateCharCount() {
+            leftCharCount.textContent = `${leftPage.value.length} / 1000`;
+            rightCharCount.textContent = `${rightPage.value.length} / 1000`;
+        }
+
+        // Show save indicator
+        function showSaveIndicator() {
+            saveIndicator.classList.add('show');
+            setTimeout(() => {
+                saveIndicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Save entry to history
+        function saveEntry() {
+            const leftContent = leftPage.value.trim();
+            const rightContent = rightPage.value.trim();
+
+            if (!leftContent && !rightContent) {
+                alert('Please write something before saving!');
+                return;
+            }
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toLocaleString(),
+                left: leftContent,
+                right: rightContent
+            };
+
+            let entries = JSON.parse(localStorage.getItem(ENTRIES_KEY) || '[]');
+            entries.unshift(entry);
+            localStorage.setItem(ENTRIES_KEY, JSON.stringify(entries));
+
+            showSaveIndicator();
+            loadEntries();
+        }
+
+        // Load saved entries
+        function loadEntries() {
+            const entries = JSON.parse(localStorage.getItem(ENTRIES_KEY) || '[]');
+
+            if (entries.length === 0) {
+                entryList.innerHTML = '<div class="empty-state">No entries yet. Start writing your first adventure!</div>';
+                return;
+            }
+
+            entryList.innerHTML = entries.map(entry => `
+                <div class="entry-item" onclick="loadEntry(${entry.id})">
+                    <div class="entry-header">
+                        <div class="entry-date">📅 ${entry.date}</div>
+                        <div class="entry-actions">
+                            <button class="entry-btn" onclick="event.stopPropagation(); loadEntry(${entry.id})">📖 Load</button>
+                            <button class="entry-btn" onclick="event.stopPropagation(); deleteEntry(${entry.id})">🗑️ Delete</button>
+                        </div>
+                    </div>
+                    <div class="entry-preview">${entry.left || entry.right || 'Empty entry'}</div>
+                </div>
+            `).join('');
+        }
+
+        // Load a specific entry
+        function loadEntry(id) {
+            const entries = JSON.parse(localStorage.getItem(ENTRIES_KEY) || '[]');
+            const entry = entries.find(e => e.id === id);
+
+            if (entry) {
+                leftPage.value = entry.left;
+                rightPage.value = entry.right;
+                updateCharCount();
+                autoSaveCurrent();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                showSaveIndicator();
+            }
+        }
+
+        // Delete an entry
+        function deleteEntry(id) {
+            if (!confirm('Are you sure you want to delete this entry?')) {
+                return;
+            }
+
+            let entries = JSON.parse(localStorage.getItem(ENTRIES_KEY) || '[]');
+            entries = entries.filter(e => e.id !== id);
+            localStorage.setItem(ENTRIES_KEY, JSON.stringify(entries));
+            loadEntries();
+        }
+
+        // Clear current pages
+        function clearCurrent() {
+            if (!confirm('Clear current pages? (This won\'t delete saved entries)')) {
+                return;
+            }
+
+            leftPage.value = '';
+            rightPage.value = '';
+            updateCharCount();
+            autoSaveCurrent();
+        }
+
+        // New entry
+        function newEntry() {
+            const leftContent = leftPage.value.trim();
+            const rightContent = rightPage.value.trim();
+
+            if (leftContent || rightContent) {
+                if (confirm('Save current entry before starting a new one?')) {
+                    saveEntry();
+                }
+            }
+
+            clearCurrent();
+        }
+
+        // Event listeners
+        leftPage.addEventListener('input', () => {
+            updateCharCount();
+            autoSaveCurrent();
+        });
+
+        rightPage.addEventListener('input', () => {
+            updateCharCount();
+            autoSaveCurrent();
+        });
+
+        // Initialize
+        createParticles();
+        loadCurrent();
+        loadEntries();
+        updateCharCount();
+
+        // Auto-save every 30 seconds
+        setInterval(autoSaveCurrent, 30000);
+    </script>
+</body>
+</html>
