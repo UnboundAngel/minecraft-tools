@@ -22,6 +22,15 @@
             scroll-behavior: smooth;
         }
 
+        /* Utility classes for view switching */
+        .is-hidden {
+            display: none !important;
+        }
+
+        /* ========================================
+           MAIN HUB STYLES (existing)
+           ======================================== */
+
         /* AI Logo Styles */
         .ai-logo-container {
             width: 120px;
@@ -227,7 +236,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: 
+            background-image:
                 repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.03) 2px, rgba(0, 255, 0, 0.03) 4px);
             pointer-events: none;
         }
@@ -542,178 +551,995 @@
             pointer-events: none;
             z-index: 998;
         }
+
+        /* ========================================
+           END DIMENSION PLANNER STYLES
+           ======================================== */
+
+        #end-planner-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #05000b 0%, #1b0133 50%, #0c0016 100%);
+            z-index: 3000;
+            overflow: auto;
+        }
+
+        .end-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .end-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(176, 68, 255, 0.4);
+            box-shadow: 0 0 8px rgba(176, 68, 255, 0.6);
+            animation: float-up 15s infinite;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(var(--drift)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        #end-planner {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: 280px 1fr 420px;
+            gap: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .planner-panel {
+            background: rgba(11, 0, 22, 0.8);
+            border: 2px solid #b044ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(176, 68, 255, 0.3), inset 0 0 20px rgba(176, 68, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-to-hub-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #4ade80, #22aa55);
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
+            z-index: 100;
+        }
+
+        .back-to-hub-btn:hover {
+            background: linear-gradient(135deg, #6affaa, #4ade80);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.6);
+        }
+
+        /* LEFT PANEL */
+        .planner-left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .current-date {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(176, 68, 255, 0.2), rgba(233, 140, 255, 0.2));
+            border: 1px solid #b044ff;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(176, 68, 255, 0.3);
+        }
+
+        .date-day {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #e98cff;
+            text-shadow: 0 0 10px rgba(233, 140, 255, 0.8);
+            letter-spacing: 2px;
+        }
+
+        .date-info {
+            font-size: 0.9rem;
+            color: #b8a0ff;
+            margin-top: 0.5rem;
+        }
+
+        .timeline-label {
+            font-size: 0.8rem;
+            color: #b8a0ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-right: 0.5rem;
+            max-height: 50vh;
+        }
+
+        .timeline::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .timeline::-webkit-scrollbar-track {
+            background: rgba(176, 68, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .timeline::-webkit-scrollbar-thumb {
+            background: rgba(176, 68, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        .day-pill {
+            padding: 0.75rem 1rem;
+            background: rgba(176, 68, 255, 0.1);
+            border: 1px solid rgba(176, 68, 255, 0.3);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .day-pill:hover {
+            background: rgba(176, 68, 255, 0.2);
+            border-color: #b044ff;
+            transform: translateX(4px);
+        }
+
+        .day-pill.active {
+            background: rgba(233, 140, 255, 0.3);
+            border-color: #e98cff;
+            box-shadow: 0 0 12px rgba(233, 140, 255, 0.5);
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #b044ff, #8833cc);
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(176, 68, 255, 0.4);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #e98cff, #b044ff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(233, 140, 255, 0.6);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* CENTER PANEL */
+        .planner-center-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .journal-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e98cff;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(176, 68, 255, 0.5);
+            padding: 0.5rem;
+            outline: none;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 8px rgba(233, 140, 255, 0.6);
+        }
+
+        .journal-title::placeholder {
+            color: rgba(233, 140, 255, 0.4);
+        }
+
+        .journal-body {
+            flex: 1;
+            min-height: 400px;
+            padding: 1rem;
+            background: rgba(5, 0, 11, 0.5);
+            border: 1px solid rgba(176, 68, 255, 0.3);
+            border-radius: 4px;
+            color: #e0d5ff;
+            font-size: 1rem;
+            line-height: 1.8;
+            outline: none;
+            overflow-y: auto;
+        }
+
+        .journal-body:focus {
+            border-color: #b044ff;
+            box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
+        }
+
+        .journal-body:empty::before {
+            content: 'Write your ender log here...\A\AURLs will automatically become clickable.';
+            color: rgba(176, 68, 255, 0.4);
+            white-space: pre-wrap;
+        }
+
+        .journal-body a {
+            color: #7de8ff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .journal-body a:hover {
+            color: #a0f0ff;
+            text-shadow: 0 0 8px rgba(125, 232, 255, 0.6);
+        }
+
+        .journal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(176, 68, 255, 0.3);
+            font-size: 0.85rem;
+            color: #b8a0ff;
+        }
+
+        .char-count {
+            font-weight: bold;
+            color: #e98cff;
+        }
+
+        /* Page flip animation */
+        .page-flip-out {
+            animation: flipOut 0.3s ease;
+        }
+
+        .page-flip-in {
+            animation: flipIn 0.3s ease;
+        }
+
+        @keyframes flipOut {
+            from {
+                opacity: 1;
+                transform: rotateY(0deg) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: rotateY(90deg) scale(0.8);
+            }
+        }
+
+        @keyframes flipIn {
+            from {
+                opacity: 0;
+                transform: rotateY(-90deg) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: rotateY(0deg) scale(1);
+            }
+        }
+
+        /* RIGHT PANEL - Todos */
+        .planner-right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .todo-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e98cff;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(233, 140, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .quick-add-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .quick-add-input {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(5, 0, 11, 0.6);
+            border: 1px solid rgba(176, 68, 255, 0.5);
+            border-radius: 4px;
+            color: #e0d5ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .quick-add-input:focus {
+            border-color: #b044ff;
+            box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
+        }
+
+        .quick-add-input::placeholder {
+            color: rgba(176, 68, 255, 0.5);
+        }
+
+        .quick-add-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #44ff88, #22cc66);
+            border: none;
+            border-radius: 50%;
+            color: #000;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(68, 255, 136, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-add-btn:hover {
+            background: linear-gradient(135deg, #66ffaa, #44ff88);
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(68, 255, 136, 0.6);
+        }
+
+        .todos-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .todos-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .todos-container::-webkit-scrollbar-track {
+            background: rgba(176, 68, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .todos-container::-webkit-scrollbar-thumb {
+            background: rgba(176, 68, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        .todo-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .todo-section-title {
+            font-size: 0.85rem;
+            color: #e98cff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(176, 68, 255, 0.3);
+        }
+
+        .todo-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .todo-item {
+            background: rgba(176, 68, 255, 0.1);
+            border: 1px solid rgba(176, 68, 255, 0.3);
+            border-radius: 4px;
+            padding: 0.75rem;
+            animation: taskSlideIn 0.3s ease;
+            transition: all 0.2s ease;
+        }
+
+        @keyframes taskSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .todo-item:hover {
+            background: rgba(176, 68, 255, 0.15);
+            border-color: #b044ff;
+        }
+
+        .todo-item.completed {
+            opacity: 0.5;
+        }
+
+        .todo-item.completing {
+            animation: taskComplete 0.5s ease;
+        }
+
+        @keyframes taskComplete {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                background: rgba(68, 255, 136, 0.3);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+        }
+
+        .todo-main {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-top: 2px;
+            accent-color: #44ff88;
+        }
+
+        .todo-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .todo-text {
+            color: #e0d5ff;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+            cursor: text;
+        }
+
+        .todo-text[contenteditable="true"] {
+            outline: 1px solid #b044ff;
+            padding: 4px;
+            border-radius: 2px;
+            background: rgba(176, 68, 255, 0.1);
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #8866aa;
+        }
+
+        .todo-meta {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+        }
+
+        .priority-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .priority-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.3;
+            border: 2px solid transparent;
+        }
+
+        .priority-dot:hover {
+            opacity: 0.7;
+            transform: scale(1.2);
+        }
+
+        .priority-dot.active {
+            opacity: 1;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .priority-dot.high {
+            background: #ff4466;
+        }
+
+        .priority-dot.normal {
+            background: #ffaa44;
+        }
+
+        .priority-dot.low {
+            background: #44ff88;
+        }
+
+        .due-date-tag {
+            padding: 2px 6px;
+            background: rgba(125, 232, 255, 0.2);
+            border: 1px solid rgba(125, 232, 255, 0.4);
+            border-radius: 3px;
+            color: #7de8ff;
+            font-size: 0.7rem;
+        }
+
+        .section-tag {
+            padding: 2px 6px;
+            background: rgba(176, 68, 255, 0.2);
+            border: 1px solid rgba(176, 68, 255, 0.4);
+            border-radius: 3px;
+            color: #b8a0ff;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .section-tag:hover {
+            background: rgba(176, 68, 255, 0.3);
+        }
+
+        .subtasks-container {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+            border-left: 2px solid rgba(176, 68, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem;
+            font-size: 0.85rem;
+        }
+
+        .subtask-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #44ff88;
+        }
+
+        .subtask-text {
+            flex: 1;
+            color: #c0b0dd;
+            cursor: text;
+        }
+
+        .subtask-text[contenteditable="true"] {
+            outline: 1px solid #b044ff;
+            padding: 2px;
+            border-radius: 2px;
+        }
+
+        .subtask-item.completed .subtask-text {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .subtask-delete {
+            color: #ff4466;
+            cursor: pointer;
+            font-size: 1rem;
+            opacity: 0.5;
+        }
+
+        .subtask-delete:hover {
+            opacity: 1;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.75rem;
+            background: rgba(176, 68, 255, 0.2);
+            border: 1px solid rgba(176, 68, 255, 0.4);
+            border-radius: 3px;
+            color: #b8a0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(176, 68, 255, 0.3);
+            border-color: #b044ff;
+            color: #e98cff;
+        }
+
+        .delete-btn {
+            background: rgba(255, 68, 102, 0.2);
+            border-color: rgba(255, 68, 102, 0.4);
+            color: #ff8899;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 68, 102, 0.3);
+            border-color: #ff4466;
+        }
+
+        .completed-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(176, 68, 255, 0.3);
+        }
+
+        .completed-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: #b8a0ff;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            user-select: none;
+        }
+
+        .completed-toggle:hover {
+            color: #e98cff;
+        }
+
+        .completed-list {
+            display: none;
+        }
+
+        .completed-list.show {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            #end-planner {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .planner-left-panel {
+                max-height: 300px;
+            }
+
+            .timeline {
+                flex-direction: row;
+                overflow-x: auto;
+                max-height: none;
+            }
+
+            .day-pill {
+                white-space: nowrap;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- AI Welcome Screen -->
-    <div class="ai-welcome" id="aiWelcome">
-        <div class="ai-container">
-            <div class="ai-logo-container">
-                <div class="ai-glow"></div>
-                <div class="ai-ring"></div>
-                <div class="ai-ring"></div>
-                <div class="ai-core">
-                    <div class="node"></div>
-                    <div class="node"></div>
-                    <div class="node"></div>
-                    <div class="node"></div>
-                    <div class="node"></div>
+    <!-- MAIN HUB VIEW -->
+    <div id="hub-view">
+        <!-- AI Welcome Screen -->
+        <div class="ai-welcome" id="aiWelcome">
+            <div class="ai-container">
+                <div class="ai-logo-container">
+                    <div class="ai-glow"></div>
+                    <div class="ai-ring"></div>
+                    <div class="ai-ring"></div>
+                    <div class="ai-core">
+                        <div class="node"></div>
+                        <div class="node"></div>
+                        <div class="node"></div>
+                        <div class="node"></div>
+                        <div class="node"></div>
+                    </div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="scanline"></div>
+                    <div class="binary">01001</div>
+                    <div class="binary">11010</div>
+                    <div class="binary">10110</div>
+                    <div class="binary">01101</div>
+                    <div class="binary">10011</div>
                 </div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="scanline"></div>
-                <div class="binary">01001</div>
-                <div class="binary">11010</div>
-                <div class="binary">10110</div>
-                <div class="binary">01101</div>
-                <div class="binary">10011</div>
+                <div class="ai-message">Welcome! Where would you like to go today?</div>
+                <div class="ai-options">
+                    <div class="ai-option" onclick="openEndPlanner()">📖 End Dimension Planner</div>
+                    <a href="enchantment_calculator.html" class="ai-option">📘 Enchantment Calculator</a>
+                    <a href="villager_trading_hub.html" class="ai-option">🧑‍🌾 Villager Trading Hub</a>
+                    <a href="ore_guide_page.html" class="ai-option">💎 Ore Coordinate Guide</a>
+                    <a href="world_seeds_page.html" class="ai-option">🗺️ Seed Finder</a>
+                    <a href="build_ideas_gallery.html" class="ai-option">🗝️ Build Ideas Gallery</a>
+                    <a href="farm_efficiency_page.html" class="ai-option">🌾 Farm Efficiency</a>
+                    <a href="nether_hub_calculator.html" class="ai-option">🚇 Nether hub calculator</a>
+                    <a href="potion_brewing_guide.html" class="ai-option">🧪 Potion brewing guide</a>
+                    <div class="ai-option" onclick="hideWelcome()">🌍 Browse All Tools</div>
+                </div>
             </div>
-            <div class="ai-message">Welcome! Where would you like to go today?</div>
-            <div class="ai-options">
-                <a href="minecraft_journal.html" class="ai-option">📖 Minecraft Journal</a>
-                <a href="enchantment_calculator.html" class="ai-option">📘 Enchantment Calculator</a>
-                <a href="villager_trading_hub.html" class="ai-option">🧑‍🌾 Villager Trading Hub</a>
-                <a href="ore_guide_page.html" class="ai-option">💎 Ore Coordinate Guide</a>
-                <a href="world_seeds_page.html" class="ai-option">🗺️ Seed Finder</a>
-                <a href="build_ideas_gallery.html" class="ai-option">🗝️ Build Ideas Gallery</a>
-                <a href="farm_efficiency_page.html" class="ai-option">🌾 Farm Efficiency</a>
-                <a href="nether_hub_calculator.html" class="ai-option">🚇 Nether hub calculator</a>
-                <a href="potion_brewing_guide.html" class="ai-option">🧪 Potion brewing guide</a>
-                <div class="ai-option" onclick="hideWelcome()">🌍 Browse All Tools</div>
+        </div>
+
+        <!-- Scroll fade overlays -->
+        <div class="fade-overlay" id="topFade"></div>
+        <div class="fade-overlay-bottom"></div>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>⛏️ MINECRAFT TOOLS HUB ⛏️</h1>
+            <p>Your Ultimate Resource for Java & Bedrock</p>
+        </section>
+
+        <!-- Overworld Section -->
+        <section class="overworld-section" id="overworld">
+            <h2 class="section-title">🌲 OVERWORLD TOOLS 🌲</h2>
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openEndPlanner()">
+                    <div class="hotbar-icon">📖</div>
+                    <h3>End Dimension Planner</h3>
+                    <p>Track your adventures and tasks in a beautiful End-themed journal with TickTick-style to-dos</p>
+                </div>
+                <a href="enchantment_calculator.html" class="tool-card">
+                    <div class="hotbar-icon">📘</div>
+                    <h3>Enchantment Calculator</h3>
+                    <p>Calculate XP costs and optimal enchanting strategies for all your gear</p>
+                </a>
+                <a href="villager_trading_hub.html" class="tool-card">
+                    <div class="hotbar-icon">🧑‍🌾</div>
+                    <h3>Villager Trading Hub</h3>
+                    <p>Complete guide to villager trades, prices, and profession mechanics</p>
+                </a>
+                <a href="ore_guide_page.html" class="tool-card">
+                    <div class="hotbar-icon">💎</div>
+                    <h3>Ore Coordinate Guide</h3>
+                    <p>Find the best Y-levels for mining diamonds, iron, copper, and more</p>
+                </a>
+                <a href="build_ideas_gallery.html" class="tool-card">
+                    <div class="hotbar-icon">🗝️</div>
+                    <h3>Build Ideas Gallery</h3>
+                    <p>Browse creative builds and architectural inspiration</p>
+                </a>
+                <a href="world_seeds_page.html" class="tool-card">
+                    <div class="hotbar-icon">🗺️</div>
+                    <h3>Seed Finder</h3>
+                    <p>Discover amazing world seeds for your next adventure</p>
+                </a>
             </div>
+        </section>
+
+        <!-- Nether Section -->
+        <section class="nether-section" id="nether">
+            <h2 class="section-title">🔥 NETHER TOOLS 🔥</h2>
+            <div class="tools-grid">
+                <a href="farm_efficiency_page.html" class="tool-card">
+                    <div class="hotbar-icon">🌾</div>
+                    <h3>Farm Efficiency Hub</h3>
+                    <p>Calculate rates for mob farms, crop farms, and automated systems</p>
+                </a>
+                <a href="potion_brewing_guide.html" class="tool-card">
+                    <div class="hotbar-icon">🧪</div>
+                    <h3>Potion Brewing Guide</h3>
+                    <p>Master the art of brewing with recipes and effects</p>
+                </a>
+                <a href="nether_hub_calculator.html" class="tool-card">
+                    <div class="hotbar-icon">🚇</div>
+                    <h3>Nether Hub Calculator</h3>
+                    <p>Plan your nether highway network and portal coordinates</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Hotbar Navigation -->
+        <div class="hotbar" id="hotbar">
+            <a href="index.html" class="hotbar-slot" title="Home">
+                <div class="hotbar-icon">🏠</div>
+                <div class="hotbar-label">HOME</div>
+            </a>
+            <div class="hotbar-slot" onclick="openEndPlanner()" title="Planner">
+                <div class="hotbar-icon">📖</div>
+                <div class="hotbar-label">PLANNER</div>
+            </div>
+            <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+                <div class="hotbar-icon">📘</div>
+                <div class="hotbar-label">ENCHANT</div>
+            </a>
+            <a href="villager_trading_hub.html" class="hotbar-slot" title="Villagers">
+                <div class="hotbar-icon">🧑‍🌾</div>
+                <div class="hotbar-label">VILLAGER</div>
+            </a>
+            <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+                <div class="hotbar-icon">💎</div>
+                <div class="hotbar-label">ORES</div>
+            </a>
+            <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+                <div class="hotbar-icon">🗺️</div>
+                <div class="hotbar-label">SEEDS</div>
+            </a>
+            <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+                <div class="hotbar-icon">🗝️</div>
+                <div class="hotbar-label">BUILDS</div>
+            </a>
+            <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+                <div class="hotbar-icon">🌾</div>
+                <div class="hotbar-label">FARMS</div>
+            </a>
+            <a href="potion_brewing_guide.html" class="hotbar-slot" title="Potions">
+                <div class="hotbar-icon">🧪</div>
+                <div class="hotbar-label">POTIONS</div>
+            </a>
+            <a href="nether_hub_calculator.html" class="hotbar-slot" title="Nether Hub">
+                <div class="hotbar-icon">🚇</div>
+                <div class="hotbar-label">NETHER</div>
+            </a>
         </div>
     </div>
 
-    <!-- Scroll fade overlays -->
-    <div class="fade-overlay" id="topFade"></div>
-    <div class="fade-overlay-bottom"></div>
+    <!-- END PLANNER VIEW -->
+    <div id="end-planner-view" class="is-hidden">
+        <!-- End particles background -->
+        <div class="end-particles" id="endParticles"></div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>⛏️ MINECRAFT TOOLS HUB ⛏️</h1>
-        <p>Your Ultimate Resource for Java & Bedrock</p>
-    </section>
+        <!-- Back to Hub button -->
+        <button class="back-to-hub-btn" onclick="closeEndPlanner()">⬅ Back to Hub</button>
 
-    <!-- Overworld Section -->
-    <section class="overworld-section" id="overworld">
-        <h2 class="section-title">🌲 OVERWORLD TOOLS 🌲</h2>
-        <div class="tools-grid">
-            <a href="minecraft_journal.html" class="tool-card">
-                <div class="hotbar-icon">📖</div>
-                <h3>Minecraft Journal</h3>
-                <p>Document your adventures, builds, and plans in a beautiful 3D journal with auto-save</p>
-            </a>
-            <a href="enchantment_calculator.html" class="tool-card">
-                <div class="hotbar-icon">📘</div>
-                <h3>Enchantment Calculator</h3>
-                <p>Calculate XP costs and optimal enchanting strategies for all your gear</p>
-            </a>
-            <a href="villager_trading_hub.html" class="tool-card">
-                <div class="hotbar-icon">🧑‍🌾</div>
-                <h3>Villager Trading Hub</h3>
-                <p>Complete guide to villager trades, prices, and profession mechanics</p>
-            </a>
-            <a href="ore_guide_page.html" class="tool-card">
-                <div class="hotbar-icon">💎</div>
-                <h3>Ore Coordinate Guide</h3>
-                <p>Find the best Y-levels for mining diamonds, iron, copper, and more</p>
-            </a>
-            <a href="build_ideas_gallery.html" class="tool-card">
-                <div class="hotbar-icon">🗝️</div>
-                <h3>Build Ideas Gallery</h3>
-                <p>Browse creative builds and architectural inspiration</p>
-            </a>
-            <a href="world_seeds_page.html" class="tool-card">
-                <div class="hotbar-icon">🗺️</div>
-                <h3>Seed Finder</h3>
-                <p>Discover amazing world seeds for your next adventure</p>
-            </a>
+        <!-- Main planner container -->
+        <div id="end-planner">
+            <!-- LEFT PANEL - Navigation -->
+            <div class="planner-panel planner-left-panel">
+                <div class="current-date">
+                    <div class="date-day" id="currentDay">DAY 1</div>
+                    <div class="date-info" id="currentDate">Loading...</div>
+                </div>
+
+                <div class="timeline-label">Timeline</div>
+                <div class="timeline" id="timeline">
+                    <!-- Day pills populated by JS -->
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="prevBtn" onclick="navigatePrev()">⬅ Prev</button>
+                    <button class="nav-btn" id="nextBtn" onclick="navigateNext()">Next ➡</button>
+                </div>
+            </div>
+
+            <!-- CENTER PANEL - Journal -->
+            <div class="planner-panel planner-center-panel" id="centerPanel">
+                <input type="text" class="journal-title" id="journalTitle" placeholder="Ender Log Title" />
+
+                <div class="journal-body" contenteditable="true" id="journalBody"></div>
+
+                <div class="journal-footer">
+                    <span class="char-count" id="charCount">0 characters</span>
+                    <span>URLs become clickable links</span>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL - Todos -->
+            <div class="planner-panel planner-right-panel">
+                <div class="todo-header">End Tasks</div>
+
+                <div class="quick-add-container">
+                    <input type="text" class="quick-add-input" id="quickAddInput" placeholder="Add a task..." />
+                    <button class="quick-add-btn" id="quickAddBtn" onclick="addTask()">+</button>
+                </div>
+
+                <div class="todos-container">
+                    <div class="todo-section">
+                        <div class="todo-section-title">📅 Today</div>
+                        <div class="todo-list" id="todayTodos"></div>
+                    </div>
+
+                    <div class="todo-section">
+                        <div class="todo-section-title">📆 Upcoming</div>
+                        <div class="todo-list" id="upcomingTodos"></div>
+                    </div>
+
+                    <div class="completed-section">
+                        <div class="completed-toggle" onclick="toggleCompleted()">
+                            <span id="completedToggleIcon">▶</span>
+                            <span>Completed (<span id="completedCount">0</span>)</span>
+                        </div>
+                        <div class="completed-list" id="completedList"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
-
-    <!-- Nether Section -->
-    <section class="nether-section" id="nether">
-        <h2 class="section-title">🔥 NETHER TOOLS 🔥</h2>
-        <div class="tools-grid">
-            <a href="farm_efficiency_page.html" class="tool-card">
-                <div class="hotbar-icon">🌾</div>
-                <h3>Farm Efficiency Hub</h3>
-                <p>Calculate rates for mob farms, crop farms, and automated systems</p>
-            </a>
-            <a href="potion_brewing_guide.html" class="tool-card">
-                <div class="hotbar-icon">🧪</div>
-                <h3>Potion Brewing Guide</h3>
-                <p>Master the art of brewing with recipes and effects</p>
-            </a>
-            <a href="nether_hub_calculator.html" class="tool-card">
-                <div class="hotbar-icon">🚇</div>
-                <h3>Nether Hub Calculator</h3>
-                <p>Plan your nether highway network and portal coordinates</p>
-            </a>
-        </div>
-    </section>
-
-    <!-- Hotbar Navigation -->
-    <div class="hotbar" id="hotbar">
-        <a href="index.html" class="hotbar-slot" title="Home">
-            <div class="hotbar-icon">🏠</div>
-            <div class="hotbar-label">HOME</div>
-        </a>
-        <a href="minecraft_journal.html" class="hotbar-slot" title="Journal">
-            <div class="hotbar-icon">📖</div>
-            <div class="hotbar-label">JOURNAL</div>
-        </a>
-        <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
-            <div class="hotbar-icon">📘</div>
-            <div class="hotbar-label">ENCHANT</div>
-        </a>
-        <a href="villager_trading_hub.html" class="hotbar-slot" title="Villagers">
-            <div class="hotbar-icon">🧑‍🌾</div>
-            <div class="hotbar-label">VILLAGER</div>
-        </a>
-        <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
-            <div class="hotbar-icon">💎</div>
-            <div class="hotbar-label">ORES</div>
-        </a>
-        <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
-            <div class="hotbar-icon">🗺️</div>
-            <div class="hotbar-label">SEEDS</div>
-        </a>
-        <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
-            <div class="hotbar-icon">🗝️</div>
-            <div class="hotbar-label">BUILDS</div>
-        </a>
-        <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
-            <div class="hotbar-icon">🌾</div>
-            <div class="hotbar-label">FARMS</div>
-        </a>
-        <a href="potion_brewing_guide.html" class="hotbar-slot" title="Potions">
-            <div class="hotbar-icon">🧪</div>
-            <div class="hotbar-label">POTIONS</div>
-        </a>
-        <a href="nether_hub_calculator.html" class="hotbar-slot" title="Nether Hub">
-            <div class="hotbar-icon">🚇</div>
-            <div class="hotbar-label">NETHER</div>
-        </a>
     </div>
 
     <script>
-        // Hide welcome screen and show hotbar
+        // ============================================
+        // VIEW SWITCHING
+        // ============================================
+        function openEndPlanner() {
+            document.getElementById('hub-view').classList.add('is-hidden');
+            document.getElementById('end-planner-view').classList.remove('is-hidden');
+            initPlanner();
+        }
+
+        function closeEndPlanner() {
+            document.getElementById('end-planner-view').classList.add('is-hidden');
+            document.getElementById('hub-view').classList.remove('is-hidden');
+        }
+
+        // ============================================
+        // HUB SCRIPTS (existing)
+        // ============================================
         function hideWelcome() {
             const aiWelcome = document.getElementById('aiWelcome');
             const hotbar = document.getElementById('hotbar');
-            
+
             aiWelcome.classList.add('hidden');
-            
+
             setTimeout(() => {
                 hotbar.classList.add('visible');
             }, 500);
         }
 
-        // Scroll animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -100px 0px'
@@ -731,7 +1557,6 @@
             observer.observe(section);
         });
 
-        // Top fade effect on scroll
         window.addEventListener('scroll', () => {
             const topFade = document.getElementById('topFade');
             if (topFade && window.scrollY > 100) {
@@ -740,6 +1565,715 @@
                 topFade.classList.remove('visible');
             }
         });
+
+        // ============================================
+        // END PLANNER SCRIPTS
+        // ============================================
+        const STORAGE_KEY = 'mcTools_endPlanner_v1';
+        let pages = [];
+        let currentPageIndex = 0;
+        let showCompleted = false;
+        let plannerInitialized = false;
+
+        function initPlanner() {
+            if (plannerInitialized) {
+                renderCurrentPage();
+                return;
+            }
+
+            createEndParticles();
+            loadState();
+            bindEventListeners();
+            renderCurrentPage();
+            plannerInitialized = true;
+        }
+
+        function createEndParticles() {
+            const container = document.getElementById('endParticles');
+            if (!container || container.children.length > 0) return;
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'end-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.setProperty('--drift', (Math.random() * 100 - 50) + 'px');
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    pages = data.pages || [];
+                    currentPageIndex = data.currentPageIndex || 0;
+                } catch (e) {
+                    console.error('Failed to parse saved state:', e);
+                    pages = [];
+                }
+            }
+
+            if (pages.length === 0) {
+                pages = [{
+                    id: Date.now().toString(),
+                    dayNumber: 1,
+                    date: new Date().toISOString().split('T')[0],
+                    title: '',
+                    body: '',
+                    todos: []
+                }];
+            }
+
+            if (currentPageIndex >= pages.length) {
+                currentPageIndex = pages.length - 1;
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    pages: pages,
+                    currentPageIndex: currentPageIndex
+                }));
+            } catch (e) {
+                console.error('Failed to save state:', e);
+            }
+        }
+
+        function bindEventListeners() {
+            const journalTitle = document.getElementById('journalTitle');
+            const journalBody = document.getElementById('journalBody');
+            const quickAddInput = document.getElementById('quickAddInput');
+
+            if (!journalTitle || !journalBody || !quickAddInput) return;
+
+            journalTitle.addEventListener('input', function() {
+                pages[currentPageIndex].title = this.value;
+                updateCharCount();
+                saveState();
+            });
+
+            journalBody.addEventListener('input', function() {
+                pages[currentPageIndex].body = this.innerHTML;
+                updateCharCount();
+                saveState();
+            });
+
+            journalBody.addEventListener('blur', function() {
+                linkifyJournalBody();
+            });
+
+            journalBody.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    window.open(e.target.href, '_blank', 'noopener,noreferrer');
+                }
+            });
+
+            quickAddInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addTask();
+                }
+            });
+        }
+
+        function navigatePrev() {
+            if (currentPageIndex > 0) {
+                triggerPageFlip(() => {
+                    currentPageIndex--;
+                    renderCurrentPage();
+                });
+            }
+        }
+
+        function navigateNext() {
+            if (currentPageIndex >= pages.length - 1) {
+                const newPage = {
+                    id: Date.now().toString(),
+                    dayNumber: pages.length + 1,
+                    date: new Date().toISOString().split('T')[0],
+                    title: '',
+                    body: '',
+                    todos: []
+                };
+                pages.push(newPage);
+                saveState();
+            }
+
+            triggerPageFlip(() => {
+                currentPageIndex++;
+                renderCurrentPage();
+            });
+        }
+
+        function goToPage(index) {
+            if (index >= 0 && index < pages.length && index !== currentPageIndex) {
+                triggerPageFlip(() => {
+                    currentPageIndex = index;
+                    renderCurrentPage();
+                });
+            }
+        }
+
+        function triggerPageFlip(callback) {
+            const centerPanel = document.getElementById('centerPanel');
+            if (!centerPanel) return callback();
+
+            centerPanel.classList.add('page-flip-out');
+
+            setTimeout(() => {
+                callback();
+                centerPanel.classList.remove('page-flip-out');
+                centerPanel.classList.add('page-flip-in');
+
+                setTimeout(() => {
+                    centerPanel.classList.remove('page-flip-in');
+                }, 300);
+            }, 300);
+        }
+
+        function renderCurrentPage() {
+            const page = pages[currentPageIndex];
+
+            updateDateDisplay();
+            renderTimeline();
+            updateNavButtons();
+
+            const journalTitle = document.getElementById('journalTitle');
+            const journalBody = document.getElementById('journalBody');
+
+            if (journalTitle) journalTitle.value = page.title || '';
+            if (journalBody) journalBody.innerHTML = page.body || '';
+
+            updateCharCount();
+            renderTodos();
+        }
+
+        function updateDateDisplay() {
+            const page = pages[currentPageIndex];
+            const dateObj = new Date(page.date);
+
+            const dayEl = document.getElementById('currentDay');
+            const dateEl = document.getElementById('currentDate');
+
+            if (dayEl) dayEl.textContent = `DAY ${page.dayNumber}`;
+
+            if (dateEl) {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                dateEl.textContent = dateObj.toLocaleDateString('en-US', options);
+            }
+        }
+
+        function renderTimeline() {
+            const timeline = document.getElementById('timeline');
+            if (!timeline) return;
+
+            timeline.innerHTML = '';
+
+            pages.forEach((page, index) => {
+                const pill = document.createElement('div');
+                pill.className = 'day-pill' + (index === currentPageIndex ? ' active' : '');
+
+                const dateObj = new Date(page.date);
+                const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                pill.textContent = `Day ${page.dayNumber} – ${dateStr}`;
+                pill.onclick = () => goToPage(index);
+
+                timeline.appendChild(pill);
+            });
+        }
+
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (prevBtn) prevBtn.disabled = currentPageIndex === 0;
+            if (nextBtn) nextBtn.disabled = false;
+        }
+
+        function updateCharCount() {
+            const title = document.getElementById('journalTitle')?.value || '';
+            const body = document.getElementById('journalBody')?.innerText || '';
+
+            const titleChars = title.trim().length;
+            const bodyChars = body.trim().length;
+            const total = titleChars + bodyChars;
+
+            const charCount = document.getElementById('charCount');
+            if (charCount) {
+                charCount.textContent = `${total} character${total !== 1 ? 's' : ''}`;
+            }
+        }
+
+        function linkifyJournalBody() {
+            const body = document.getElementById('journalBody');
+            if (!body) return;
+
+            const selection = window.getSelection();
+            const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+
+            let html = body.innerHTML;
+            const urlRegex = /(?<!["'>])(https?:\/\/[^\s<]+)(?![^<]*<\/a>)/gi;
+
+            html = html.replace(urlRegex, function(url) {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+            });
+
+            if (html !== body.innerHTML) {
+                body.innerHTML = html;
+                pages[currentPageIndex].body = html;
+                saveState();
+
+                if (range) {
+                    try {
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    } catch (e) {}
+                }
+            }
+        }
+
+        function addTask() {
+            const input = document.getElementById('quickAddInput');
+            if (!input) return;
+
+            const text = input.value.trim();
+            if (!text) return;
+
+            const newTodo = {
+                id: Date.now().toString(),
+                text: text,
+                done: false,
+                createdAt: Date.now(),
+                dueDate: null,
+                priority: null,
+                section: 'today',
+                subtasks: []
+            };
+
+            pages[currentPageIndex].todos.push(newTodo);
+            input.value = '';
+
+            saveState();
+            renderTodos();
+        }
+
+        function toggleTodo(todoId) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+
+            if (todo) {
+                const todoEl = document.querySelector(`[data-todo-id="${todoId}"]`);
+                if (todoEl) {
+                    todoEl.classList.add('completing');
+                    setTimeout(() => {
+                        todo.done = !todo.done;
+                        saveState();
+                        renderTodos();
+                    }, 500);
+                } else {
+                    todo.done = !todo.done;
+                    saveState();
+                    renderTodos();
+                }
+            }
+        }
+
+        function deleteTodo(todoId) {
+            const page = pages[currentPageIndex];
+            page.todos = page.todos.filter(t => t.id !== todoId);
+            saveState();
+            renderTodos();
+        }
+
+        function updateTodoText(todoId, newText) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+            if (todo) {
+                todo.text = newText;
+                saveState();
+            }
+        }
+
+        function setPriority(todoId, priority) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+            if (todo) {
+                todo.priority = todo.priority === priority ? null : priority;
+                saveState();
+                renderTodos();
+            }
+        }
+
+        function toggleSection(todoId) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+            if (todo) {
+                todo.section = todo.section === 'today' ? 'upcoming' : 'today';
+                saveState();
+                renderTodos();
+            }
+        }
+
+        function setDueDate(todoId) {
+            const options = ['Today', 'Tomorrow', 'Next Week', 'Custom', 'Clear'];
+            const choice = prompt('Set due date:\n1. Today\n2. Tomorrow\n3. Next Week\n4. Custom\n5. Clear', '1');
+
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+            if (!todo) return;
+
+            const today = new Date();
+            switch(choice) {
+                case '1':
+                    todo.dueDate = today.toISOString().split('T')[0];
+                    break;
+                case '2':
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    todo.dueDate = tomorrow.toISOString().split('T')[0];
+                    break;
+                case '3':
+                    const nextWeek = new Date(today);
+                    nextWeek.setDate(nextWeek.getDate() + 7);
+                    todo.dueDate = nextWeek.toISOString().split('T')[0];
+                    break;
+                case '4':
+                    const customDate = prompt('Enter date (YYYY-MM-DD):');
+                    if (customDate) todo.dueDate = customDate;
+                    break;
+                case '5':
+                    todo.dueDate = null;
+                    break;
+                default:
+                    return;
+            }
+
+            saveState();
+            renderTodos();
+        }
+
+        function addSubtask(todoId) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+
+            if (todo) {
+                const text = prompt('Enter subtask:');
+                if (text && text.trim()) {
+                    todo.subtasks.push({
+                        id: Date.now().toString(),
+                        text: text.trim(),
+                        done: false
+                    });
+                    saveState();
+                    renderTodos();
+                }
+            }
+        }
+
+        function toggleSubtask(todoId, subtaskId) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+
+            if (todo) {
+                const subtask = todo.subtasks.find(s => s.id === subtaskId);
+                if (subtask) {
+                    subtask.done = !subtask.done;
+                    saveState();
+                    renderTodos();
+                }
+            }
+        }
+
+        function updateSubtaskText(todoId, subtaskId, newText) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+
+            if (todo) {
+                const subtask = todo.subtasks.find(s => s.id === subtaskId);
+                if (subtask) {
+                    subtask.text = newText;
+                    saveState();
+                }
+            }
+        }
+
+        function deleteSubtask(todoId, subtaskId) {
+            const page = pages[currentPageIndex];
+            const todo = page.todos.find(t => t.id === todoId);
+
+            if (todo) {
+                todo.subtasks = todo.subtasks.filter(s => s.id !== subtaskId);
+                saveState();
+                renderTodos();
+            }
+        }
+
+        function moveTodoUp(todoId, section) {
+            const page = pages[currentPageIndex];
+            const sectionTodos = page.todos.filter(t => !t.done && t.section === section);
+            const index = sectionTodos.findIndex(t => t.id === todoId);
+
+            if (index > 0) {
+                const allIndex1 = page.todos.indexOf(sectionTodos[index]);
+                const allIndex2 = page.todos.indexOf(sectionTodos[index - 1]);
+                [page.todos[allIndex1], page.todos[allIndex2]] = [page.todos[allIndex2], page.todos[allIndex1]];
+                saveState();
+                renderTodos();
+            }
+        }
+
+        function moveTodoDown(todoId, section) {
+            const page = pages[currentPageIndex];
+            const sectionTodos = page.todos.filter(t => !t.done && t.section === section);
+            const index = sectionTodos.findIndex(t => t.id === todoId);
+
+            if (index >= 0 && index < sectionTodos.length - 1) {
+                const allIndex1 = page.todos.indexOf(sectionTodos[index]);
+                const allIndex2 = page.todos.indexOf(sectionTodos[index + 1]);
+                [page.todos[allIndex1], page.todos[allIndex2]] = [page.todos[allIndex2], page.todos[allIndex1]];
+                saveState();
+                renderTodos();
+            }
+        }
+
+        function renderTodos() {
+            const page = pages[currentPageIndex];
+
+            const todayTodos = page.todos.filter(t => !t.done && t.section === 'today');
+            const upcomingTodos = page.todos.filter(t => !t.done && t.section === 'upcoming');
+            const completedTodos = page.todos.filter(t => t.done);
+
+            const todayContainer = document.getElementById('todayTodos');
+            const upcomingContainer = document.getElementById('upcomingTodos');
+            const completedContainer = document.getElementById('completedList');
+
+            if (todayContainer) {
+                todayContainer.innerHTML = '';
+                todayTodos.forEach((todo, index) => {
+                    todayContainer.appendChild(createTodoElement(todo, 'today', index, todayTodos.length));
+                });
+                if (todayTodos.length === 0) {
+                    todayContainer.innerHTML = '<div style="color: #8866aa; font-size: 0.85rem; text-align: center; padding: 1rem;">No tasks for today</div>';
+                }
+            }
+
+            if (upcomingContainer) {
+                upcomingContainer.innerHTML = '';
+                upcomingTodos.forEach((todo, index) => {
+                    upcomingContainer.appendChild(createTodoElement(todo, 'upcoming', index, upcomingTodos.length));
+                });
+                if (upcomingTodos.length === 0) {
+                    upcomingContainer.innerHTML = '<div style="color: #8866aa; font-size: 0.85rem; text-align: center; padding: 1rem;">No upcoming tasks</div>';
+                }
+            }
+
+            if (completedContainer) {
+                completedContainer.innerHTML = '';
+                completedTodos.forEach(todo => {
+                    completedContainer.appendChild(createTodoElement(todo, 'completed', -1, -1));
+                });
+            }
+
+            const completedCount = document.getElementById('completedCount');
+            if (completedCount) {
+                completedCount.textContent = completedTodos.length;
+            }
+        }
+
+        function createTodoElement(todo, section, index, total) {
+            const item = document.createElement('div');
+            item.className = 'todo-item' + (todo.done ? ' completed' : '');
+            item.setAttribute('data-todo-id', todo.id);
+
+            const main = document.createElement('div');
+            main.className = 'todo-main';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'todo-checkbox';
+            checkbox.checked = todo.done;
+            checkbox.onchange = () => toggleTodo(todo.id);
+
+            const content = document.createElement('div');
+            content.className = 'todo-content';
+
+            const text = document.createElement('div');
+            text.className = 'todo-text';
+            text.textContent = todo.text;
+            if (!todo.done) {
+                text.onclick = function() {
+                    this.contentEditable = 'true';
+                    this.focus();
+                };
+                text.onblur = function() {
+                    this.contentEditable = 'false';
+                    updateTodoText(todo.id, this.textContent);
+                };
+                text.onkeypress = function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur();
+                    }
+                };
+            }
+
+            content.appendChild(text);
+
+            if (!todo.done) {
+                const meta = document.createElement('div');
+                meta.className = 'todo-meta';
+
+                const priorityDots = document.createElement('div');
+                priorityDots.className = 'priority-dots';
+
+                ['high', 'normal', 'low'].forEach(level => {
+                    const dot = document.createElement('div');
+                    dot.className = `priority-dot ${level}`;
+                    if (todo.priority === level) dot.classList.add('active');
+                    dot.onclick = () => setPriority(todo.id, level);
+                    priorityDots.appendChild(dot);
+                });
+
+                meta.appendChild(priorityDots);
+
+                if (todo.dueDate) {
+                    const dueTag = document.createElement('span');
+                    dueTag.className = 'due-date-tag';
+                    const dueDate = new Date(todo.dueDate);
+                    dueTag.textContent = dueDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    meta.appendChild(dueTag);
+                }
+
+                const sectionTag = document.createElement('span');
+                sectionTag.className = 'section-tag';
+                sectionTag.textContent = todo.section === 'today' ? '📅 Today' : '📆 Upcoming';
+                sectionTag.onclick = () => toggleSection(todo.id);
+                meta.appendChild(sectionTag);
+
+                content.appendChild(meta);
+            }
+
+            if (todo.subtasks && todo.subtasks.length > 0) {
+                const subtasksContainer = document.createElement('div');
+                subtasksContainer.className = 'subtasks-container';
+
+                todo.subtasks.forEach(subtask => {
+                    const subtaskItem = document.createElement('div');
+                    subtaskItem.className = 'subtask-item' + (subtask.done ? ' completed' : '');
+
+                    const subtaskCheck = document.createElement('input');
+                    subtaskCheck.type = 'checkbox';
+                    subtaskCheck.className = 'subtask-checkbox';
+                    subtaskCheck.checked = subtask.done;
+                    subtaskCheck.onchange = () => toggleSubtask(todo.id, subtask.id);
+
+                    const subtaskText = document.createElement('span');
+                    subtaskText.className = 'subtask-text';
+                    subtaskText.textContent = subtask.text;
+                    if (!todo.done) {
+                        subtaskText.onclick = function() {
+                            this.contentEditable = 'true';
+                            this.focus();
+                        };
+                        subtaskText.onblur = function() {
+                            this.contentEditable = 'false';
+                            updateSubtaskText(todo.id, subtask.id, this.textContent);
+                        };
+                        subtaskText.onkeypress = function(e) {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                this.blur();
+                            }
+                        };
+                    }
+
+                    const subtaskDelete = document.createElement('span');
+                    subtaskDelete.className = 'subtask-delete';
+                    subtaskDelete.textContent = '×';
+                    subtaskDelete.onclick = () => deleteSubtask(todo.id, subtask.id);
+
+                    subtaskItem.appendChild(subtaskCheck);
+                    subtaskItem.appendChild(subtaskText);
+                    subtaskItem.appendChild(subtaskDelete);
+
+                    subtasksContainer.appendChild(subtaskItem);
+                });
+
+                content.appendChild(subtasksContainer);
+            }
+
+            if (!todo.done && section !== 'completed') {
+                const actions = document.createElement('div');
+                actions.className = 'todo-actions';
+
+                if (index > 0) {
+                    const upBtn = document.createElement('button');
+                    upBtn.className = 'action-btn';
+                    upBtn.textContent = '↑ Up';
+                    upBtn.onclick = () => moveTodoUp(todo.id, section);
+                    actions.appendChild(upBtn);
+                }
+
+                if (index >= 0 && index < total - 1) {
+                    const downBtn = document.createElement('button');
+                    downBtn.className = 'action-btn';
+                    downBtn.textContent = '↓ Down';
+                    downBtn.onclick = () => moveTodoDown(todo.id, section);
+                    actions.appendChild(downBtn);
+                }
+
+                const dueDateBtn = document.createElement('button');
+                dueDateBtn.className = 'action-btn';
+                dueDateBtn.textContent = '📅 Due Date';
+                dueDateBtn.onclick = () => setDueDate(todo.id);
+                actions.appendChild(dueDateBtn);
+
+                const subtaskBtn = document.createElement('button');
+                subtaskBtn.className = 'action-btn';
+                subtaskBtn.textContent = '+ Subtask';
+                subtaskBtn.onclick = () => addSubtask(todo.id);
+                actions.appendChild(subtaskBtn);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn delete-btn';
+                deleteBtn.textContent = '🗑 Delete';
+                deleteBtn.onclick = () => {
+                    if (confirm('Delete this task?')) {
+                        deleteTodo(todo.id);
+                    }
+                };
+                actions.appendChild(deleteBtn);
+
+                content.appendChild(actions);
+            }
+
+            main.appendChild(checkbox);
+            main.appendChild(content);
+            item.appendChild(main);
+
+            return item;
+        }
+
+        function toggleCompleted() {
+            showCompleted = !showCompleted;
+            const list = document.getElementById('completedList');
+            const icon = document.getElementById('completedToggleIcon');
+
+            if (list && icon) {
+                if (showCompleted) {
+                    list.classList.add('show');
+                    icon.textContent = '▼';
+                } else {
+                    list.classList.remove('show');
+                    icon.textContent = '▶';
+                }
+            }
+        }
     </script>
 </body>
 </html>
