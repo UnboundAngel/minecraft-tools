@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minecraft Tools Hub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
     <style>
         * {
             margin: 0;
@@ -562,9 +563,156 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(180deg, #05000b 0%, #1b0133 50%, #0c0016 100%);
+            background:
+                linear-gradient(180deg,
+                    #020007 0%,
+                    #14002a 40%,
+                    #25004c 70%,
+                    #14002a 100%
+                );
             z-index: 3000;
             overflow: auto;
+        }
+
+        /* Floating End Islands */
+        .end-island {
+            position: fixed;
+            background: linear-gradient(135deg, rgba(50, 30, 60, 0.4), rgba(30, 15, 40, 0.3));
+            border-radius: 50% 50% 40% 60% / 60% 40% 50% 50%;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 -10px 20px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(176, 68, 255, 0.1);
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.6;
+        }
+
+        .end-island-1 {
+            width: 300px;
+            height: 150px;
+            top: 15%;
+            left: 5%;
+            animation: floatIsland1 20s ease-in-out infinite;
+        }
+
+        .end-island-2 {
+            width: 250px;
+            height: 120px;
+            top: 40%;
+            right: 8%;
+            animation: floatIsland2 18s ease-in-out infinite;
+        }
+
+        .end-island-3 {
+            width: 200px;
+            height: 100px;
+            bottom: 20%;
+            left: 15%;
+            animation: floatIsland3 22s ease-in-out infinite;
+        }
+
+        .end-island-4 {
+            width: 180px;
+            height: 90px;
+            top: 60%;
+            right: 20%;
+            animation: floatIsland4 19s ease-in-out infinite;
+        }
+
+        @keyframes floatIsland1 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-20px) translateX(10px); }
+        }
+
+        @keyframes floatIsland2 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(15px) translateX(-15px); }
+        }
+
+        @keyframes floatIsland3 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-18px) translateX(12px); }
+        }
+
+        @keyframes floatIsland4 {
+            0%, 100% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(12px) translateX(-8px); }
+        }
+
+        /* Chorus Plant Silhouettes */
+        .chorus-plant {
+            position: fixed;
+            bottom: 0;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .chorus-plant-1 {
+            left: 10%;
+            width: 80px;
+            height: 200px;
+            background:
+                linear-gradient(to top,
+                    transparent 0%,
+                    #3d1a4d 20%,
+                    transparent 40%,
+                    #3d1a4d 60%,
+                    transparent 80%,
+                    #3d1a4d 100%
+                );
+            clip-path: polygon(
+                45% 0%, 55% 0%,
+                55% 20%, 60% 20%, 60% 40%, 55% 40%,
+                55% 60%, 50% 60%,
+                50% 80%, 45% 80%,
+                45% 60%, 40% 60%, 40% 40%, 45% 40%,
+                45% 20%, 40% 20%, 40% 0%
+            );
+        }
+
+        .chorus-plant-2 {
+            right: 15%;
+            width: 100px;
+            height: 250px;
+            background:
+                linear-gradient(to top,
+                    transparent 0%,
+                    #3d1a4d 15%,
+                    transparent 35%,
+                    #3d1a4d 55%,
+                    transparent 75%,
+                    #3d1a4d 100%
+                );
+            clip-path: polygon(
+                45% 0%, 55% 0%,
+                55% 25%, 65% 25%, 65% 50%, 55% 50%,
+                55% 75%, 50% 75%,
+                50% 100%, 45% 100%,
+                45% 75%, 35% 75%, 35% 50%, 45% 50%,
+                45% 25%, 35% 25%
+            );
+        }
+
+        .chorus-plant-3 {
+            left: 35%;
+            width: 70px;
+            height: 180px;
+            background:
+                linear-gradient(to top,
+                    transparent 0%,
+                    #3d1a4d 25%,
+                    transparent 50%,
+                    #3d1a4d 75%,
+                    transparent 100%
+                );
+            clip-path: polygon(
+                45% 0%, 55% 0%,
+                55% 30%, 60% 30%, 60% 60%, 55% 60%,
+                55% 90%, 45% 90%,
+                45% 60%, 40% 60%, 40% 30%, 45% 30%
+            );
         }
 
         .end-particles {
@@ -790,6 +938,38 @@
             color: rgba(233, 140, 255, 0.4);
         }
 
+        .markdown-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(176, 68, 255, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .markdown-tab {
+            padding: 0.5rem 1rem;
+            background: rgba(176, 68, 255, 0.1);
+            border: 1px solid rgba(176, 68, 255, 0.3);
+            border-radius: 4px 4px 0 0;
+            color: #b8a0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .markdown-tab:hover {
+            background: rgba(176, 68, 255, 0.2);
+            border-color: #b044ff;
+        }
+
+        .markdown-tab.active {
+            background: rgba(233, 140, 255, 0.3);
+            border-color: #e98cff;
+            color: #e98cff;
+            font-weight: bold;
+        }
+
         .journal-body {
             flex: 1;
             min-height: 400px;
@@ -802,26 +982,89 @@
             line-height: 1.8;
             outline: none;
             overflow-y: auto;
+            font-family: 'Courier New', monospace;
         }
 
-        .journal-body:focus {
+        .journal-textarea {
+            resize: none;
+            width: 100%;
+        }
+
+        .journal-textarea:focus {
             border-color: #b044ff;
             box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
         }
 
-        .journal-body:empty::before {
-            content: 'Write your ender log here...\A\AURLs will automatically become clickable.';
+        .journal-textarea::placeholder {
             color: rgba(176, 68, 255, 0.4);
-            white-space: pre-wrap;
         }
 
-        .journal-body a {
+        .journal-preview {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .journal-preview:empty::before {
+            content: 'Nothing to preview yet. Switch to Write mode to add content.';
+            color: rgba(176, 68, 255, 0.4);
+        }
+
+        /* Markdown preview styling */
+        .journal-preview h1 {
+            font-size: 2rem;
+            color: #e98cff;
+            margin: 1rem 0;
+            border-bottom: 2px solid rgba(176, 68, 255, 0.5);
+            padding-bottom: 0.5rem;
+        }
+
+        .journal-preview h2 {
+            font-size: 1.6rem;
+            color: #e98cff;
+            margin: 0.8rem 0;
+        }
+
+        .journal-preview h3 {
+            font-size: 1.3rem;
+            color: #b8a0ff;
+            margin: 0.6rem 0;
+        }
+
+        .journal-preview strong {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .journal-preview em {
+            font-style: italic;
+            color: #e0d5ff;
+        }
+
+        .journal-preview ul, .journal-preview ol {
+            margin: 0.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .journal-preview li {
+            margin: 0.25rem 0;
+        }
+
+        .journal-preview code {
+            background: rgba(176, 68, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #7de8ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .journal-preview a {
             color: #7de8ff;
             text-decoration: underline;
             cursor: pointer;
         }
 
-        .journal-body a:hover {
+        .journal-preview a:hover {
             color: #a0f0ff;
             text-shadow: 0 0 8px rgba(125, 232, 255, 0.6);
         }
@@ -1444,6 +1687,17 @@
         <!-- End particles background -->
         <div class="end-particles" id="endParticles"></div>
 
+        <!-- Floating End Islands -->
+        <div class="end-island end-island-1"></div>
+        <div class="end-island end-island-2"></div>
+        <div class="end-island end-island-3"></div>
+        <div class="end-island end-island-4"></div>
+
+        <!-- Chorus Plant Silhouettes -->
+        <div class="chorus-plant chorus-plant-1"></div>
+        <div class="chorus-plant chorus-plant-2"></div>
+        <div class="chorus-plant chorus-plant-3"></div>
+
         <!-- Back to Hub button -->
         <button class="back-to-hub-btn" onclick="closeEndPlanner()">⬅ Back to Hub</button>
 
@@ -1471,11 +1725,24 @@
             <div class="planner-panel planner-center-panel" id="centerPanel">
                 <input type="text" class="journal-title" id="journalTitle" placeholder="Ender Log Title" />
 
-                <div class="journal-body" contenteditable="true" id="journalBody"></div>
+                <div class="markdown-tabs">
+                    <button class="markdown-tab active" id="writeTab" onclick="switchToWriteMode()">✏️ Write</button>
+                    <button class="markdown-tab" id="previewTab" onclick="switchToPreviewMode()">👁️ Preview</button>
+                </div>
+
+                <textarea class="journal-body journal-textarea" id="journalTextarea" placeholder="Write your ender log here in markdown...
+
+**Bold** or *italic* text
+# Headers
+- Lists
+`code`
+Links: https://example.com"></textarea>
+
+                <div class="journal-body journal-preview is-hidden" id="journalPreview"></div>
 
                 <div class="journal-footer">
                     <span class="char-count" id="charCount">0 characters</span>
-                    <span>URLs become clickable links</span>
+                    <span>Supports markdown formatting</span>
                 </div>
             </div>
 
@@ -1484,8 +1751,8 @@
                 <div class="todo-header">End Tasks</div>
 
                 <div class="quick-add-container">
-                    <input type="text" class="quick-add-input" id="quickAddInput" placeholder="Add a task..." />
-                    <button class="quick-add-btn" id="quickAddBtn" onclick="addTask()">+</button>
+                    <input type="text" class="quick-add-input" id="end-task-input" placeholder="Add a task..." />
+                    <button class="quick-add-btn" id="end-task-add-btn">+</button>
                 </div>
 
                 <div class="todos-container">
@@ -1574,6 +1841,7 @@
         let currentPageIndex = 0;
         let showCompleted = false;
         let plannerInitialized = false;
+        let markdownMode = 'write'; // 'write' or 'preview'
 
         function initPlanner() {
             if (plannerInitialized) {
@@ -1592,7 +1860,7 @@
             const container = document.getElementById('endParticles');
             if (!container || container.children.length > 0) return;
 
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 15; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'end-particle';
                 particle.style.left = Math.random() * 100 + '%';
@@ -1622,10 +1890,21 @@
                     dayNumber: 1,
                     date: new Date().toISOString().split('T')[0],
                     title: '',
-                    body: '',
+                    bodyMarkdown: '',
                     todos: []
                 }];
             }
+
+            // Migrate old 'body' field to 'bodyMarkdown'
+            pages.forEach(page => {
+                if (page.body && !page.bodyMarkdown) {
+                    page.bodyMarkdown = page.body;
+                    delete page.body;
+                }
+                if (!page.bodyMarkdown) {
+                    page.bodyMarkdown = '';
+                }
+            });
 
             if (currentPageIndex >= pages.length) {
                 currentPageIndex = pages.length - 1;
@@ -1643,12 +1922,91 @@
             }
         }
 
+        function parseMarkdown(markdown) {
+            if (!markdown) return '';
+
+            let html = markdown;
+
+            // Headers
+            html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Italic
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Inline code
+            html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+            // Auto-linkify URLs
+            html = html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+
+            // Unordered lists
+            html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+
+            // Line breaks
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+
+        function switchToWriteMode() {
+            markdownMode = 'write';
+            const textarea = document.getElementById('journalTextarea');
+            const preview = document.getElementById('journalPreview');
+            const writeTab = document.getElementById('writeTab');
+            const previewTab = document.getElementById('previewTab');
+
+            if (textarea) textarea.classList.remove('is-hidden');
+            if (preview) preview.classList.add('is-hidden');
+            if (writeTab) writeTab.classList.add('active');
+            if (previewTab) previewTab.classList.remove('active');
+        }
+
+        function switchToPreviewMode() {
+            markdownMode = 'preview';
+            const textarea = document.getElementById('journalTextarea');
+            const preview = document.getElementById('journalPreview');
+            const writeTab = document.getElementById('writeTab');
+            const previewTab = document.getElementById('previewTab');
+
+            // Update preview with current markdown
+            const page = pages[currentPageIndex];
+            if (preview && page) {
+                preview.innerHTML = parseMarkdown(page.bodyMarkdown || '');
+            }
+
+            if (textarea) textarea.classList.add('is-hidden');
+            if (preview) preview.classList.remove('is-hidden');
+            if (writeTab) writeTab.classList.remove('active');
+            if (previewTab) previewTab.classList.add('active');
+
+            // Add click handlers to links
+            if (preview) {
+                const links = preview.querySelectorAll('a');
+                links.forEach(link => {
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        window.open(this.href, '_blank', 'noopener,noreferrer');
+                    };
+                });
+            }
+        }
+
         function bindEventListeners() {
             const journalTitle = document.getElementById('journalTitle');
-            const journalBody = document.getElementById('journalBody');
-            const quickAddInput = document.getElementById('quickAddInput');
+            const journalTextarea = document.getElementById('journalTextarea');
+            const quickAddInput = document.getElementById('end-task-input');
+            const quickAddBtn = document.getElementById('end-task-add-btn');
 
-            if (!journalTitle || !journalBody || !quickAddInput) return;
+            if (!journalTitle || !journalTextarea || !quickAddInput || !quickAddBtn) return;
 
             journalTitle.addEventListener('input', function() {
                 pages[currentPageIndex].title = this.value;
@@ -1656,27 +2014,21 @@
                 saveState();
             });
 
-            journalBody.addEventListener('input', function() {
-                pages[currentPageIndex].body = this.innerHTML;
+            journalTextarea.addEventListener('input', function() {
+                pages[currentPageIndex].bodyMarkdown = this.value;
                 updateCharCount();
                 saveState();
-            });
-
-            journalBody.addEventListener('blur', function() {
-                linkifyJournalBody();
-            });
-
-            journalBody.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') {
-                    e.preventDefault();
-                    window.open(e.target.href, '_blank', 'noopener,noreferrer');
-                }
             });
 
             quickAddInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     addTask();
                 }
+            });
+
+            quickAddBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                addTask();
             });
         }
 
@@ -1696,7 +2048,7 @@
                     dayNumber: pages.length + 1,
                     date: new Date().toISOString().split('T')[0],
                     title: '',
-                    body: '',
+                    bodyMarkdown: '',
                     todos: []
                 };
                 pages.push(newPage);
@@ -1743,10 +2095,25 @@
             updateNavButtons();
 
             const journalTitle = document.getElementById('journalTitle');
-            const journalBody = document.getElementById('journalBody');
+            const journalTextarea = document.getElementById('journalTextarea');
+            const journalPreview = document.getElementById('journalPreview');
 
             if (journalTitle) journalTitle.value = page.title || '';
-            if (journalBody) journalBody.innerHTML = page.body || '';
+            if (journalTextarea) journalTextarea.value = page.bodyMarkdown || '';
+
+            // Update preview if in preview mode
+            if (markdownMode === 'preview' && journalPreview) {
+                journalPreview.innerHTML = parseMarkdown(page.bodyMarkdown || '');
+
+                // Add click handlers to links
+                const links = journalPreview.querySelectorAll('a');
+                links.forEach(link => {
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        window.open(this.href, '_blank', 'noopener,noreferrer');
+                    };
+                });
+            }
 
             updateCharCount();
             renderTodos();
@@ -1797,10 +2164,10 @@
 
         function updateCharCount() {
             const title = document.getElementById('journalTitle')?.value || '';
-            const body = document.getElementById('journalBody')?.innerText || '';
+            const bodyMarkdown = document.getElementById('journalTextarea')?.value || '';
 
             const titleChars = title.trim().length;
-            const bodyChars = body.trim().length;
+            const bodyChars = bodyMarkdown.trim().length;
             const total = titleChars + bodyChars;
 
             const charCount = document.getElementById('charCount');
@@ -1809,36 +2176,8 @@
             }
         }
 
-        function linkifyJournalBody() {
-            const body = document.getElementById('journalBody');
-            if (!body) return;
-
-            const selection = window.getSelection();
-            const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-
-            let html = body.innerHTML;
-            const urlRegex = /(?<!["'>])(https?:\/\/[^\s<]+)(?![^<]*<\/a>)/gi;
-
-            html = html.replace(urlRegex, function(url) {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-            });
-
-            if (html !== body.innerHTML) {
-                body.innerHTML = html;
-                pages[currentPageIndex].body = html;
-                saveState();
-
-                if (range) {
-                    try {
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                    } catch (e) {}
-                }
-            }
-        }
-
         function addTask() {
-            const input = document.getElementById('quickAddInput');
+            const input = document.getElementById('end-task-input');
             if (!input) return;
 
             const text = input.value.trim();
