@@ -1174,7 +1174,8 @@
         }
 
         .quick-add-input.error {
-            border-color: #ff4466;
+            border-color: #ff4d6a !important;
+            box-shadow: 0 0 10px rgba(255, 77, 106, 0.7) !important;
             animation: shake 0.3s ease;
         }
 
@@ -1976,10 +1977,27 @@
         const STORAGE_KEY = 'mcTools_endPlanner_v2';
 
         // Clean state object
-        const plannerState = {
+        let plannerState = {
             pages: [],
             currentPageIndex: 0
         };
+
+        // State helper functions
+        function getPages() {
+            return plannerState.pages;
+        }
+
+        function setPages(newPages) {
+            plannerState.pages = Array.isArray(newPages) ? newPages : [];
+        }
+
+        function getCurrentPageIndex() {
+            return plannerState.currentPageIndex || 0;
+        }
+
+        function setCurrentPageIndex(index) {
+            plannerState.currentPageIndex = index;
+        }
 
         // UI state
         let currentJournalMode = 'edit'; // 'edit' or 'preview'
@@ -2119,53 +2137,66 @@ function switchJournalMode(mode) {
     const preview = document.getElementById('journalPreview');
     const indicator = document.getElementById('modeIndicator');
 
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index] || {};
 
     if (mode === 'edit') {
         // Show editor, hide preview
-        editor.classList.remove('is-hidden');
-        preview.classList.add('is-hidden');
-        editBtn.classList.add('active');
-        previewBtn.classList.remove('active');
-        indicator.textContent = 'Edit Mode';
+        if (editor) editor.classList.remove('is-hidden');
+        if (preview) preview.classList.add('is-hidden');
+        if (editBtn) editBtn.classList.add('active');
+        if (previewBtn) previewBtn.classList.remove('active');
+        if (indicator) indicator.textContent = 'Edit Mode';
 
         // Load markdown into editor
-        editor.value = currentPage.bodyMarkdown || '';
+        if (editor) editor.value = currentPage.bodyMarkdown || '';
     } else {
         // Save editor content first
-        currentPage.bodyMarkdown = editor.value;
-        savePlannerState();
+        if (editor) {
+            currentPage.bodyMarkdown = editor.value;
+            pages[index] = currentPage;
+            setPages(pages);
+            savePlannerState();
+        }
 
         // Show preview, hide editor
-        editor.classList.add('is-hidden');
-        preview.classList.remove('is-hidden');
-        editBtn.classList.remove('active');
-        previewBtn.classList.add('active');
-        indicator.textContent = 'Preview Mode';
+        if (editor) editor.classList.add('is-hidden');
+        if (preview) preview.classList.remove('is-hidden');
+        if (editBtn) editBtn.classList.remove('active');
+        if (previewBtn) previewBtn.classList.add('active');
+        if (indicator) indicator.textContent = 'Preview Mode';
 
         // Render markdown
-        preview.innerHTML = parseMarkdown(currentPage.bodyMarkdown || '');
+        if (preview) {
+            preview.innerHTML = parseMarkdown(currentPage.bodyMarkdown || '');
 
-        // Make links work
-        const links = preview.querySelectorAll('a');
-        links.forEach(link => {
-            link.onclick = (e) => {
-                e.preventDefault();
-                window.open(link.href, '_blank', 'noopener,noreferrer');
-            };
-        });
+            // Make links work
+            const links = preview.querySelectorAll('a');
+            links.forEach(link => {
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    window.open(link.href, '_blank', 'noopener,noreferrer');
+                };
+            });
+        }
     }
 }
 
 function updateCharCount() {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
-    const title = document.getElementById('journalTitle')?.value || '';
-    const markdown = currentPage.bodyMarkdown || '';
+    const titleEl = document.getElementById('journalTitle');
+    const title = titleEl ? (titleEl.value || '') : '';
 
-    const total = title.length + markdown.length;
-    const charCount = document.getElementById('charCount');
-    if (charCount) {
-        charCount.textContent = `${total} character${total !== 1 ? 's' : ''}`;
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const page = pages[index] || {};
+    const bodyMarkdown = page.bodyMarkdown || '';
+
+    const total = title.trim().length + bodyMarkdown.trim().length;
+
+    const charCountEl = document.getElementById('charCount');
+    if (charCountEl) {
+        charCountEl.textContent = `${total} character${total !== 1 ? 's' : ''}`;
     }
 }
 
@@ -2192,7 +2223,10 @@ function addTaskFromQuickAdd() {
         return;
     }
 
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index] || { todos: [] };
+
     if (!Array.isArray(currentPage.todos)) {
         currentPage.todos = [];
     }
@@ -2208,6 +2242,8 @@ function addTaskFromQuickAdd() {
     };
 
     currentPage.todos.push(newTask);
+    pages[index] = currentPage;
+    setPages(pages);
     input.value = '';
 
     savePlannerState();
@@ -2215,7 +2251,7 @@ function addTaskFromQuickAdd() {
 }
 
 function toggleTaskComplete(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
 
     if (task) {
@@ -2226,14 +2262,14 @@ function toggleTaskComplete(taskId) {
 }
 
 function deleteTask(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     currentPage.todos = currentPage.todos.filter(t => t.id !== taskId);
     savePlannerState();
     renderTasks();
 }
 
 function cyclePriority(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
 
     if (task) {
@@ -2246,7 +2282,7 @@ function cyclePriority(taskId) {
 }
 
 function toggleTaskSection(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
 
     if (task) {
@@ -2266,7 +2302,7 @@ function showCalendarPicker(taskId, buttonElement) {
         activeCalendarPicker = null;
     }
 
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
     if (!task) return;
 
@@ -2429,7 +2465,7 @@ function showCalendarPicker(taskId, buttonElement) {
 }
 
 function addSubtask(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
     if (!task) return;
 
@@ -2449,7 +2485,7 @@ function addSubtask(taskId) {
 }
 
 function toggleSubtask(taskId, subtaskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
     if (!task) return;
 
@@ -2462,7 +2498,7 @@ function toggleSubtask(taskId, subtaskId) {
 }
 
 function renderTasks() {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
     const todos = currentPage.todos || [];
 
     const todayList = document.getElementById('todayTodos');
@@ -2633,7 +2669,7 @@ function bindAllEventListeners() {
     const journalTitle = document.getElementById('journalTitle');
     if (journalTitle) {
         journalTitle.addEventListener('input', () => {
-            const currentPage = plannerState.pages[plannerState.currentPageIndex];
+            const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
             currentPage.title = journalTitle.value;
             updateCharCount();
             savePlannerState();
@@ -2644,7 +2680,7 @@ function bindAllEventListeners() {
     const journalEditor = document.getElementById('journalEditor');
     if (journalEditor) {
         journalEditor.addEventListener('input', () => {
-            const currentPage = plannerState.pages[plannerState.currentPageIndex];
+            const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
             currentPage.bodyMarkdown = journalEditor.value;
             updateCharCount();
             savePlannerState();
@@ -2685,7 +2721,15 @@ function bindAllEventListeners() {
 // RENDERING
 // ============================================
 function renderCurrentPage() {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+
+    if (!pages.length || index < 0 || index >= pages.length) {
+        console.warn('No pages to render');
+        return;
+    }
+
+    const currentPage = pages[index];
 
     updateDateDisplay();
     renderTimeline();
@@ -2720,16 +2764,25 @@ function renderCurrentPage() {
 }
 
         function navigatePrev() {
-            if (currentPageIndex > 0) {
-                triggerPageFlip(() => {
-                    currentPageIndex--;
-                    renderCurrentPage();
-                });
-            }
+            const pages = getPages();
+            if (!pages.length) return;
+
+            const index = getCurrentPageIndex();
+            if (index <= 0) return;
+
+            triggerPageFlip(() => {
+                setCurrentPageIndex(index - 1);
+                renderCurrentPage();
+            });
         }
 
         function navigateNext() {
-            if (currentPageIndex >= pages.length - 1) {
+            const pages = getPages();
+            if (!pages.length) return;
+
+            const index = getCurrentPageIndex();
+
+            if (index >= pages.length - 1) {
                 const newPage = {
                     id: Date.now().toString(),
                     dayNumber: pages.length + 1,
@@ -2739,19 +2792,23 @@ function renderCurrentPage() {
                     todos: []
                 };
                 pages.push(newPage);
-                saveState();
+                setPages(pages);
+                savePlannerState();
             }
 
             triggerPageFlip(() => {
-                currentPageIndex++;
+                setCurrentPageIndex(index + 1);
                 renderCurrentPage();
             });
         }
 
         function goToPage(index) {
-            if (index >= 0 && index < pages.length && index !== currentPageIndex) {
+            const pages = getPages();
+            const currentIndex = getCurrentPageIndex();
+
+            if (index >= 0 && index < pages.length && index !== currentIndex) {
                 triggerPageFlip(() => {
-                    currentPageIndex = index;
+                    setCurrentPageIndex(index);
                     renderCurrentPage();
                 });
             }
@@ -2806,7 +2863,12 @@ function renderCurrentPage() {
         }
 
         function updateDateDisplay() {
-            const page = pages[currentPageIndex];
+            const pages = getPages();
+            const index = getCurrentPageIndex();
+            const page = pages[index];
+
+            if (!page) return;
+
             const dateObj = new Date(page.date);
 
             const dayEl = document.getElementById('currentDay');
@@ -2824,11 +2886,14 @@ function renderCurrentPage() {
             const timeline = document.getElementById('timeline');
             if (!timeline) return;
 
+            const pages = getPages();
+            const currentIndex = getCurrentPageIndex();
+
             timeline.innerHTML = '';
 
             pages.forEach((page, index) => {
                 const pill = document.createElement('div');
-                pill.className = 'day-pill' + (index === currentPageIndex ? ' active' : '');
+                pill.className = 'day-pill' + (index === currentIndex ? ' active' : '');
 
                 const dateObj = new Date(page.date);
                 const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -2844,23 +2909,10 @@ function renderCurrentPage() {
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
 
-            if (prevBtn) prevBtn.disabled = currentPageIndex === 0;
+            const currentIndex = getCurrentPageIndex();
+
+            if (prevBtn) prevBtn.disabled = currentIndex === 0;
             if (nextBtn) nextBtn.disabled = false;
-        }
-
-        function updateCharCount() {
-            const title = document.getElementById('journalTitle')?.value || '';
-            const page = pages[currentPageIndex];
-            const bodyMarkdown = page?.bodyMarkdown || '';
-
-            const titleChars = title.trim().length;
-            const bodyChars = bodyMarkdown.trim().length;
-            const total = titleChars + bodyChars;
-
-            const charCount = document.getElementById('charCount');
-            if (charCount) {
-                charCount.textContent = `${total} character${total !== 1 ? 's' : ''}`;
-            }
         }
 
         function addTask() {
