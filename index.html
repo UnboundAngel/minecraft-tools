@@ -1143,12 +1143,38 @@
             text-shadow: 0 0 10px rgba(233, 140, 255, 0.8);
             text-transform: uppercase;
             letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .task-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .quick-add-container {
             display: flex;
             gap: 0.5rem;
             align-items: center;
+            flex: 1;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1rem;
+            background: rgba(176, 68, 255, 0.2);
+            border: 1px solid rgba(176, 68, 255, 0.4);
+            border-radius: 4px;
+            color: #e98cff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: rgba(176, 68, 255, 0.3);
+            border-color: #b044ff;
         }
 
         .quick-add-input {
@@ -1174,7 +1200,8 @@
         }
 
         .quick-add-input.error {
-            border-color: #ff4466;
+            border-color: #ff4d6a !important;
+            box-shadow: 0 0 10px rgba(255, 77, 106, 0.7) !important;
             animation: shake 0.3s ease;
         }
 
@@ -1207,24 +1234,73 @@
             box-shadow: 0 6px 16px rgba(68, 255, 136, 0.6);
         }
 
-        .todos-container {
+        .tasks-container {
             flex: 1;
             overflow-y: auto;
             padding-right: 0.5rem;
         }
 
-        .todos-container::-webkit-scrollbar {
+        .tasks-container::-webkit-scrollbar {
             width: 6px;
         }
 
-        .todos-container::-webkit-scrollbar-track {
+        .tasks-container::-webkit-scrollbar-track {
             background: rgba(176, 68, 255, 0.1);
             border-radius: 3px;
         }
 
-        .todos-container::-webkit-scrollbar-thumb {
+        .tasks-container::-webkit-scrollbar-thumb {
             background: rgba(176, 68, 255, 0.5);
             border-radius: 3px;
+        }
+
+        .task-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .task-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: #e98cff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(176, 68, 255, 0.3);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .task-section-header:hover {
+            color: #fff;
+        }
+
+        .section-chevron {
+            transition: transform 0.2s ease;
+        }
+
+        .section-chevron.expanded {
+            transform: rotate(90deg);
+        }
+
+        .task-section-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .task-section-list.collapsed {
+            display: none;
+        }
+
+        .task-empty {
+            text-align: center;
+            color: #8866aa;
+            font-size: 0.85rem;
+            padding: 1rem;
+            font-style: italic;
         }
 
         .todo-section {
@@ -1322,17 +1398,27 @@
             font-size: 0.95rem;
             line-height: 1.4;
             word-wrap: break-word;
-            cursor: text;
         }
 
-        .todo-text[contenteditable="true"] {
-            outline: 1px solid #b044ff;
-            padding: 4px;
+        .task-title-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #e0d5ff;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+            outline: none;
+            padding: 2px 4px;
             border-radius: 2px;
-            background: rgba(176, 68, 255, 0.1);
         }
 
-        .todo-item.completed .todo-text {
+        .task-title-input:focus {
+            background: rgba(176, 68, 255, 0.1);
+            outline: 1px solid #b044ff;
+        }
+
+        .todo-item.completed .task-title-input {
             text-decoration: line-through;
             color: #8866aa;
         }
@@ -1374,7 +1460,7 @@
             background: #ff4466;
         }
 
-        .priority-dot.normal {
+        .priority-dot.medium {
             background: #ffaa44;
         }
 
@@ -1382,13 +1468,36 @@
             background: #44ff88;
         }
 
+        .priority-dot.none {
+            background: #8866aa;
+        }
+
         .due-date-tag {
-            padding: 2px 6px;
-            background: rgba(125, 232, 255, 0.2);
+            padding: 2px 8px;
+            background: rgba(125, 232, 255, 0.15);
             border: 1px solid rgba(125, 232, 255, 0.4);
             border-radius: 3px;
             color: #7de8ff;
             font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .due-date-tag:hover {
+            background: rgba(125, 232, 255, 0.25);
+            border-color: #7de8ff;
+        }
+
+        .due-date-tag.overdue {
+            background: rgba(255, 68, 102, 0.15);
+            border-color: rgba(255, 68, 102, 0.6);
+            color: #ff8899;
+        }
+
+        .due-date-tag.no-date {
+            color: #8866aa;
+            background: rgba(136, 102, 170, 0.1);
+            border-color: rgba(136, 102, 170, 0.3);
         }
 
         .section-tag {
@@ -1403,6 +1512,24 @@
 
         .section-tag:hover {
             background: rgba(176, 68, 255, 0.3);
+        }
+
+        .section-pill {
+            padding: 3px 8px;
+            background: rgba(125, 232, 255, 0.15);
+            border: 1px solid rgba(125, 232, 255, 0.4);
+            border-radius: 12px;
+            color: #7de8ff;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .section-pill:hover {
+            background: rgba(125, 232, 255, 0.25);
+            border-color: #7de8ff;
+            transform: scale(1.05);
         }
 
         .subtasks-container {
@@ -1887,29 +2014,18 @@
             <div class="planner-panel planner-right-panel">
                 <div class="todo-header">End Tasks</div>
 
-                <div class="quick-add-container">
-                    <input type="text" class="quick-add-input" id="end-task-input" placeholder="Add a task..." />
-                    <button class="quick-add-btn" id="end-task-add-btn">+</button>
+                <!-- Quick Add + Filter -->
+                <div class="task-controls">
+                    <div class="quick-add-container">
+                        <input type="text" class="quick-add-input" id="taskQuickAddInput" placeholder="Add a task..." />
+                        <button class="quick-add-btn" id="taskQuickAddBtn">+</button>
+                    </div>
+                    <button class="filter-btn" id="taskFilterBtn">⚡ All</button>
                 </div>
 
-                <div class="todos-container">
-                    <div class="todo-section">
-                        <div class="todo-section-title">📅 Today</div>
-                        <div class="todo-list" id="todayTodos"></div>
-                    </div>
-
-                    <div class="todo-section">
-                        <div class="todo-section-title">📆 Upcoming</div>
-                        <div class="todo-list" id="upcomingTodos"></div>
-                    </div>
-
-                    <div class="completed-section">
-                        <div class="completed-toggle" onclick="toggleCompleted()">
-                            <span id="completedToggleIcon">▶</span>
-                            <span>Completed (<span id="completedCount">0</span>)</span>
-                        </div>
-                        <div class="completed-list" id="completedList"></div>
-                    </div>
+                <!-- Task Lists Container -->
+                <div class="tasks-container" id="tasksContainer">
+                    <!-- Sections will be rendered dynamically -->
                 </div>
             </div>
         </div>
@@ -1976,10 +2092,27 @@
         const STORAGE_KEY = 'mcTools_endPlanner_v2';
 
         // Clean state object
-        const plannerState = {
+        let plannerState = {
             pages: [],
             currentPageIndex: 0
         };
+
+        // State helper functions
+        function getPages() {
+            return plannerState.pages;
+        }
+
+        function setPages(newPages) {
+            plannerState.pages = Array.isArray(newPages) ? newPages : [];
+        }
+
+        function getCurrentPageIndex() {
+            return plannerState.currentPageIndex || 0;
+        }
+
+        function setCurrentPageIndex(index) {
+            plannerState.currentPageIndex = index;
+        }
 
         // UI state
         let currentJournalMode = 'edit'; // 'edit' or 'preview'
@@ -2029,6 +2162,9 @@
             if (plannerState.currentPageIndex >= plannerState.pages.length) {
                 plannerState.currentPageIndex = plannerState.pages.length - 1;
             }
+
+            // Normalize all todos to new format
+            normalizeTodosForAllPages();
         }
 
         function savePlannerState() {
@@ -2040,6 +2176,64 @@
             } catch (e) {
                 console.error('Failed to save planner state:', e);
             }
+        }
+
+        // ============================================
+        // DATA NORMALIZATION FOR NEW TASK SYSTEM
+        // ============================================
+        function normalizeTodosForAllPages() {
+            const pages = getPages();
+
+            pages.forEach(page => {
+                if (!Array.isArray(page.todos)) {
+                    page.todos = [];
+                    return;
+                }
+
+                page.todos = page.todos.map(todo => {
+                    // Normalize to new format
+                    const normalized = {
+                        id: todo.id || Date.now().toString() + Math.random(),
+                        title: todo.title || todo.text || '',
+                        done: todo.done || false,
+                        section: normalizeSection(todo.section),
+                        priority: normalizePriority(todo.priority),
+                        dueDate: todo.dueDate || null,
+                        createdAt: todo.createdAt || new Date().toISOString(),
+                        note: todo.note || '',
+                        subtasks: Array.isArray(todo.subtasks) ? todo.subtasks.map(st => ({
+                            id: st.id || Date.now().toString() + Math.random(),
+                            text: st.text || '',
+                            done: st.done || false
+                        })) : []
+                    };
+
+                    return normalized;
+                });
+            });
+
+            setPages(pages);
+            savePlannerState();
+        }
+
+        function normalizeSection(oldSection) {
+            // Map old sections to new ones
+            if (!oldSection || oldSection === 'today') return 'today';
+            if (oldSection === 'upcoming') return 'later';
+            if (oldSection === 'inbox') return 'inbox';
+            if (oldSection === 'tomorrow') return 'tomorrow';
+            if (oldSection === 'week') return 'week';
+            if (oldSection === 'later') return 'later';
+            return 'inbox'; // default
+        }
+
+        function normalizePriority(oldPriority) {
+            // Map old priorities to new ones: none, low, medium, high
+            if (!oldPriority || oldPriority === 'normal') return 'none';
+            if (oldPriority === 'low') return 'low';
+            if (oldPriority === 'medium') return 'medium';
+            if (oldPriority === 'high') return 'high';
+            return 'none'; // default
         }
 
         function createEndParticles() {
@@ -2119,72 +2313,96 @@ function switchJournalMode(mode) {
     const preview = document.getElementById('journalPreview');
     const indicator = document.getElementById('modeIndicator');
 
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index] || {};
 
     if (mode === 'edit') {
         // Show editor, hide preview
-        editor.classList.remove('is-hidden');
-        preview.classList.add('is-hidden');
-        editBtn.classList.add('active');
-        previewBtn.classList.remove('active');
-        indicator.textContent = 'Edit Mode';
+        if (editor) editor.classList.remove('is-hidden');
+        if (preview) preview.classList.add('is-hidden');
+        if (editBtn) editBtn.classList.add('active');
+        if (previewBtn) previewBtn.classList.remove('active');
+        if (indicator) indicator.textContent = 'Edit Mode';
 
         // Load markdown into editor
-        editor.value = currentPage.bodyMarkdown || '';
+        if (editor) editor.value = currentPage.bodyMarkdown || '';
     } else {
         // Save editor content first
-        currentPage.bodyMarkdown = editor.value;
-        savePlannerState();
+        if (editor) {
+            currentPage.bodyMarkdown = editor.value;
+            pages[index] = currentPage;
+            setPages(pages);
+            savePlannerState();
+        }
 
         // Show preview, hide editor
-        editor.classList.add('is-hidden');
-        preview.classList.remove('is-hidden');
-        editBtn.classList.remove('active');
-        previewBtn.classList.add('active');
-        indicator.textContent = 'Preview Mode';
+        if (editor) editor.classList.add('is-hidden');
+        if (preview) preview.classList.remove('is-hidden');
+        if (editBtn) editBtn.classList.remove('active');
+        if (previewBtn) previewBtn.classList.add('active');
+        if (indicator) indicator.textContent = 'Preview Mode';
 
         // Render markdown
-        preview.innerHTML = parseMarkdown(currentPage.bodyMarkdown || '');
+        if (preview) {
+            preview.innerHTML = parseMarkdown(currentPage.bodyMarkdown || '');
 
-        // Make links work
-        const links = preview.querySelectorAll('a');
-        links.forEach(link => {
-            link.onclick = (e) => {
-                e.preventDefault();
-                window.open(link.href, '_blank', 'noopener,noreferrer');
-            };
-        });
+            // Make links work
+            const links = preview.querySelectorAll('a');
+            links.forEach(link => {
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    window.open(link.href, '_blank', 'noopener,noreferrer');
+                };
+            });
+        }
     }
 }
 
 function updateCharCount() {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
-    const title = document.getElementById('journalTitle')?.value || '';
-    const markdown = currentPage.bodyMarkdown || '';
+    const titleEl = document.getElementById('journalTitle');
+    const title = titleEl ? (titleEl.value || '') : '';
 
-    const total = title.length + markdown.length;
-    const charCount = document.getElementById('charCount');
-    if (charCount) {
-        charCount.textContent = `${total} character${total !== 1 ? 's' : ''}`;
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const page = pages[index] || {};
+    const bodyMarkdown = page.bodyMarkdown || '';
+
+    const total = title.trim().length + bodyMarkdown.trim().length;
+
+    const charCountEl = document.getElementById('charCount');
+    if (charCountEl) {
+        charCountEl.textContent = `${total} character${total !== 1 ? 's' : ''}`;
     }
 }
 
 // ============================================
-// TASK SYSTEM - TICKTICK STYLE
+// TASK SYSTEM - TICKTICK STYLE (COMPLETE REWRITE)
+// ============================================
+
+// Global state for calendar picker and section expansion
+let activeCalendarPicker = null;
+let collapsedSections = new Set();
+
+// ============================================
+// QUICK ADD
 // ============================================
 function showQuickAddError() {
-    const input = document.getElementById('end-task-input');
+    const input = document.getElementById('taskQuickAddInput');
     if (!input) return;
 
     input.classList.add('error');
     setTimeout(() => {
         input.classList.remove('error');
-    }, 300);
+    }, 500);
 }
 
-function addTaskFromQuickAdd() {
-    const input = document.getElementById('end-task-input');
-    if (!input) return;
+function handleTaskQuickAdd() {
+    const input = document.getElementById('taskQuickAddInput');
+    if (!input) {
+        console.error('Quick-add input not found');
+        return;
+    }
 
     const text = input.value.trim();
     if (!text) {
@@ -2192,67 +2410,185 @@ function addTaskFromQuickAdd() {
         return;
     }
 
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
+
+    if (!currentPage) {
+        console.error('No current page');
+        return;
+    }
+
     if (!Array.isArray(currentPage.todos)) {
         currentPage.todos = [];
     }
 
+    // Create new task with standardized format
     const newTask = {
-        id: Date.now().toString(),
-        text: text,
+        id: Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9),
+        title: text,
         done: false,
-        section: 'today',
-        priority: 'normal',
+        section: 'inbox',
+        priority: 'none',
         dueDate: null,
+        createdAt: new Date().toISOString(),
+        note: '',
         subtasks: []
     };
 
     currentPage.todos.push(newTask);
+    pages[index] = currentPage;
+    setPages(pages);
     input.value = '';
 
     savePlannerState();
-    renderTasks();
+    renderAllTasks();
 }
 
-function toggleTaskComplete(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+// ============================================
+// TASK CRUD OPERATIONS
+// ============================================
+function toggleTaskDone(taskId) {
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
 
     if (task) {
         task.done = !task.done;
+        // If completing, move to completed section
+        if (task.done) {
+            task.section = 'completed';
+        }
         savePlannerState();
-        renderTasks();
+        renderAllTasks();
     }
 }
 
 function deleteTask(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
+
+    if (!confirm('Delete this task?')) return;
+
     currentPage.todos = currentPage.todos.filter(t => t.id !== taskId);
+    pages[index] = currentPage;
+    setPages(pages);
     savePlannerState();
-    renderTasks();
+    renderAllTasks();
 }
 
-function cyclePriority(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+function updateTaskTitle(taskId, newTitle) {
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
 
     if (task) {
-        const priorities = ['normal', 'high', 'low'];
-        const currentIndex = priorities.indexOf(task.priority);
-        task.priority = priorities[(currentIndex + 1) % priorities.length];
+        task.title = newTitle.trim();
+        pages[index] = currentPage;
+        setPages(pages);
         savePlannerState();
-        renderTasks();
     }
 }
 
-function toggleTaskSection(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+// ============================================
+// PRIORITY CYCLING
+// ============================================
+function cycleTaskPriority(taskId) {
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
 
     if (task) {
-        task.section = task.section === 'today' ? 'upcoming' : 'today';
+        // Cycle: none -> low -> medium -> high -> none
+        const priorities = ['none', 'low', 'medium', 'high'];
+        const currentIdx = priorities.indexOf(task.priority);
+        task.priority = priorities[(currentIdx + 1) % priorities.length];
+
+        pages[index] = currentPage;
+        setPages(pages);
         savePlannerState();
-        renderTasks();
+        renderAllTasks();
+    }
+}
+
+// ============================================
+// SECTION MANAGEMENT
+// ============================================
+function moveTaskToSection(taskId, newSection) {
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
+    const task = currentPage.todos.find(t => t.id === taskId);
+
+    if (task) {
+        task.section = newSection;
+
+        // Auto-set due dates based on section
+        const today = new Date();
+        if (newSection === 'today') {
+            task.dueDate = today.toISOString().split('T')[0];
+        } else if (newSection === 'tomorrow') {
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            task.dueDate = tomorrow.toISOString().split('T')[0];
+        } else if (newSection === 'week') {
+            const nextWeek = new Date(today);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            task.dueDate = nextWeek.toISOString().split('T')[0];
+        }
+
+        pages[index] = currentPage;
+        setPages(pages);
+        savePlannerState();
+        renderAllTasks();
+    }
+}
+
+// ============================================
+// SUBTASK MANAGEMENT
+// ============================================
+function addSubtask(taskId) {
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
+    const task = currentPage.todos.find(t => t.id === taskId);
+    if (!task) return;
+
+    const text = prompt('Enter subtask:');
+    if (text && text.trim()) {
+        if (!Array.isArray(task.subtasks)) {
+            task.subtasks = [];
+        }
+        task.subtasks.push({
+            id: Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9),
+            text: text.trim(),
+            done: false
+        });
+        pages[index] = currentPage;
+        setPages(pages);
+        savePlannerState();
+        renderAllTasks();
+    }
+}
+
+function toggleSubtask(taskId, subtaskId) {
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
+    const task = currentPage.todos.find(t => t.id === taskId);
+    if (!task) return;
+
+    const subtask = task.subtasks.find(s => s.id === subtaskId);
+    if (subtask) {
+        subtask.done = !subtask.done;
+        pages[index] = currentPage;
+        setPages(pages);
+        savePlannerState();
+        renderAllTasks();
     }
 }
 
@@ -2266,7 +2602,9 @@ function showCalendarPicker(taskId, buttonElement) {
         activeCalendarPicker = null;
     }
 
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
     const task = currentPage.todos.find(t => t.id === taskId);
     if (!task) return;
 
@@ -2286,7 +2624,7 @@ function showCalendarPicker(taskId, buttonElement) {
     const options = [
         { label: '📅 Today', date: today },
         { label: '⏰ Tomorrow', date: tomorrow },
-        { label: '📆 Next Week', date: nextWeek },
+        { label: '📆 Next 7 Days', date: nextWeek },
         { label: '❌ Clear', date: null }
     ];
 
@@ -2300,8 +2638,10 @@ function showCalendarPicker(taskId, buttonElement) {
             } else {
                 task.dueDate = null;
             }
+            pages[index] = currentPage;
+            setPages(pages);
             savePlannerState();
-            renderTasks();
+            renderAllTasks();
             picker.remove();
             activeCalendarPicker = null;
         };
@@ -2394,8 +2734,10 @@ function showCalendarPicker(taskId, buttonElement) {
 
             dayEl.onclick = () => {
                 task.dueDate = dateStr;
+                pages[index] = currentPage;
+                setPages(pages);
                 savePlannerState();
-                renderTasks();
+                renderAllTasks();
                 picker.remove();
                 activeCalendarPicker = null;
             };
@@ -2428,149 +2770,190 @@ function showCalendarPicker(taskId, buttonElement) {
     }, 100);
 }
 
-function addSubtask(taskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
-    const task = currentPage.todos.find(t => t.id === taskId);
-    if (!task) return;
-
-    const text = prompt('Enter subtask:');
-    if (text && text.trim()) {
-        if (!Array.isArray(task.subtasks)) {
-            task.subtasks = [];
-        }
-        task.subtasks.push({
-            id: Date.now().toString(),
-            text: text.trim(),
-            done: false
-        });
-        savePlannerState();
-        renderTasks();
-    }
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+function isTaskOverdue(task) {
+    if (!task.dueDate || task.done) return false;
+    const today = new Date().toISOString().split('T')[0];
+    return task.dueDate < today;
 }
 
-function toggleSubtask(taskId, subtaskId) {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
-    const task = currentPage.todos.find(t => t.id === taskId);
-    if (!task) return;
+function formatDueDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const subtask = task.subtasks.find(s => s.id === subtaskId);
-    if (subtask) {
-        subtask.done = !subtask.done;
-        savePlannerState();
-        renderTasks();
-    }
+    const dateOnly = dateStr;
+    const todayOnly = today.toISOString().split('T')[0];
+    const tomorrowOnly = tomorrow.toISOString().split('T')[0];
+
+    if (dateOnly === todayOnly) return 'Today';
+    if (dateOnly === tomorrowOnly) return 'Tomorrow';
+
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function renderTasks() {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+function toggleSectionCollapse(sectionName) {
+    if (collapsedSections.has(sectionName)) {
+        collapsedSections.delete(sectionName);
+    } else {
+        collapsedSections.add(sectionName);
+    }
+    renderAllTasks();
+}
+
+// ============================================
+// MAIN RENDERING FUNCTION
+// ============================================
+function renderAllTasks() {
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+    const currentPage = pages[index];
+    if (!currentPage) return;
+
     const todos = currentPage.todos || [];
+    const container = document.getElementById('tasksContainer');
+    if (!container) return;
 
-    const todayList = document.getElementById('todayTodos');
-    const upcomingList = document.getElementById('upcomingTodos');
-    const completedList = document.getElementById('completedList');
-    const completedCount = document.getElementById('completedCount');
+    container.innerHTML = '';
 
-    if (!todayList || !upcomingList || !completedList) return;
+    // Define sections to render
+    const sections = [
+        { id: 'inbox', label: 'Inbox', icon: '📥', filter: t => !t.done && t.section === 'inbox' },
+        { id: 'today', label: 'Today', icon: '📅', filter: t => !t.done && t.section === 'today' },
+        { id: 'tomorrow', label: 'Tomorrow', icon: '⏰', filter: t => !t.done && t.section === 'tomorrow' },
+        { id: 'week', label: 'Next 7 Days', icon: '📆', filter: t => !t.done && t.section === 'week' },
+        { id: 'later', label: 'Later', icon: '🗓️', filter: t => !t.done && t.section === 'later' },
+        { id: 'completed', label: 'Completed', icon: '✓', filter: t => t.done || t.section === 'completed' }
+    ];
 
-    const todayTasks = todos.filter(t => !t.done && t.section === 'today');
-    const upcomingTasks = todos.filter(t => !t.done && t.section === 'upcoming');
-    const completedTasks = todos.filter(t => t.done);
+    sections.forEach(section => {
+        const sectionTasks = todos.filter(section.filter);
 
-    todayList.innerHTML = '';
-    upcomingList.innerHTML = '';
-    completedList.innerHTML = '';
+        // Only render section if it has tasks or if it's inbox/today (always show)
+        if (sectionTasks.length === 0 && section.id !== 'inbox' && section.id !== 'today') {
+            return;
+        }
 
-    if (completedCount) {
-        completedCount.textContent = completedTasks.length;
-    }
+        const sectionEl = document.createElement('div');
+        sectionEl.className = 'task-section';
 
-    todayTasks.forEach(task => {
-        todayList.appendChild(createTaskElement(task));
+        // Section header
+        const header = document.createElement('div');
+        header.className = 'task-section-header';
+        header.onclick = () => toggleSectionCollapse(section.id);
+
+        const chevron = document.createElement('span');
+        chevron.className = 'section-chevron' + (collapsedSections.has(section.id) ? '' : ' expanded');
+        chevron.textContent = '▶';
+
+        const label = document.createElement('span');
+        label.textContent = `${section.icon} ${section.label} (${sectionTasks.length})`;
+
+        header.appendChild(chevron);
+        header.appendChild(label);
+        sectionEl.appendChild(header);
+
+        // Section list
+        const list = document.createElement('div');
+        list.className = 'task-section-list' + (collapsedSections.has(section.id) ? ' collapsed' : '');
+
+        if (sectionTasks.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'task-empty';
+            empty.textContent = `No ${section.label.toLowerCase()} tasks`;
+            list.appendChild(empty);
+        } else {
+            sectionTasks.forEach(task => {
+                list.appendChild(createTaskCard(task));
+            });
+        }
+
+        sectionEl.appendChild(list);
+        container.appendChild(sectionEl);
     });
-
-    upcomingTasks.forEach(task => {
-        upcomingList.appendChild(createTaskElement(task));
-    });
-
-    completedTasks.forEach(task => {
-        completedList.appendChild(createTaskElement(task));
-    });
-
-    if (todayTasks.length === 0) {
-        todayList.innerHTML = '<div style="color: #8866aa; font-size: 0.85rem; text-align: center; padding: 1rem;">No tasks for today</div>';
-    }
-
-    if (upcomingTasks.length === 0) {
-        upcomingList.innerHTML = '<div style="color: #8866aa; font-size: 0.85rem; text-align: center; padding: 1rem;">No upcoming tasks</div>';
-    }
 }
 
-function createTaskElement(task) {
-    const item = document.createElement('div');
-    item.className = 'todo-item' + (task.done ? ' completed' : '');
+// ============================================
+// TASK CARD CREATION
+// ============================================
+function createTaskCard(task) {
+    const card = document.createElement('div');
+    card.className = 'todo-item' + (task.done ? ' completed' : '');
+    card.dataset.taskId = task.id;
 
     const main = document.createElement('div');
     main.className = 'todo-main';
 
+    // Checkbox
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'todo-checkbox';
-    checkbox.checked = task.done;
-    checkbox.onchange = () => toggleTaskComplete(task.id);
+    checkbox.checked = task.done || false;
+    checkbox.onchange = () => toggleTaskDone(task.id);
 
+    // Content wrapper
     const content = document.createElement('div');
     content.className = 'todo-content';
 
-    const text = document.createElement('div');
-    text.className = 'todo-text';
-    text.textContent = task.text;
-    content.appendChild(text);
+    // Inline editable title
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.className = 'task-title-input';
+    titleInput.value = task.title || task.text || '';
+    titleInput.onblur = () => updateTaskTitle(task.id, titleInput.value);
+    titleInput.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+            titleInput.blur();
+        }
+    };
+    content.appendChild(titleInput);
 
+    // Meta info (priority, due date, section)
     if (!task.done) {
         const meta = document.createElement('div');
         meta.className = 'todo-meta';
 
-        // Priority dot
+        // Priority dot (clickable to cycle)
         const priorityDot = document.createElement('div');
-        priorityDot.className = `priority-dot ${task.priority} active`;
-        priorityDot.title = `Priority: ${task.priority}`;
-        priorityDot.onclick = () => cyclePriority(task.id);
+        priorityDot.className = `priority-dot ${task.priority || 'none'}`;
+        priorityDot.title = `Priority: ${task.priority || 'none'} (click to change)`;
+        priorityDot.onclick = () => cycleTaskPriority(task.id);
+        meta.appendChild(priorityDot);
 
-        const priorityDots = document.createElement('div');
-        priorityDots.className = 'priority-dots';
-        priorityDots.appendChild(priorityDot);
-        meta.appendChild(priorityDots);
-
-        // Due date
+        // Due date tag
         if (task.dueDate) {
             const dueTag = document.createElement('span');
-            dueTag.className = 'due-date-tag';
-            const date = new Date(task.dueDate);
-            dueTag.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            dueTag.className = 'due-date-tag' + (isTaskOverdue(task) ? ' overdue' : '');
+            dueTag.textContent = formatDueDate(task.dueDate);
+            dueTag.onclick = (e) => {
+                e.stopPropagation();
+                showCalendarPicker(task.id, dueTag);
+            };
+            meta.appendChild(dueTag);
+        } else {
+            const dueTag = document.createElement('span');
+            dueTag.className = 'due-date-tag no-date';
+            dueTag.textContent = '📅 Set date';
+            dueTag.onclick = (e) => {
+                e.stopPropagation();
+                showCalendarPicker(task.id, dueTag);
+            };
             meta.appendChild(dueTag);
         }
 
-        // Section tag
-        const sectionTag = document.createElement('span');
-        sectionTag.className = 'section-tag';
-        sectionTag.textContent = task.section === 'today' ? '📅 Today' : '📆 Upcoming';
-        sectionTag.onclick = () => toggleTaskSection(task.id);
-        meta.appendChild(sectionTag);
+        // Section pill with dropdown
+        const sectionPill = createSectionPill(task);
+        meta.appendChild(sectionPill);
 
         content.appendChild(meta);
 
-        // Actions
+        // Action buttons
         const actions = document.createElement('div');
         actions.className = 'todo-actions';
-
-        const dueDateBtn = document.createElement('button');
-        dueDateBtn.className = 'action-btn';
-        dueDateBtn.textContent = '📅 Due Date';
-        dueDateBtn.onclick = (e) => {
-            e.stopPropagation();
-            showCalendarPicker(task.id, dueDateBtn);
-        };
-        actions.appendChild(dueDateBtn);
 
         const subtaskBtn = document.createElement('button');
         subtaskBtn.className = 'action-btn';
@@ -2581,11 +2964,7 @@ function createTaskElement(task) {
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'action-btn delete-btn';
         deleteBtn.textContent = '🗑 Delete';
-        deleteBtn.onclick = () => {
-            if (confirm('Delete this task?')) {
-                deleteTask(task.id);
-            }
-        };
+        deleteBtn.onclick = () => deleteTask(task.id);
         actions.appendChild(deleteBtn);
 
         content.appendChild(actions);
@@ -2603,7 +2982,7 @@ function createTaskElement(task) {
             const subtaskCheck = document.createElement('input');
             subtaskCheck.type = 'checkbox';
             subtaskCheck.className = 'subtask-checkbox';
-            subtaskCheck.checked = subtask.done;
+            subtaskCheck.checked = subtask.done || false;
             subtaskCheck.onchange = () => toggleSubtask(task.id, subtask.id);
 
             const subtaskText = document.createElement('span');
@@ -2620,9 +2999,35 @@ function createTaskElement(task) {
 
     main.appendChild(checkbox);
     main.appendChild(content);
-    item.appendChild(main);
+    card.appendChild(main);
 
-    return item;
+    return card;
+}
+
+function createSectionPill(task) {
+    const pill = document.createElement('span');
+    pill.className = 'section-pill';
+
+    const sectionLabels = {
+        inbox: '📥 Inbox',
+        today: '📅 Today',
+        tomorrow: '⏰ Tomorrow',
+        week: '📆 Week',
+        later: '🗓️ Later'
+    };
+
+    pill.textContent = sectionLabels[task.section] || '📥 Inbox';
+    pill.title = 'Click to move to different section';
+
+    // Simple section cycling (click to move between sections)
+    pill.onclick = () => {
+        const sections = ['inbox', 'today', 'tomorrow', 'week', 'later'];
+        const currentIdx = sections.indexOf(task.section);
+        const nextIdx = (currentIdx + 1) % sections.length;
+        moveTaskToSection(task.id, sections[nextIdx]);
+    };
+
+    return pill;
 }
 
 // ============================================
@@ -2633,7 +3038,7 @@ function bindAllEventListeners() {
     const journalTitle = document.getElementById('journalTitle');
     if (journalTitle) {
         journalTitle.addEventListener('input', () => {
-            const currentPage = plannerState.pages[plannerState.currentPageIndex];
+            const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
             currentPage.title = journalTitle.value;
             updateCharCount();
             savePlannerState();
@@ -2644,7 +3049,7 @@ function bindAllEventListeners() {
     const journalEditor = document.getElementById('journalEditor');
     if (journalEditor) {
         journalEditor.addEventListener('input', () => {
-            const currentPage = plannerState.pages[plannerState.currentPageIndex];
+            const pages = getPages(); const index = getCurrentPageIndex(); const currentPage = pages[index];
             currentPage.bodyMarkdown = journalEditor.value;
             updateCharCount();
             savePlannerState();
@@ -2663,21 +3068,21 @@ function bindAllEventListeners() {
         previewModeBtn.addEventListener('click', () => switchJournalMode('preview'));
     }
 
-    // Quick-add
-    const quickAddInput = document.getElementById('end-task-input');
-    const quickAddBtn = document.getElementById('end-task-add-btn');
+    // Quick-add (NEW IDs)
+    const quickAddInput = document.getElementById('taskQuickAddInput');
+    const quickAddBtn = document.getElementById('taskQuickAddBtn');
 
     if (quickAddInput) {
         quickAddInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                addTaskFromQuickAdd();
+                handleTaskQuickAdd();
             }
         });
     }
 
     if (quickAddBtn) {
-        quickAddBtn.addEventListener('click', addTaskFromQuickAdd);
+        quickAddBtn.addEventListener('click', handleTaskQuickAdd);
     }
 }
 
@@ -2685,7 +3090,15 @@ function bindAllEventListeners() {
 // RENDERING
 // ============================================
 function renderCurrentPage() {
-    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const pages = getPages();
+    const index = getCurrentPageIndex();
+
+    if (!pages.length || index < 0 || index >= pages.length) {
+        console.warn('No pages to render');
+        return;
+    }
+
+    const currentPage = pages[index];
 
     updateDateDisplay();
     renderTimeline();
@@ -2716,20 +3129,29 @@ function renderCurrentPage() {
     }
 
     updateCharCount();
-    renderTasks();
+    renderAllTasks();
 }
 
         function navigatePrev() {
-            if (currentPageIndex > 0) {
-                triggerPageFlip(() => {
-                    currentPageIndex--;
-                    renderCurrentPage();
-                });
-            }
+            const pages = getPages();
+            if (!pages.length) return;
+
+            const index = getCurrentPageIndex();
+            if (index <= 0) return;
+
+            triggerPageFlip(() => {
+                setCurrentPageIndex(index - 1);
+                renderCurrentPage();
+            });
         }
 
         function navigateNext() {
-            if (currentPageIndex >= pages.length - 1) {
+            const pages = getPages();
+            if (!pages.length) return;
+
+            const index = getCurrentPageIndex();
+
+            if (index >= pages.length - 1) {
                 const newPage = {
                     id: Date.now().toString(),
                     dayNumber: pages.length + 1,
@@ -2739,19 +3161,23 @@ function renderCurrentPage() {
                     todos: []
                 };
                 pages.push(newPage);
-                saveState();
+                setPages(pages);
+                savePlannerState();
             }
 
             triggerPageFlip(() => {
-                currentPageIndex++;
+                setCurrentPageIndex(index + 1);
                 renderCurrentPage();
             });
         }
 
         function goToPage(index) {
-            if (index >= 0 && index < pages.length && index !== currentPageIndex) {
+            const pages = getPages();
+            const currentIndex = getCurrentPageIndex();
+
+            if (index >= 0 && index < pages.length && index !== currentIndex) {
                 triggerPageFlip(() => {
-                    currentPageIndex = index;
+                    setCurrentPageIndex(index);
                     renderCurrentPage();
                 });
             }
@@ -2806,7 +3232,12 @@ function renderCurrentPage() {
         }
 
         function updateDateDisplay() {
-            const page = pages[currentPageIndex];
+            const pages = getPages();
+            const index = getCurrentPageIndex();
+            const page = pages[index];
+
+            if (!page) return;
+
             const dateObj = new Date(page.date);
 
             const dayEl = document.getElementById('currentDay');
@@ -2824,11 +3255,14 @@ function renderCurrentPage() {
             const timeline = document.getElementById('timeline');
             if (!timeline) return;
 
+            const pages = getPages();
+            const currentIndex = getCurrentPageIndex();
+
             timeline.innerHTML = '';
 
             pages.forEach((page, index) => {
                 const pill = document.createElement('div');
-                pill.className = 'day-pill' + (index === currentPageIndex ? ' active' : '');
+                pill.className = 'day-pill' + (index === currentIndex ? ' active' : '');
 
                 const dateObj = new Date(page.date);
                 const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -2844,23 +3278,10 @@ function renderCurrentPage() {
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
 
-            if (prevBtn) prevBtn.disabled = currentPageIndex === 0;
+            const currentIndex = getCurrentPageIndex();
+
+            if (prevBtn) prevBtn.disabled = currentIndex === 0;
             if (nextBtn) nextBtn.disabled = false;
-        }
-
-        function updateCharCount() {
-            const title = document.getElementById('journalTitle')?.value || '';
-            const page = pages[currentPageIndex];
-            const bodyMarkdown = page?.bodyMarkdown || '';
-
-            const titleChars = title.trim().length;
-            const bodyChars = bodyMarkdown.trim().length;
-            const total = titleChars + bodyChars;
-
-            const charCount = document.getElementById('charCount');
-            if (charCount) {
-                charCount.textContent = `${total} character${total !== 1 ? 's' : ''}`;
-            }
         }
 
         function addTask() {
