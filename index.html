@@ -772,12 +772,57 @@
         }
 
         .planner-panel {
-            background: rgba(11, 0, 22, 0.8);
-            border: 2px solid #b044ff;
-            border-radius: 8px;
+            background: linear-gradient(to bottom,
+                rgba(25, 15, 35, 0.95) 0%,
+                rgba(20, 10, 30, 0.92) 50%,
+                rgba(25, 15, 35, 0.95) 100%);
+            border: 2px solid rgba(176, 68, 255, 0.4);
+            border-radius: 4px;
             padding: 1.5rem;
-            box-shadow: 0 8px 32px rgba(176, 68, 255, 0.3), inset 0 0 20px rgba(176, 68, 255, 0.1);
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.3),
+                0 8px 24px rgba(176, 68, 255, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Paper texture overlay */
+        .planner-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(176, 68, 255, 0.02) 2px,
+                    rgba(176, 68, 255, 0.02) 4px
+                );
+            pointer-events: none;
+            border-radius: 4px;
+            opacity: 0.3;
+        }
+
+        /* Book spine shadow effect */
+        .planner-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -2px;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to right,
+                rgba(0, 0, 0, 0.4),
+                transparent
+            );
+            border-radius: 4px 0 0 4px;
         }
 
         .back-to-hub-btn {
@@ -897,28 +942,30 @@
         .nav-btn {
             flex: 1;
             padding: 0.75rem;
-            background: linear-gradient(135deg, #b044ff, #8833cc);
-            border: none;
-            border-radius: 4px;
+            background: linear-gradient(135deg, rgba(176, 68, 255, 0.6), rgba(136, 51, 204, 0.6));
+            border: 1px solid rgba(176, 68, 255, 0.4);
+            border-radius: 3px;
             color: #fff;
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(176, 68, 255, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 6px rgba(176, 68, 255, 0.3);
         }
 
         .nav-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #e98cff, #b044ff);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(233, 140, 255, 0.6);
+            background: linear-gradient(135deg, rgba(233, 140, 255, 0.7), rgba(176, 68, 255, 0.7));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(233, 140, 255, 0.4);
+            border-color: rgba(233, 140, 255, 0.6);
         }
 
         .nav-btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
             transform: none;
+            filter: grayscale(0.5);
         }
 
         /* CENTER PANEL */
@@ -934,15 +981,22 @@
             color: #e98cff;
             background: transparent;
             border: none;
-            border-bottom: 2px solid rgba(176, 68, 255, 0.5);
-            padding: 0.5rem;
+            border-bottom: 2px solid rgba(176, 68, 255, 0.3);
+            padding: 0.5rem 0.75rem;
             outline: none;
             font-family: 'Courier New', monospace;
-            text-shadow: 0 0 8px rgba(233, 140, 255, 0.6);
+            text-shadow: 0 0 8px rgba(233, 140, 255, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .journal-title:focus {
+            border-bottom-color: rgba(233, 140, 255, 0.7);
+            text-shadow: 0 0 12px rgba(233, 140, 255, 0.6);
+            transform: translateY(-1px);
         }
 
         .journal-title::placeholder {
-            color: rgba(233, 140, 255, 0.4);
+            color: rgba(233, 140, 255, 0.3);
         }
 
         .journal-mode-toggle {
@@ -956,35 +1010,40 @@
         .mode-btn {
             flex: 1;
             padding: 0.6rem 1rem;
-            background: rgba(176, 68, 255, 0.1);
-            border: 1px solid rgba(176, 68, 255, 0.3);
-            border-radius: 4px;
+            background: rgba(176, 68, 255, 0.08);
+            border: 1px solid rgba(176, 68, 255, 0.25);
+            border-radius: 3px;
             color: #b8a0ff;
             font-family: 'Courier New', monospace;
             font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .mode-btn:hover {
-            background: rgba(176, 68, 255, 0.2);
-            border-color: #b044ff;
+            background: rgba(176, 68, 255, 0.15);
+            border-color: rgba(176, 68, 255, 0.4);
+            color: #e98cff;
+            transform: translateY(-1px);
         }
 
         .mode-btn.active {
-            background: rgba(233, 140, 255, 0.3);
-            border-color: #e98cff;
+            background: linear-gradient(135deg, rgba(233, 140, 255, 0.25), rgba(176, 68, 255, 0.3));
+            border-color: rgba(233, 140, 255, 0.5);
             color: #fff;
             font-weight: bold;
+            box-shadow: 0 2px 8px rgba(233, 140, 255, 0.3);
         }
 
         .journal-editor {
             flex: 1;
             min-height: 400px;
-            padding: 1rem;
-            background: rgba(5, 0, 11, 0.5);
-            border: 1px solid rgba(176, 68, 255, 0.3);
-            border-radius: 4px;
+            padding: 1.25rem;
+            background: linear-gradient(to bottom,
+                rgba(5, 0, 11, 0.4) 0%,
+                rgba(10, 0, 20, 0.5) 100%);
+            border: 1px solid rgba(176, 68, 255, 0.25);
+            border-radius: 3px;
             color: #e0d5ff;
             font-size: 1rem;
             line-height: 1.8;
@@ -992,15 +1051,22 @@
             overflow-y: auto;
             font-family: 'Courier New', monospace;
             resize: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
         }
 
         .journal-editor:focus {
-            border-color: #b044ff;
-            box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
+            border-color: rgba(176, 68, 255, 0.5);
+            box-shadow:
+                inset 0 2px 6px rgba(0, 0, 0, 0.3),
+                0 0 16px rgba(176, 68, 255, 0.3);
+            background: linear-gradient(to bottom,
+                rgba(10, 0, 20, 0.5) 0%,
+                rgba(15, 0, 25, 0.6) 100%);
         }
 
         .journal-editor::placeholder {
-            color: rgba(176, 68, 255, 0.4);
+            color: rgba(176, 68, 255, 0.3);
         }
 
         .journal-preview {
@@ -1097,34 +1163,46 @@
             color: #e98cff;
         }
 
-        /* Page flip animation */
+        /* Journal-like page turning animation */
         .page-flip-out {
-            animation: flipOut 0.3s ease;
+            animation: journalPageTurnOut 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
         .page-flip-in {
-            animation: flipIn 0.3s ease;
+            animation: journalPageTurnIn 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
 
-        @keyframes flipOut {
-            from {
+        @keyframes journalPageTurnOut {
+            0% {
                 opacity: 1;
-                transform: rotateY(0deg) scale(1);
+                transform: perspective(1200px) rotateY(0deg);
+                filter: brightness(1) sepia(0);
             }
-            to {
+            50% {
+                opacity: 0.7;
+                filter: brightness(0.9) sepia(0.1);
+            }
+            100% {
                 opacity: 0;
-                transform: rotateY(90deg) scale(0.8);
+                transform: perspective(1200px) rotateY(-15deg) translateX(-30px);
+                filter: brightness(0.8) sepia(0.15);
             }
         }
 
-        @keyframes flipIn {
-            from {
+        @keyframes journalPageTurnIn {
+            0% {
                 opacity: 0;
-                transform: rotateY(-90deg) scale(0.8);
+                transform: perspective(1200px) rotateY(15deg) translateX(30px);
+                filter: brightness(0.8) sepia(0.15);
             }
-            to {
+            50% {
+                opacity: 0.7;
+                filter: brightness(0.9) sepia(0.1);
+            }
+            100% {
                 opacity: 1;
-                transform: rotateY(0deg) scale(1);
+                transform: perspective(1200px) rotateY(0deg);
+                filter: brightness(1) sepia(0);
             }
         }
 
@@ -1278,11 +1356,15 @@
         }
 
         .section-chevron {
-            transition: transform 0.2s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .section-chevron.expanded {
             transform: rotate(90deg);
+        }
+
+        .task-section-header {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .task-section-list {
@@ -1324,50 +1406,76 @@
         }
 
         .todo-item {
-            background: rgba(176, 68, 255, 0.1);
-            border: 1px solid rgba(176, 68, 255, 0.3);
-            border-radius: 4px;
+            background: linear-gradient(to right,
+                rgba(176, 68, 255, 0.08) 0%,
+                rgba(176, 68, 255, 0.12) 50%,
+                rgba(176, 68, 255, 0.08) 100%);
+            border: 1px solid rgba(176, 68, 255, 0.25);
+            border-radius: 3px;
             padding: 0.75rem;
-            animation: taskSlideIn 0.3s ease;
-            transition: all 0.2s ease;
+            animation: inkWriteIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes taskSlideIn {
-            from {
+        /* Ink writing animation - like writing in a journal */
+        @keyframes inkWriteIn {
+            0% {
                 opacity: 0;
-                transform: scale(0.95) translateY(-10px);
+                transform: translateX(-20px);
+                filter: blur(4px);
             }
-            to {
+            60% {
+                opacity: 0.8;
+                filter: blur(1px);
+            }
+            100% {
                 opacity: 1;
-                transform: scale(1) translateY(0);
+                transform: translateX(0);
+                filter: blur(0);
             }
         }
 
         .todo-item:hover {
-            background: rgba(176, 68, 255, 0.15);
-            border-color: #b044ff;
+            background: linear-gradient(to right,
+                rgba(176, 68, 255, 0.12) 0%,
+                rgba(176, 68, 255, 0.18) 50%,
+                rgba(176, 68, 255, 0.12) 100%);
+            border-color: rgba(176, 68, 255, 0.5);
+            box-shadow: 0 2px 6px rgba(176, 68, 255, 0.2);
+            transform: translateX(2px);
         }
 
         .todo-item.completed {
-            opacity: 0.5;
+            opacity: 0.6;
+            filter: grayscale(0.3);
         }
 
         .todo-item.completing {
-            animation: taskComplete 0.5s ease;
+            animation: inkStrikethrough 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes taskComplete {
+        /* Ink strikethrough effect */
+        @keyframes inkStrikethrough {
             0% {
                 transform: scale(1);
                 opacity: 1;
             }
-            50% {
-                transform: scale(1.05);
-                background: rgba(68, 255, 136, 0.3);
+            30% {
+                transform: scale(1.02);
+                box-shadow: 0 4px 12px rgba(68, 255, 136, 0.3);
+            }
+            60% {
+                background: linear-gradient(to right,
+                    rgba(68, 255, 136, 0.2) 0%,
+                    rgba(68, 255, 136, 0.25) 50%,
+                    rgba(68, 255, 136, 0.2) 100%);
             }
             100% {
                 transform: scale(1);
-                opacity: 0.5;
+                opacity: 0.6;
             }
         }
 
@@ -3186,6 +3294,7 @@ function renderCurrentPage() {
             const centerPanel = document.getElementById('centerPanel');
             if (!centerPanel) return callback();
 
+            // Slower, more journal-like page turning
             centerPanel.classList.add('page-flip-out');
 
             setTimeout(() => {
@@ -3195,39 +3304,8 @@ function renderCurrentPage() {
 
                 setTimeout(() => {
                     centerPanel.classList.remove('page-flip-in');
-                }, 300);
-            }, 300);
-        }
-
-        function renderCurrentPage() {
-            const page = pages[currentPageIndex];
-
-            updateDateDisplay();
-            renderTimeline();
-            updateNavButtons();
-
-            const journalTitle = document.getElementById('journalTitle');
-            const journalBody = document.getElementById('journalBody');
-
-            if (journalTitle) journalTitle.value = page.title || '';
-
-            if (journalBody) {
-                const markdown = page.bodyMarkdown || '';
-                const html = parseMarkdown(markdown);
-                journalBody.innerHTML = html;
-
-                // Add click handlers to links
-                const links = journalBody.querySelectorAll('a');
-                links.forEach(link => {
-                    link.onclick = function(e) {
-                        e.preventDefault();
-                        window.open(this.href, '_blank', 'noopener,noreferrer');
-                    };
-                });
-            }
-
-            updateCharCount();
-            renderTodos();
+                }, 600);
+            }, 600);
         }
 
         function updateDateDisplay() {
