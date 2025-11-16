@@ -945,7 +945,40 @@
             color: rgba(233, 140, 255, 0.4);
         }
 
-        .journal-body {
+        .journal-mode-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid rgba(176, 68, 255, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            background: rgba(176, 68, 255, 0.1);
+            border: 1px solid rgba(176, 68, 255, 0.3);
+            border-radius: 4px;
+            color: #b8a0ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn:hover {
+            background: rgba(176, 68, 255, 0.2);
+            border-color: #b044ff;
+        }
+
+        .mode-btn.active {
+            background: rgba(233, 140, 255, 0.3);
+            border-color: #e98cff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .journal-editor {
             flex: 1;
             min-height: 400px;
             padding: 1rem;
@@ -958,21 +991,39 @@
             outline: none;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
+            resize: none;
         }
 
-        .journal-body:focus {
+        .journal-editor:focus {
             border-color: #b044ff;
             box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
         }
 
-        .journal-body:empty::before {
-            content: attr(data-placeholder);
+        .journal-editor::placeholder {
             color: rgba(176, 68, 255, 0.4);
-            white-space: pre-wrap;
         }
 
-        /* Inline markdown styling */
-        .journal-body h1 {
+        .journal-preview {
+            flex: 1;
+            min-height: 400px;
+            padding: 1rem;
+            background: rgba(5, 0, 11, 0.3);
+            border: 1px solid rgba(176, 68, 255, 0.2);
+            border-radius: 4px;
+            color: #e0d5ff;
+            font-size: 1rem;
+            line-height: 1.8;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        .journal-preview:empty::before {
+            content: 'Nothing to preview yet. Switch to Edit mode to add content.';
+            color: rgba(176, 68, 255, 0.4);
+        }
+
+        /* Preview mode markdown styling */
+        .journal-preview h1 {
             font-size: 2rem;
             color: #e98cff;
             margin: 1rem 0;
@@ -980,38 +1031,38 @@
             padding-bottom: 0.5rem;
         }
 
-        .journal-body h2 {
+        .journal-preview h2 {
             font-size: 1.6rem;
             color: #e98cff;
             margin: 0.8rem 0;
         }
 
-        .journal-body h3 {
+        .journal-preview h3 {
             font-size: 1.3rem;
             color: #b8a0ff;
             margin: 0.6rem 0;
         }
 
-        .journal-body strong {
+        .journal-preview strong {
             font-weight: bold;
             color: #fff;
         }
 
-        .journal-body em {
+        .journal-preview em {
             font-style: italic;
             color: #e0d5ff;
         }
 
-        .journal-body ul, .journal-body ol {
+        .journal-preview ul, .journal-preview ol {
             margin: 0.5rem 0;
             padding-left: 2rem;
         }
 
-        .journal-body li {
+        .journal-preview li {
             margin: 0.25rem 0;
         }
 
-        .journal-body code {
+        .journal-preview code {
             background: rgba(176, 68, 255, 0.2);
             padding: 2px 6px;
             border-radius: 3px;
@@ -1020,13 +1071,13 @@
             font-size: 0.9em;
         }
 
-        .journal-body a {
+        .journal-preview a {
             color: #7de8ff;
             text-decoration: underline;
             cursor: pointer;
         }
 
-        .journal-body a:hover {
+        .journal-preview a:hover {
             color: #a0f0ff;
             text-shadow: 0 0 8px rgba(125, 232, 255, 0.6);
         }
@@ -1120,6 +1171,17 @@
 
         .quick-add-input::placeholder {
             color: rgba(176, 68, 255, 0.5);
+        }
+
+        .quick-add-input.error {
+            border-color: #ff4466;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
 
         .quick-add-btn {
@@ -1462,6 +1524,119 @@
             gap: 0.5rem;
         }
 
+        /* Calendar Picker */
+        .calendar-picker {
+            position: absolute;
+            background: rgba(11, 0, 22, 0.95);
+            border: 2px solid #b044ff;
+            border-radius: 6px;
+            padding: 1rem;
+            box-shadow: 0 8px 32px rgba(176, 68, 255, 0.5);
+            z-index: 1000;
+            min-width: 280px;
+        }
+
+        .calendar-quick-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(176, 68, 255, 0.3);
+        }
+
+        .calendar-quick-btn {
+            padding: 0.5rem;
+            background: rgba(176, 68, 255, 0.1);
+            border: 1px solid rgba(176, 68, 255, 0.3);
+            border-radius: 4px;
+            color: #e0d5ff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .calendar-quick-btn:hover {
+            background: rgba(176, 68, 255, 0.2);
+            border-color: #b044ff;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .calendar-month {
+            color: #e98cff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .calendar-nav-btn {
+            background: rgba(176, 68, 255, 0.1);
+            border: 1px solid rgba(176, 68, 255, 0.3);
+            border-radius: 3px;
+            color: #e0d5ff;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .calendar-nav-btn:hover {
+            background: rgba(176, 68, 255, 0.2);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .calendar-day-label {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #b8a0ff;
+            padding: 0.25rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(176, 68, 255, 0.1);
+            border: 1px solid rgba(176, 68, 255, 0.2);
+            border-radius: 3px;
+            color: #e0d5ff;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calendar-day:hover {
+            background: rgba(176, 68, 255, 0.3);
+            border-color: #b044ff;
+        }
+
+        .calendar-day.today {
+            border-color: #44ff88;
+            background: rgba(68, 255, 136, 0.1);
+        }
+
+        .calendar-day.selected {
+            background: rgba(233, 140, 255, 0.3);
+            border-color: #e98cff;
+            font-weight: bold;
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             #end-planner {
@@ -1687,11 +1862,24 @@
             <div class="planner-panel planner-center-panel" id="centerPanel">
                 <input type="text" class="journal-title" id="journalTitle" placeholder="Ender Log Title" />
 
-                <div class="journal-body" contenteditable="true" id="journalBody" data-placeholder="Write your ender log here... Use markdown: **bold**, *italic*, # headers, - lists, `code`, [links](url)"></div>
+                <div class="journal-mode-toggle">
+                    <button class="mode-btn active" id="editModeBtn" data-mode="edit">✏️ Edit</button>
+                    <button class="mode-btn" id="previewModeBtn" data-mode="preview">👁️ Preview</button>
+                </div>
+
+                <textarea class="journal-editor" id="journalEditor" placeholder="Write your markdown here...
+
+# Heading
+**bold** or *italic*
+- List item
+`code`
+[link text](https://example.com)"></textarea>
+
+                <div class="journal-preview is-hidden" id="journalPreview"></div>
 
                 <div class="journal-footer">
                     <span class="char-count" id="charCount">0 characters</span>
-                    <span>Inline markdown rendering</span>
+                    <span id="modeIndicator">Edit Mode</span>
                 </div>
             </div>
 
@@ -1783,13 +1971,21 @@
         });
 
         // ============================================
-        // END PLANNER SCRIPTS
+        // END PLANNER SCRIPTS - COMPLETE REWRITE
         // ============================================
-        const STORAGE_KEY = 'mcTools_endPlanner_v1';
-        let pages = [];
-        let currentPageIndex = 0;
+        const STORAGE_KEY = 'mcTools_endPlanner_v2';
+
+        // Clean state object
+        const plannerState = {
+            pages: [],
+            currentPageIndex: 0
+        };
+
+        // UI state
+        let currentJournalMode = 'edit'; // 'edit' or 'preview'
         let showCompleted = false;
         let plannerInitialized = false;
+        let activeCalendarPicker = null;
 
         function initPlanner() {
             if (plannerInitialized) {
@@ -1798,10 +1994,52 @@
             }
 
             createEndParticles();
-            loadState();
-            bindEventListeners();
+            loadPlannerState();
+            bindAllEventListeners();
             renderCurrentPage();
             plannerInitialized = true;
+        }
+
+        function loadPlannerState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    plannerState.pages = data.pages || [];
+                    plannerState.currentPageIndex = data.currentPageIndex || 0;
+                } catch (e) {
+                    console.error('Failed to load planner state:', e);
+                    plannerState.pages = [];
+                }
+            }
+
+            // Ensure at least one page exists
+            if (plannerState.pages.length === 0) {
+                plannerState.pages = [{
+                    id: Date.now().toString(),
+                    dayNumber: 1,
+                    date: new Date().toISOString().split('T')[0],
+                    title: '',
+                    bodyMarkdown: '',
+                    todos: []
+                }];
+            }
+
+            // Validate currentPageIndex
+            if (plannerState.currentPageIndex >= plannerState.pages.length) {
+                plannerState.currentPageIndex = plannerState.pages.length - 1;
+            }
+        }
+
+        function savePlannerState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    pages: plannerState.pages,
+                    currentPageIndex: plannerState.currentPageIndex
+                }));
+            } catch (e) {
+                console.error('Failed to save planner state:', e);
+            }
         }
 
         function createEndParticles() {
@@ -1819,57 +2057,9 @@
             }
         }
 
-        function loadState() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    pages = data.pages || [];
-                    currentPageIndex = data.currentPageIndex || 0;
-                } catch (e) {
-                    console.error('Failed to parse saved state:', e);
-                    pages = [];
-                }
-            }
-
-            if (pages.length === 0) {
-                pages = [{
-                    id: Date.now().toString(),
-                    dayNumber: 1,
-                    date: new Date().toISOString().split('T')[0],
-                    title: '',
-                    bodyMarkdown: '',
-                    todos: []
-                }];
-            }
-
-            // Migrate old 'body' field to 'bodyMarkdown'
-            pages.forEach(page => {
-                if (page.body && !page.bodyMarkdown) {
-                    page.bodyMarkdown = page.body;
-                    delete page.body;
-                }
-                if (!page.bodyMarkdown) {
-                    page.bodyMarkdown = '';
-                }
-            });
-
-            if (currentPageIndex >= pages.length) {
-                currentPageIndex = pages.length - 1;
-            }
-        }
-
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    pages: pages,
-                    currentPageIndex: currentPageIndex
-                }));
-            } catch (e) {
-                console.error('Failed to save state:', e);
-            }
-        }
-
+        // ============================================
+        // MARKDOWN PARSER - SIMPLE AND CLEAN
+        // ============================================
         function parseMarkdown(markdown) {
             if (!markdown) return '';
 
@@ -1917,139 +2107,617 @@
             return html;
         }
 
-        function saveCursorPosition(element) {
-            const selection = window.getSelection();
-            if (selection.rangeCount === 0) return null;
 
-            const range = selection.getRangeAt(0);
-            const preSelectionRange = range.cloneRange();
-            preSelectionRange.selectNodeContents(element);
-            preSelectionRange.setEnd(range.startContainer, range.startOffset);
+// ============================================
+// JOURNAL MODE SWITCHING (Edit / Preview)
+// ============================================
+function switchJournalMode(mode) {
+    currentJournalMode = mode;
+    const editBtn = document.getElementById('editModeBtn');
+    const previewBtn = document.getElementById('previewModeBtn');
+    const editor = document.getElementById('journalEditor');
+    const preview = document.getElementById('journalPreview');
+    const indicator = document.getElementById('modeIndicator');
 
-            return preSelectionRange.toString().length;
-        }
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
 
-        function restoreCursorPosition(element, position) {
-            if (position === null) return;
+    if (mode === 'edit') {
+        // Show editor, hide preview
+        editor.classList.remove('is-hidden');
+        preview.classList.add('is-hidden');
+        editBtn.classList.add('active');
+        previewBtn.classList.remove('active');
+        indicator.textContent = 'Edit Mode';
 
-            const selection = window.getSelection();
-            const range = document.createRange();
+        // Load markdown into editor
+        editor.value = currentPage.bodyMarkdown || '';
+    } else {
+        // Save editor content first
+        currentPage.bodyMarkdown = editor.value;
+        savePlannerState();
 
-            let charIndex = 0;
-            let nodeStack = [element];
-            let node, foundStart = false;
+        // Show preview, hide editor
+        editor.classList.add('is-hidden');
+        preview.classList.remove('is-hidden');
+        editBtn.classList.remove('active');
+        previewBtn.classList.add('active');
+        indicator.textContent = 'Preview Mode';
 
-            while (!foundStart && (node = nodeStack.pop())) {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    const nextCharIndex = charIndex + node.length;
-                    if (position >= charIndex && position <= nextCharIndex) {
-                        range.setStart(node, position - charIndex);
-                        range.collapse(true);
-                        foundStart = true;
-                    }
-                    charIndex = nextCharIndex;
-                } else {
-                    let i = node.childNodes.length;
-                    while (i--) {
-                        nodeStack.push(node.childNodes[i]);
-                    }
-                }
-            }
+        // Render markdown
+        preview.innerHTML = parseMarkdown(currentPage.bodyMarkdown || '');
 
-            if (foundStart) {
-                selection.removeAllRanges();
-                selection.addRange(range);
-            }
-        }
-
-        let journalUpdateTimer = null;
-
-        function updateJournalFromEditor() {
-            const editor = document.getElementById('journalBody');
-            const page = pages[currentPageIndex];
-
-            if (!editor || !page) return;
-
-            // Extract plain text (markdown source) from the editor
-            const markdownSource = editor.innerText || '';
-            page.bodyMarkdown = markdownSource;
-
-            saveState();
-            updateCharCount();
-        }
-
-        function renderJournalMarkdown() {
-            const editor = document.getElementById('journalBody');
-            const page = pages[currentPageIndex];
-
-            if (!editor || !page) return;
-
-            const cursorPos = saveCursorPosition(editor);
-            const markdown = page.bodyMarkdown || '';
-            const html = parseMarkdown(markdown);
-
-            editor.innerHTML = html;
-
-            // Add click handlers to links
-            const links = editor.querySelectorAll('a');
-            links.forEach(link => {
-                link.onclick = function(e) {
-                    e.preventDefault();
-                    window.open(this.href, '_blank', 'noopener,noreferrer');
-                };
-            });
-
-            restoreCursorPosition(editor, cursorPos);
-        }
-
-        function bindEventListeners() {
-            const journalTitle = document.getElementById('journalTitle');
-            const journalBody = document.getElementById('journalBody');
-            const quickAddInput = document.getElementById('end-task-input');
-            const quickAddBtn = document.getElementById('end-task-add-btn');
-
-            if (!journalTitle || !journalBody || !quickAddInput || !quickAddBtn) {
-                console.error('Missing elements:', {
-                    journalTitle: !!journalTitle,
-                    journalBody: !!journalBody,
-                    quickAddInput: !!quickAddInput,
-                    quickAddBtn: !!quickAddBtn
-                });
-                return;
-            }
-
-            journalTitle.addEventListener('input', function() {
-                pages[currentPageIndex].title = this.value;
-                updateCharCount();
-                saveState();
-            });
-
-            journalBody.addEventListener('input', function() {
-                clearTimeout(journalUpdateTimer);
-                journalUpdateTimer = setTimeout(() => {
-                    updateJournalFromEditor();
-                    renderJournalMarkdown();
-                }, 300);
-            });
-
-            journalBody.addEventListener('blur', function() {
-                updateJournalFromEditor();
-                renderJournalMarkdown();
-            });
-
-            quickAddInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addTask();
-                }
-            });
-
-            quickAddBtn.addEventListener('click', function(e) {
+        // Make links work
+        const links = preview.querySelectorAll('a');
+        links.forEach(link => {
+            link.onclick = (e) => {
                 e.preventDefault();
-                console.log('Quick add button clicked!');
-                addTask();
-            });
+                window.open(link.href, '_blank', 'noopener,noreferrer');
+            };
+        });
+    }
+}
+
+function updateCharCount() {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const title = document.getElementById('journalTitle')?.value || '';
+    const markdown = currentPage.bodyMarkdown || '';
+
+    const total = title.length + markdown.length;
+    const charCount = document.getElementById('charCount');
+    if (charCount) {
+        charCount.textContent = `${total} character${total !== 1 ? 's' : ''}`;
+    }
+}
+
+// ============================================
+// TASK SYSTEM - TICKTICK STYLE
+// ============================================
+function showQuickAddError() {
+    const input = document.getElementById('end-task-input');
+    if (!input) return;
+
+    input.classList.add('error');
+    setTimeout(() => {
+        input.classList.remove('error');
+    }, 300);
+}
+
+function addTaskFromQuickAdd() {
+    const input = document.getElementById('end-task-input');
+    if (!input) return;
+
+    const text = input.value.trim();
+    if (!text) {
+        showQuickAddError();
+        return;
+    }
+
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    if (!Array.isArray(currentPage.todos)) {
+        currentPage.todos = [];
+    }
+
+    const newTask = {
+        id: Date.now().toString(),
+        text: text,
+        done: false,
+        section: 'today',
+        priority: 'normal',
+        dueDate: null,
+        subtasks: []
+    };
+
+    currentPage.todos.push(newTask);
+    input.value = '';
+
+    savePlannerState();
+    renderTasks();
+}
+
+function toggleTaskComplete(taskId) {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const task = currentPage.todos.find(t => t.id === taskId);
+
+    if (task) {
+        task.done = !task.done;
+        savePlannerState();
+        renderTasks();
+    }
+}
+
+function deleteTask(taskId) {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    currentPage.todos = currentPage.todos.filter(t => t.id !== taskId);
+    savePlannerState();
+    renderTasks();
+}
+
+function cyclePriority(taskId) {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const task = currentPage.todos.find(t => t.id === taskId);
+
+    if (task) {
+        const priorities = ['normal', 'high', 'low'];
+        const currentIndex = priorities.indexOf(task.priority);
+        task.priority = priorities[(currentIndex + 1) % priorities.length];
+        savePlannerState();
+        renderTasks();
+    }
+}
+
+function toggleTaskSection(taskId) {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const task = currentPage.todos.find(t => t.id === taskId);
+
+    if (task) {
+        task.section = task.section === 'today' ? 'upcoming' : 'today';
+        savePlannerState();
+        renderTasks();
+    }
+}
+
+// ============================================
+// CALENDAR PICKER
+// ============================================
+function showCalendarPicker(taskId, buttonElement) {
+    // Close any existing picker
+    if (activeCalendarPicker) {
+        activeCalendarPicker.remove();
+        activeCalendarPicker = null;
+    }
+
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const task = currentPage.todos.find(t => t.id === taskId);
+    if (!task) return;
+
+    const picker = document.createElement('div');
+    picker.className = 'calendar-picker';
+
+    // Quick options
+    const quickOptions = document.createElement('div');
+    quickOptions.className = 'calendar-quick-options';
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    const options = [
+        { label: '📅 Today', date: today },
+        { label: '⏰ Tomorrow', date: tomorrow },
+        { label: '📆 Next Week', date: nextWeek },
+        { label: '❌ Clear', date: null }
+    ];
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'calendar-quick-btn';
+        btn.textContent = opt.label;
+        btn.onclick = () => {
+            if (opt.date) {
+                task.dueDate = opt.date.toISOString().split('T')[0];
+            } else {
+                task.dueDate = null;
+            }
+            savePlannerState();
+            renderTasks();
+            picker.remove();
+            activeCalendarPicker = null;
+        };
+        quickOptions.appendChild(btn);
+    });
+
+    picker.appendChild(quickOptions);
+
+    // Calendar month view
+    const calendarDate = task.dueDate ? new Date(task.dueDate) : new Date();
+    let viewMonth = calendarDate.getMonth();
+    let viewYear = calendarDate.getFullYear();
+
+    function renderCalendar() {
+        const existing = picker.querySelector('.calendar-header');
+        if (existing) {
+            existing.parentElement.removeChild(existing);
+            picker.querySelector('.calendar-grid')?.remove();
         }
+
+        const header = document.createElement('div');
+        header.className = 'calendar-header';
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'calendar-nav-btn';
+        prevBtn.textContent = '◀';
+        prevBtn.onclick = () => {
+            viewMonth--;
+            if (viewMonth < 0) {
+                viewMonth = 11;
+                viewYear--;
+            }
+            renderCalendar();
+        };
+
+        const monthLabel = document.createElement('span');
+        monthLabel.className = 'calendar-month';
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+        monthLabel.textContent = `${monthNames[viewMonth]} ${viewYear}`;
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'calendar-nav-btn';
+        nextBtn.textContent = '▶';
+        nextBtn.onclick = () => {
+            viewMonth++;
+            if (viewMonth > 11) {
+                viewMonth = 0;
+                viewYear++;
+            }
+            renderCalendar();
+        };
+
+        header.appendChild(prevBtn);
+        header.appendChild(monthLabel);
+        header.appendChild(nextBtn);
+        picker.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'calendar-grid';
+
+        // Day labels
+        ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
+            const label = document.createElement('div');
+            label.className = 'calendar-day-label';
+            label.textContent = day;
+            grid.appendChild(label);
+        });
+
+        // Days
+        const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+        const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            grid.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day';
+            dayEl.textContent = day;
+
+            const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const isToday = dateStr === today.toISOString().split('T')[0];
+            const isSelected = dateStr === task.dueDate;
+
+            if (isToday) dayEl.classList.add('today');
+            if (isSelected) dayEl.classList.add('selected');
+
+            dayEl.onclick = () => {
+                task.dueDate = dateStr;
+                savePlannerState();
+                renderTasks();
+                picker.remove();
+                activeCalendarPicker = null;
+            };
+
+            grid.appendChild(dayEl);
+        }
+
+        picker.appendChild(grid);
+    }
+
+    renderCalendar();
+
+    // Position picker near button
+    document.body.appendChild(picker);
+    const rect = buttonElement.getBoundingClientRect();
+    picker.style.top = (rect.bottom + 5) + 'px';
+    picker.style.left = rect.left + 'px';
+
+    activeCalendarPicker = picker;
+
+    // Close on outside click
+    setTimeout(() => {
+        document.addEventListener('click', function closeCalendar(e) {
+            if (!picker.contains(e.target) && e.target !== buttonElement) {
+                picker.remove();
+                activeCalendarPicker = null;
+                document.removeEventListener('click', closeCalendar);
+            }
+        });
+    }, 100);
+}
+
+function addSubtask(taskId) {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const task = currentPage.todos.find(t => t.id === taskId);
+    if (!task) return;
+
+    const text = prompt('Enter subtask:');
+    if (text && text.trim()) {
+        if (!Array.isArray(task.subtasks)) {
+            task.subtasks = [];
+        }
+        task.subtasks.push({
+            id: Date.now().toString(),
+            text: text.trim(),
+            done: false
+        });
+        savePlannerState();
+        renderTasks();
+    }
+}
+
+function toggleSubtask(taskId, subtaskId) {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const task = currentPage.todos.find(t => t.id === taskId);
+    if (!task) return;
+
+    const subtask = task.subtasks.find(s => s.id === subtaskId);
+    if (subtask) {
+        subtask.done = !subtask.done;
+        savePlannerState();
+        renderTasks();
+    }
+}
+
+function renderTasks() {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+    const todos = currentPage.todos || [];
+
+    const todayList = document.getElementById('todayTodos');
+    const upcomingList = document.getElementById('upcomingTodos');
+    const completedList = document.getElementById('completedList');
+    const completedCount = document.getElementById('completedCount');
+
+    if (!todayList || !upcomingList || !completedList) return;
+
+    const todayTasks = todos.filter(t => !t.done && t.section === 'today');
+    const upcomingTasks = todos.filter(t => !t.done && t.section === 'upcoming');
+    const completedTasks = todos.filter(t => t.done);
+
+    todayList.innerHTML = '';
+    upcomingList.innerHTML = '';
+    completedList.innerHTML = '';
+
+    if (completedCount) {
+        completedCount.textContent = completedTasks.length;
+    }
+
+    todayTasks.forEach(task => {
+        todayList.appendChild(createTaskElement(task));
+    });
+
+    upcomingTasks.forEach(task => {
+        upcomingList.appendChild(createTaskElement(task));
+    });
+
+    completedTasks.forEach(task => {
+        completedList.appendChild(createTaskElement(task));
+    });
+
+    if (todayTasks.length === 0) {
+        todayList.innerHTML = '<div style="color: #8866aa; font-size: 0.85rem; text-align: center; padding: 1rem;">No tasks for today</div>';
+    }
+
+    if (upcomingTasks.length === 0) {
+        upcomingList.innerHTML = '<div style="color: #8866aa; font-size: 0.85rem; text-align: center; padding: 1rem;">No upcoming tasks</div>';
+    }
+}
+
+function createTaskElement(task) {
+    const item = document.createElement('div');
+    item.className = 'todo-item' + (task.done ? ' completed' : '');
+
+    const main = document.createElement('div');
+    main.className = 'todo-main';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'todo-checkbox';
+    checkbox.checked = task.done;
+    checkbox.onchange = () => toggleTaskComplete(task.id);
+
+    const content = document.createElement('div');
+    content.className = 'todo-content';
+
+    const text = document.createElement('div');
+    text.className = 'todo-text';
+    text.textContent = task.text;
+    content.appendChild(text);
+
+    if (!task.done) {
+        const meta = document.createElement('div');
+        meta.className = 'todo-meta';
+
+        // Priority dot
+        const priorityDot = document.createElement('div');
+        priorityDot.className = `priority-dot ${task.priority} active`;
+        priorityDot.title = `Priority: ${task.priority}`;
+        priorityDot.onclick = () => cyclePriority(task.id);
+
+        const priorityDots = document.createElement('div');
+        priorityDots.className = 'priority-dots';
+        priorityDots.appendChild(priorityDot);
+        meta.appendChild(priorityDots);
+
+        // Due date
+        if (task.dueDate) {
+            const dueTag = document.createElement('span');
+            dueTag.className = 'due-date-tag';
+            const date = new Date(task.dueDate);
+            dueTag.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            meta.appendChild(dueTag);
+        }
+
+        // Section tag
+        const sectionTag = document.createElement('span');
+        sectionTag.className = 'section-tag';
+        sectionTag.textContent = task.section === 'today' ? '📅 Today' : '📆 Upcoming';
+        sectionTag.onclick = () => toggleTaskSection(task.id);
+        meta.appendChild(sectionTag);
+
+        content.appendChild(meta);
+
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'todo-actions';
+
+        const dueDateBtn = document.createElement('button');
+        dueDateBtn.className = 'action-btn';
+        dueDateBtn.textContent = '📅 Due Date';
+        dueDateBtn.onclick = (e) => {
+            e.stopPropagation();
+            showCalendarPicker(task.id, dueDateBtn);
+        };
+        actions.appendChild(dueDateBtn);
+
+        const subtaskBtn = document.createElement('button');
+        subtaskBtn.className = 'action-btn';
+        subtaskBtn.textContent = '+ Subtask';
+        subtaskBtn.onclick = () => addSubtask(task.id);
+        actions.appendChild(subtaskBtn);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'action-btn delete-btn';
+        deleteBtn.textContent = '🗑 Delete';
+        deleteBtn.onclick = () => {
+            if (confirm('Delete this task?')) {
+                deleteTask(task.id);
+            }
+        };
+        actions.appendChild(deleteBtn);
+
+        content.appendChild(actions);
+    }
+
+    // Subtasks
+    if (task.subtasks && task.subtasks.length > 0) {
+        const subtasksContainer = document.createElement('div');
+        subtasksContainer.className = 'subtasks-container';
+
+        task.subtasks.forEach(subtask => {
+            const subtaskItem = document.createElement('div');
+            subtaskItem.className = 'subtask-item' + (subtask.done ? ' completed' : '');
+
+            const subtaskCheck = document.createElement('input');
+            subtaskCheck.type = 'checkbox';
+            subtaskCheck.className = 'subtask-checkbox';
+            subtaskCheck.checked = subtask.done;
+            subtaskCheck.onchange = () => toggleSubtask(task.id, subtask.id);
+
+            const subtaskText = document.createElement('span');
+            subtaskText.className = 'subtask-text';
+            subtaskText.textContent = subtask.text;
+
+            subtaskItem.appendChild(subtaskCheck);
+            subtaskItem.appendChild(subtaskText);
+            subtasksContainer.appendChild(subtaskItem);
+        });
+
+        content.appendChild(subtasksContainer);
+    }
+
+    main.appendChild(checkbox);
+    main.appendChild(content);
+    item.appendChild(main);
+
+    return item;
+}
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+function bindAllEventListeners() {
+    // Journal title
+    const journalTitle = document.getElementById('journalTitle');
+    if (journalTitle) {
+        journalTitle.addEventListener('input', () => {
+            const currentPage = plannerState.pages[plannerState.currentPageIndex];
+            currentPage.title = journalTitle.value;
+            updateCharCount();
+            savePlannerState();
+        });
+    }
+
+    // Journal editor
+    const journalEditor = document.getElementById('journalEditor');
+    if (journalEditor) {
+        journalEditor.addEventListener('input', () => {
+            const currentPage = plannerState.pages[plannerState.currentPageIndex];
+            currentPage.bodyMarkdown = journalEditor.value;
+            updateCharCount();
+            savePlannerState();
+        });
+    }
+
+    // Mode toggle buttons
+    const editModeBtn = document.getElementById('editModeBtn');
+    const previewModeBtn = document.getElementById('previewModeBtn');
+
+    if (editModeBtn) {
+        editModeBtn.addEventListener('click', () => switchJournalMode('edit'));
+    }
+
+    if (previewModeBtn) {
+        previewModeBtn.addEventListener('click', () => switchJournalMode('preview'));
+    }
+
+    // Quick-add
+    const quickAddInput = document.getElementById('end-task-input');
+    const quickAddBtn = document.getElementById('end-task-add-btn');
+
+    if (quickAddInput) {
+        quickAddInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTaskFromQuickAdd();
+            }
+        });
+    }
+
+    if (quickAddBtn) {
+        quickAddBtn.addEventListener('click', addTaskFromQuickAdd);
+    }
+}
+
+// ============================================
+// RENDERING
+// ============================================
+function renderCurrentPage() {
+    const currentPage = plannerState.pages[plannerState.currentPageIndex];
+
+    updateDateDisplay();
+    renderTimeline();
+    updateNavButtons();
+
+    // Load title
+    const journalTitle = document.getElementById('journalTitle');
+    if (journalTitle) {
+        journalTitle.value = currentPage.title || '';
+    }
+
+    // Load journal based on current mode
+    const journalEditor = document.getElementById('journalEditor');
+    const journalPreview = document.getElementById('journalPreview');
+
+    if (currentJournalMode === 'edit' && journalEditor) {
+        journalEditor.value = currentPage.bodyMarkdown || '';
+    } else if (currentJournalMode === 'preview' && journalPreview) {
+        journalPreview.innerHTML = parseMarkdown(currentPage.bodyMarkdown || '');
+
+        const links = journalPreview.querySelectorAll('a');
+        links.forEach(link => {
+            link.onclick = (e) => {
+                e.preventDefault();
+                window.open(link.href, '_blank', 'noopener,noreferrer');
+            };
+        });
+    }
+
+    updateCharCount();
+    renderTasks();
+}
 
         function navigatePrev() {
             if (currentPageIndex > 0) {
