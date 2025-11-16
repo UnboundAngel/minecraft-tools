@@ -938,41 +938,15 @@
             color: rgba(233, 140, 255, 0.4);
         }
 
-        .markdown-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid rgba(176, 68, 255, 0.3);
-            padding-bottom: 0.5rem;
-        }
-
-        .markdown-tab {
-            padding: 0.5rem 1rem;
-            background: rgba(176, 68, 255, 0.1);
-            border: 1px solid rgba(176, 68, 255, 0.3);
-            border-radius: 4px 4px 0 0;
-            color: #b8a0ff;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .markdown-tab:hover {
-            background: rgba(176, 68, 255, 0.2);
-            border-color: #b044ff;
-        }
-
-        .markdown-tab.active {
-            background: rgba(233, 140, 255, 0.3);
-            border-color: #e98cff;
-            color: #e98cff;
-            font-weight: bold;
-        }
-
-        .journal-body {
+        .journal-container {
             flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
             min-height: 400px;
+        }
+
+        .journal-textarea {
             padding: 1rem;
             background: rgba(5, 0, 11, 0.5);
             border: 1px solid rgba(176, 68, 255, 0.3);
@@ -983,11 +957,7 @@
             outline: none;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
-        }
-
-        .journal-textarea {
             resize: none;
-            width: 100%;
         }
 
         .journal-textarea:focus {
@@ -1000,12 +970,21 @@
         }
 
         .journal-preview {
+            padding: 1rem;
+            background: rgba(5, 0, 11, 0.3);
+            border: 1px solid rgba(176, 68, 255, 0.2);
+            border-radius: 4px;
+            color: #e0d5ff;
+            font-size: 1rem;
+            line-height: 1.8;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
             white-space: pre-wrap;
             word-wrap: break-word;
         }
 
         .journal-preview:empty::before {
-            content: 'Nothing to preview yet. Switch to Write mode to add content.';
+            content: 'Live preview appears here...';
             color: rgba(176, 68, 255, 0.4);
         }
 
@@ -1520,6 +1499,10 @@
             .day-pill {
                 white-space: nowrap;
             }
+
+            .journal-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -1725,24 +1708,14 @@
             <div class="planner-panel planner-center-panel" id="centerPanel">
                 <input type="text" class="journal-title" id="journalTitle" placeholder="Ender Log Title" />
 
-                <div class="markdown-tabs">
-                    <button class="markdown-tab active" id="writeTab" onclick="switchToWriteMode()">✏️ Write</button>
-                    <button class="markdown-tab" id="previewTab" onclick="switchToPreviewMode()">👁️ Preview</button>
+                <div class="journal-container">
+                    <textarea class="journal-textarea" id="journalTextarea" placeholder="Write in markdown... **bold**, *italic*, # headers, - lists, `code`, links"></textarea>
+                    <div class="journal-preview" id="journalPreview"></div>
                 </div>
-
-                <textarea class="journal-body journal-textarea" id="journalTextarea" placeholder="Write your ender log here in markdown...
-
-**Bold** or *italic* text
-# Headers
-- Lists
-`code`
-Links: https://example.com"></textarea>
-
-                <div class="journal-body journal-preview is-hidden" id="journalPreview"></div>
 
                 <div class="journal-footer">
                     <span class="char-count" id="charCount">0 characters</span>
-                    <span>Supports markdown formatting</span>
+                    <span>Real-time markdown rendering</span>
                 </div>
             </div>
 
@@ -1841,7 +1814,6 @@ Links: https://example.com"></textarea>
         let currentPageIndex = 0;
         let showCompleted = false;
         let plannerInitialized = false;
-        let markdownMode = 'write'; // 'write' or 'preview'
 
         function initPlanner() {
             if (plannerInitialized) {
@@ -1957,39 +1929,14 @@ Links: https://example.com"></textarea>
             return html;
         }
 
-        function switchToWriteMode() {
-            markdownMode = 'write';
-            const textarea = document.getElementById('journalTextarea');
+        function updatePreview() {
             const preview = document.getElementById('journalPreview');
-            const writeTab = document.getElementById('writeTab');
-            const previewTab = document.getElementById('previewTab');
-
-            if (textarea) textarea.classList.remove('is-hidden');
-            if (preview) preview.classList.add('is-hidden');
-            if (writeTab) writeTab.classList.add('active');
-            if (previewTab) previewTab.classList.remove('active');
-        }
-
-        function switchToPreviewMode() {
-            markdownMode = 'preview';
-            const textarea = document.getElementById('journalTextarea');
-            const preview = document.getElementById('journalPreview');
-            const writeTab = document.getElementById('writeTab');
-            const previewTab = document.getElementById('previewTab');
-
-            // Update preview with current markdown
             const page = pages[currentPageIndex];
+
             if (preview && page) {
                 preview.innerHTML = parseMarkdown(page.bodyMarkdown || '');
-            }
 
-            if (textarea) textarea.classList.add('is-hidden');
-            if (preview) preview.classList.remove('is-hidden');
-            if (writeTab) writeTab.classList.remove('active');
-            if (previewTab) previewTab.classList.add('active');
-
-            // Add click handlers to links
-            if (preview) {
+                // Add click handlers to links
                 const links = preview.querySelectorAll('a');
                 links.forEach(link => {
                     link.onclick = function(e) {
@@ -2006,7 +1953,15 @@ Links: https://example.com"></textarea>
             const quickAddInput = document.getElementById('end-task-input');
             const quickAddBtn = document.getElementById('end-task-add-btn');
 
-            if (!journalTitle || !journalTextarea || !quickAddInput || !quickAddBtn) return;
+            if (!journalTitle || !journalTextarea || !quickAddInput || !quickAddBtn) {
+                console.error('Missing elements:', {
+                    journalTitle: !!journalTitle,
+                    journalTextarea: !!journalTextarea,
+                    quickAddInput: !!quickAddInput,
+                    quickAddBtn: !!quickAddBtn
+                });
+                return;
+            }
 
             journalTitle.addEventListener('input', function() {
                 pages[currentPageIndex].title = this.value;
@@ -2016,18 +1971,21 @@ Links: https://example.com"></textarea>
 
             journalTextarea.addEventListener('input', function() {
                 pages[currentPageIndex].bodyMarkdown = this.value;
+                updatePreview(); // Real-time preview update
                 updateCharCount();
                 saveState();
             });
 
             quickAddInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
+                    e.preventDefault();
                     addTask();
                 }
             });
 
             quickAddBtn.addEventListener('click', function(e) {
                 e.preventDefault();
+                console.log('Quick add button clicked!');
                 addTask();
             });
         }
@@ -2096,24 +2054,12 @@ Links: https://example.com"></textarea>
 
             const journalTitle = document.getElementById('journalTitle');
             const journalTextarea = document.getElementById('journalTextarea');
-            const journalPreview = document.getElementById('journalPreview');
 
             if (journalTitle) journalTitle.value = page.title || '';
             if (journalTextarea) journalTextarea.value = page.bodyMarkdown || '';
 
-            // Update preview if in preview mode
-            if (markdownMode === 'preview' && journalPreview) {
-                journalPreview.innerHTML = parseMarkdown(page.bodyMarkdown || '');
-
-                // Add click handlers to links
-                const links = journalPreview.querySelectorAll('a');
-                links.forEach(link => {
-                    link.onclick = function(e) {
-                        e.preventDefault();
-                        window.open(this.href, '_blank', 'noopener,noreferrer');
-                    };
-                });
-            }
+            // Always update preview (real-time rendering)
+            updatePreview();
 
             updateCharCount();
             renderTodos();
