@@ -577,46 +577,49 @@
         /* Floating End Islands */
         .end-island {
             position: fixed;
-            background: linear-gradient(135deg, rgba(50, 30, 60, 0.4), rgba(30, 15, 40, 0.3));
+            background:
+                radial-gradient(ellipse at center, rgba(240, 239, 192, 0.25), rgba(216, 216, 168, 0.15)),
+                linear-gradient(135deg, rgba(181, 181, 138, 0.3), rgba(140, 130, 100, 0.2));
             border-radius: 50% 50% 40% 60% / 60% 40% 50% 50%;
             box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                inset 0 -10px 20px rgba(0, 0, 0, 0.3),
-                0 0 30px rgba(176, 68, 255, 0.1);
+                0 25px 70px rgba(0, 0, 0, 0.7),
+                inset 0 -15px 30px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(176, 68, 255, 0.2);
             pointer-events: none;
             z-index: 2;
-            opacity: 0.6;
+            opacity: 0.8;
+            filter: blur(1.5px);
         }
 
         .end-island-1 {
-            width: 300px;
-            height: 150px;
-            top: 15%;
-            left: 5%;
+            width: 400px;
+            height: 180px;
+            top: 12%;
+            left: 3%;
             animation: floatIsland1 20s ease-in-out infinite;
         }
 
         .end-island-2 {
-            width: 250px;
-            height: 120px;
-            top: 40%;
-            right: 8%;
+            width: 350px;
+            height: 150px;
+            top: 35%;
+            right: 5%;
             animation: floatIsland2 18s ease-in-out infinite;
         }
 
         .end-island-3 {
-            width: 200px;
-            height: 100px;
-            bottom: 20%;
-            left: 15%;
+            width: 280px;
+            height: 130px;
+            bottom: 15%;
+            left: 12%;
             animation: floatIsland3 22s ease-in-out infinite;
         }
 
         .end-island-4 {
-            width: 180px;
-            height: 90px;
-            top: 60%;
-            right: 20%;
+            width: 250px;
+            height: 110px;
+            top: 55%;
+            right: 15%;
             animation: floatIsland4 19s ease-in-out infinite;
         }
 
@@ -644,74 +647,78 @@
         .chorus-plant {
             position: fixed;
             bottom: 0;
-            opacity: 0.15;
+            opacity: 0.3;
             pointer-events: none;
             z-index: 2;
+            filter: blur(0.5px);
         }
 
         .chorus-plant-1 {
-            left: 10%;
-            width: 80px;
-            height: 200px;
+            left: 8%;
+            width: 90px;
+            height: 220px;
             background:
                 linear-gradient(to top,
-                    transparent 0%,
-                    #3d1a4d 20%,
-                    transparent 40%,
-                    #3d1a4d 60%,
-                    transparent 80%,
-                    #3d1a4d 100%
+                    rgba(26, 0, 38, 0) 0%,
+                    rgba(61, 26, 77, 0.6) 20%,
+                    rgba(26, 0, 38, 0) 40%,
+                    rgba(61, 26, 77, 0.6) 60%,
+                    rgba(26, 0, 38, 0) 80%,
+                    rgba(61, 26, 77, 0.8) 100%
                 );
+            box-shadow: 0 0 20px rgba(61, 26, 77, 0.3);
             clip-path: polygon(
                 45% 0%, 55% 0%,
-                55% 20%, 60% 20%, 60% 40%, 55% 40%,
+                55% 20%, 62% 20%, 62% 40%, 55% 40%,
                 55% 60%, 50% 60%,
                 50% 80%, 45% 80%,
-                45% 60%, 40% 60%, 40% 40%, 45% 40%,
-                45% 20%, 40% 20%, 40% 0%
+                45% 60%, 38% 60%, 38% 40%, 45% 40%,
+                45% 20%, 38% 20%
             );
         }
 
         .chorus-plant-2 {
-            right: 15%;
-            width: 100px;
-            height: 250px;
+            right: 12%;
+            width: 110px;
+            height: 270px;
             background:
                 linear-gradient(to top,
-                    transparent 0%,
-                    #3d1a4d 15%,
-                    transparent 35%,
-                    #3d1a4d 55%,
-                    transparent 75%,
-                    #3d1a4d 100%
+                    rgba(26, 0, 38, 0) 0%,
+                    rgba(61, 26, 77, 0.5) 15%,
+                    rgba(26, 0, 38, 0) 35%,
+                    rgba(61, 26, 77, 0.7) 55%,
+                    rgba(26, 0, 38, 0) 75%,
+                    rgba(61, 26, 77, 0.9) 100%
                 );
+            box-shadow: 0 0 25px rgba(61, 26, 77, 0.4);
             clip-path: polygon(
                 45% 0%, 55% 0%,
-                55% 25%, 65% 25%, 65% 50%, 55% 50%,
+                55% 25%, 68% 25%, 68% 50%, 55% 50%,
                 55% 75%, 50% 75%,
                 50% 100%, 45% 100%,
-                45% 75%, 35% 75%, 35% 50%, 45% 50%,
-                45% 25%, 35% 25%
+                45% 75%, 32% 75%, 32% 50%, 45% 50%,
+                45% 25%, 32% 25%
             );
         }
 
         .chorus-plant-3 {
-            left: 35%;
-            width: 70px;
-            height: 180px;
+            left: 32%;
+            width: 80px;
+            height: 200px;
             background:
                 linear-gradient(to top,
-                    transparent 0%,
-                    #3d1a4d 25%,
-                    transparent 50%,
-                    #3d1a4d 75%,
-                    transparent 100%
+                    rgba(26, 0, 38, 0) 0%,
+                    rgba(61, 26, 77, 0.5) 25%,
+                    rgba(26, 0, 38, 0) 50%,
+                    rgba(61, 26, 77, 0.7) 75%,
+                    rgba(26, 0, 38, 0) 100%
                 );
+            box-shadow: 0 0 18px rgba(61, 26, 77, 0.3);
             clip-path: polygon(
                 45% 0%, 55% 0%,
-                55% 30%, 60% 30%, 60% 60%, 55% 60%,
+                55% 30%, 62% 30%, 62% 60%, 55% 60%,
                 55% 90%, 45% 90%,
-                45% 60%, 40% 60%, 40% 30%, 45% 30%
+                45% 60%, 38% 60%, 38% 30%, 45% 30%
             );
         }
 
@@ -938,15 +945,9 @@
             color: rgba(233, 140, 255, 0.4);
         }
 
-        .journal-container {
+        .journal-body {
             flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
             min-height: 400px;
-        }
-
-        .journal-textarea {
             padding: 1rem;
             background: rgba(5, 0, 11, 0.5);
             border: 1px solid rgba(176, 68, 255, 0.3);
@@ -957,39 +958,21 @@
             outline: none;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
-            resize: none;
         }
 
-        .journal-textarea:focus {
+        .journal-body:focus {
             border-color: #b044ff;
             box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
         }
 
-        .journal-textarea::placeholder {
+        .journal-body:empty::before {
+            content: attr(data-placeholder);
             color: rgba(176, 68, 255, 0.4);
-        }
-
-        .journal-preview {
-            padding: 1rem;
-            background: rgba(5, 0, 11, 0.3);
-            border: 1px solid rgba(176, 68, 255, 0.2);
-            border-radius: 4px;
-            color: #e0d5ff;
-            font-size: 1rem;
-            line-height: 1.8;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
             white-space: pre-wrap;
-            word-wrap: break-word;
         }
 
-        .journal-preview:empty::before {
-            content: 'Live preview appears here...';
-            color: rgba(176, 68, 255, 0.4);
-        }
-
-        /* Markdown preview styling */
-        .journal-preview h1 {
+        /* Inline markdown styling */
+        .journal-body h1 {
             font-size: 2rem;
             color: #e98cff;
             margin: 1rem 0;
@@ -997,38 +980,38 @@
             padding-bottom: 0.5rem;
         }
 
-        .journal-preview h2 {
+        .journal-body h2 {
             font-size: 1.6rem;
             color: #e98cff;
             margin: 0.8rem 0;
         }
 
-        .journal-preview h3 {
+        .journal-body h3 {
             font-size: 1.3rem;
             color: #b8a0ff;
             margin: 0.6rem 0;
         }
 
-        .journal-preview strong {
+        .journal-body strong {
             font-weight: bold;
             color: #fff;
         }
 
-        .journal-preview em {
+        .journal-body em {
             font-style: italic;
             color: #e0d5ff;
         }
 
-        .journal-preview ul, .journal-preview ol {
+        .journal-body ul, .journal-body ol {
             margin: 0.5rem 0;
             padding-left: 2rem;
         }
 
-        .journal-preview li {
+        .journal-body li {
             margin: 0.25rem 0;
         }
 
-        .journal-preview code {
+        .journal-body code {
             background: rgba(176, 68, 255, 0.2);
             padding: 2px 6px;
             border-radius: 3px;
@@ -1037,13 +1020,13 @@
             font-size: 0.9em;
         }
 
-        .journal-preview a {
+        .journal-body a {
             color: #7de8ff;
             text-decoration: underline;
             cursor: pointer;
         }
 
-        .journal-preview a:hover {
+        .journal-body a:hover {
             color: #a0f0ff;
             text-shadow: 0 0 8px rgba(125, 232, 255, 0.6);
         }
@@ -1499,10 +1482,6 @@
             .day-pill {
                 white-space: nowrap;
             }
-
-            .journal-container {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -1708,14 +1687,11 @@
             <div class="planner-panel planner-center-panel" id="centerPanel">
                 <input type="text" class="journal-title" id="journalTitle" placeholder="Ender Log Title" />
 
-                <div class="journal-container">
-                    <textarea class="journal-textarea" id="journalTextarea" placeholder="Write in markdown... **bold**, *italic*, # headers, - lists, `code`, links"></textarea>
-                    <div class="journal-preview" id="journalPreview"></div>
-                </div>
+                <div class="journal-body" contenteditable="true" id="journalBody" data-placeholder="Write your ender log here... Use markdown: **bold**, *italic*, # headers, - lists, `code`, [links](url)"></div>
 
                 <div class="journal-footer">
                     <span class="char-count" id="charCount">0 characters</span>
-                    <span>Real-time markdown rendering</span>
+                    <span>Inline markdown rendering</span>
                 </div>
             </div>
 
@@ -1899,7 +1875,16 @@
 
             let html = markdown;
 
-            // Headers
+            // Escape HTML to prevent injection
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+
+            html = escapeHtml(html);
+
+            // Headers (must come before other formatting)
             html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
             html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
             html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
@@ -1911,17 +1896,20 @@
             html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
             // Inline code
-            html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
 
-            // Links
+            // Markdown links [text](url)
             html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
-            // Auto-linkify URLs
-            html = html.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+            // Auto-linkify bare URLs
+            html = html.replace(/(?<!href="|">)(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
 
             // Unordered lists
-            html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            html = html.replace(/^[\-\*] (.+$)/gim, '<li>$1</li>');
+            html = html.replace(/(<li>.*?<\/li>\n?)+/g, '<ul>$&</ul>');
+
+            // Ordered lists
+            html = html.replace(/^\d+\. (.+$)/gim, '<li>$1</li>');
 
             // Line breaks
             html = html.replace(/\n/g, '<br>');
@@ -1929,34 +1917,101 @@
             return html;
         }
 
-        function updatePreview() {
-            const preview = document.getElementById('journalPreview');
+        function saveCursorPosition(element) {
+            const selection = window.getSelection();
+            if (selection.rangeCount === 0) return null;
+
+            const range = selection.getRangeAt(0);
+            const preSelectionRange = range.cloneRange();
+            preSelectionRange.selectNodeContents(element);
+            preSelectionRange.setEnd(range.startContainer, range.startOffset);
+
+            return preSelectionRange.toString().length;
+        }
+
+        function restoreCursorPosition(element, position) {
+            if (position === null) return;
+
+            const selection = window.getSelection();
+            const range = document.createRange();
+
+            let charIndex = 0;
+            let nodeStack = [element];
+            let node, foundStart = false;
+
+            while (!foundStart && (node = nodeStack.pop())) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const nextCharIndex = charIndex + node.length;
+                    if (position >= charIndex && position <= nextCharIndex) {
+                        range.setStart(node, position - charIndex);
+                        range.collapse(true);
+                        foundStart = true;
+                    }
+                    charIndex = nextCharIndex;
+                } else {
+                    let i = node.childNodes.length;
+                    while (i--) {
+                        nodeStack.push(node.childNodes[i]);
+                    }
+                }
+            }
+
+            if (foundStart) {
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+
+        let journalUpdateTimer = null;
+
+        function updateJournalFromEditor() {
+            const editor = document.getElementById('journalBody');
             const page = pages[currentPageIndex];
 
-            if (preview && page) {
-                preview.innerHTML = parseMarkdown(page.bodyMarkdown || '');
+            if (!editor || !page) return;
 
-                // Add click handlers to links
-                const links = preview.querySelectorAll('a');
-                links.forEach(link => {
-                    link.onclick = function(e) {
-                        e.preventDefault();
-                        window.open(this.href, '_blank', 'noopener,noreferrer');
-                    };
-                });
-            }
+            // Extract plain text (markdown source) from the editor
+            const markdownSource = editor.innerText || '';
+            page.bodyMarkdown = markdownSource;
+
+            saveState();
+            updateCharCount();
+        }
+
+        function renderJournalMarkdown() {
+            const editor = document.getElementById('journalBody');
+            const page = pages[currentPageIndex];
+
+            if (!editor || !page) return;
+
+            const cursorPos = saveCursorPosition(editor);
+            const markdown = page.bodyMarkdown || '';
+            const html = parseMarkdown(markdown);
+
+            editor.innerHTML = html;
+
+            // Add click handlers to links
+            const links = editor.querySelectorAll('a');
+            links.forEach(link => {
+                link.onclick = function(e) {
+                    e.preventDefault();
+                    window.open(this.href, '_blank', 'noopener,noreferrer');
+                };
+            });
+
+            restoreCursorPosition(editor, cursorPos);
         }
 
         function bindEventListeners() {
             const journalTitle = document.getElementById('journalTitle');
-            const journalTextarea = document.getElementById('journalTextarea');
+            const journalBody = document.getElementById('journalBody');
             const quickAddInput = document.getElementById('end-task-input');
             const quickAddBtn = document.getElementById('end-task-add-btn');
 
-            if (!journalTitle || !journalTextarea || !quickAddInput || !quickAddBtn) {
+            if (!journalTitle || !journalBody || !quickAddInput || !quickAddBtn) {
                 console.error('Missing elements:', {
                     journalTitle: !!journalTitle,
-                    journalTextarea: !!journalTextarea,
+                    journalBody: !!journalBody,
                     quickAddInput: !!quickAddInput,
                     quickAddBtn: !!quickAddBtn
                 });
@@ -1969,11 +2024,17 @@
                 saveState();
             });
 
-            journalTextarea.addEventListener('input', function() {
-                pages[currentPageIndex].bodyMarkdown = this.value;
-                updatePreview(); // Real-time preview update
-                updateCharCount();
-                saveState();
+            journalBody.addEventListener('input', function() {
+                clearTimeout(journalUpdateTimer);
+                journalUpdateTimer = setTimeout(() => {
+                    updateJournalFromEditor();
+                    renderJournalMarkdown();
+                }, 300);
+            });
+
+            journalBody.addEventListener('blur', function() {
+                updateJournalFromEditor();
+                renderJournalMarkdown();
             });
 
             quickAddInput.addEventListener('keypress', function(e) {
@@ -2053,13 +2114,24 @@
             updateNavButtons();
 
             const journalTitle = document.getElementById('journalTitle');
-            const journalTextarea = document.getElementById('journalTextarea');
+            const journalBody = document.getElementById('journalBody');
 
             if (journalTitle) journalTitle.value = page.title || '';
-            if (journalTextarea) journalTextarea.value = page.bodyMarkdown || '';
 
-            // Always update preview (real-time rendering)
-            updatePreview();
+            if (journalBody) {
+                const markdown = page.bodyMarkdown || '';
+                const html = parseMarkdown(markdown);
+                journalBody.innerHTML = html;
+
+                // Add click handlers to links
+                const links = journalBody.querySelectorAll('a');
+                links.forEach(link => {
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        window.open(this.href, '_blank', 'noopener,noreferrer');
+                    };
+                });
+            }
 
             updateCharCount();
             renderTodos();
@@ -2110,7 +2182,8 @@
 
         function updateCharCount() {
             const title = document.getElementById('journalTitle')?.value || '';
-            const bodyMarkdown = document.getElementById('journalTextarea')?.value || '';
+            const page = pages[currentPageIndex];
+            const bodyMarkdown = page?.bodyMarkdown || '';
 
             const titleChars = title.trim().length;
             const bodyChars = bodyMarkdown.trim().length;
@@ -2124,10 +2197,39 @@
 
         function addTask() {
             const input = document.getElementById('end-task-input');
-            if (!input) return;
+            if (!input) {
+                console.error('Quick-add input not found');
+                return;
+            }
 
             const text = input.value.trim();
-            if (!text) return;
+            if (!text) {
+                console.log('No text entered');
+                return;
+            }
+
+            // Ensure pages array exists and has content
+            if (!pages || pages.length === 0) {
+                console.error('No pages exist');
+                return;
+            }
+
+            // Ensure currentPageIndex is valid
+            if (currentPageIndex < 0 || currentPageIndex >= pages.length) {
+                console.error('Invalid page index:', currentPageIndex);
+                return;
+            }
+
+            const currentPage = pages[currentPageIndex];
+            if (!currentPage) {
+                console.error('Current page not found');
+                return;
+            }
+
+            // Ensure todos array exists
+            if (!Array.isArray(currentPage.todos)) {
+                currentPage.todos = [];
+            }
 
             const newTodo = {
                 id: Date.now().toString(),
@@ -2140,11 +2242,13 @@
                 subtasks: []
             };
 
-            pages[currentPageIndex].todos.push(newTodo);
+            console.log('Adding task:', newTodo);
+            currentPage.todos.push(newTodo);
             input.value = '';
 
             saveState();
             renderTodos();
+            console.log('Task added successfully. Total todos:', currentPage.todos.length);
         }
 
         function toggleTodo(todoId) {
