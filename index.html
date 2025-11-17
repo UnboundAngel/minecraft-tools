@@ -1441,6 +1441,13 @@
             background: linear-gradient(to bottom,
                 rgba(10, 0, 20, 0.5) 0%,
                 rgba(15, 0, 25, 0.6) 100%);
+            animation: subtle-pulse 2s ease-in-out infinite;
+        }
+
+        /* Writing effects for all editable elements */
+        [contenteditable="true"]:focus {
+            animation: subtle-pulse 2s ease-in-out infinite;
+            outline: 1px solid rgba(176, 68, 255, 0.5);
         }
 
         .journal-editor::placeholder {
@@ -1589,23 +1596,56 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            background: linear-gradient(135deg, #C9A875 0%, #B8926A 50%, #A67C52 100%);
+            border: 4px solid #6B3410;
+            border-radius: 8px;
+            box-shadow:
+                0 8px 24px rgba(0, 0, 0, 0.6),
+                inset 0 2px 4px rgba(255, 255, 255, 0.2),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        /* Minecraft book texture overlay */
+        .planner-right-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(107, 52, 16, 0.05) 2px,
+                    rgba(107, 52, 16, 0.05) 3px
+                );
+            pointer-events: none;
+            opacity: 0.6;
+            border-radius: 4px;
         }
 
         .todo-header {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #e98cff;
+            color: #4a2511;
             text-align: center;
-            text-shadow: 0 0 10px rgba(233, 140, 255, 0.8);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .task-controls {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .quick-add-container {
@@ -1617,29 +1657,32 @@
 
         .filter-btn {
             padding: 0.75rem 1rem;
-            background: rgba(176, 68, 255, 0.2);
-            border: 1px solid rgba(176, 68, 255, 0.4);
+            background: rgba(139, 69, 19, 0.3);
+            border: 2px solid #6B3410;
             border-radius: 4px;
-            color: #e98cff;
+            color: #4a2511;
             font-family: 'Courier New', monospace;
             font-size: 0.85rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             white-space: nowrap;
         }
 
         .filter-btn:hover {
-            background: rgba(176, 68, 255, 0.3);
-            border-color: #b044ff;
+            background: rgba(139, 69, 19, 0.5);
+            border-color: #4a2511;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .quick-add-input {
             flex: 1;
             padding: 0.75rem;
-            background: rgba(5, 0, 11, 0.6);
-            border: 1px solid rgba(176, 68, 255, 0.5);
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid #8B4513;
             border-radius: 4px;
-            color: #e0d5ff;
+            color: #4a2511;
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             outline: none;
@@ -1649,6 +1692,16 @@
         .quick-add-input:focus {
             border-color: #b044ff;
             box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
+            animation: subtle-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes subtle-pulse {
+            0%, 100% {
+                box-shadow: 0 0 12px rgba(176, 68, 255, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(176, 68, 255, 0.6);
+            }
         }
 
         .quick-add-input::placeholder {
@@ -1765,16 +1818,19 @@
 
         .todo-section {
             margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .todo-section-title {
             font-size: 0.85rem;
-            color: #e98cff;
+            color: #4a2511;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 0.75rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(176, 68, 255, 0.3);
+            border-bottom: 2px solid rgba(107, 52, 16, 0.4);
+            font-weight: bold;
         }
 
         .todo-list {
@@ -1783,17 +1839,29 @@
             gap: 0.5rem;
         }
 
+        /* Tasks container background */
+        .tasks-container {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, #F4E7D7 0%, #EDD9C3 100%);
+            border: 2px solid rgba(107, 52, 16, 0.3);
+            border-radius: 6px;
+            padding: 1rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
         .todo-item {
             background: linear-gradient(to right,
-                rgba(176, 68, 255, 0.08) 0%,
-                rgba(176, 68, 255, 0.12) 50%,
-                rgba(176, 68, 255, 0.08) 100%);
-            border: 1px solid rgba(176, 68, 255, 0.25);
-            border-radius: 3px;
+                rgba(139, 69, 19, 0.12) 0%,
+                rgba(139, 69, 19, 0.18) 50%,
+                rgba(139, 69, 19, 0.12) 100%);
+            border: 2px solid rgba(107, 52, 16, 0.4);
+            border-radius: 4px;
             padding: 0.75rem;
             animation: inkWriteIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
         }
@@ -1818,11 +1886,11 @@
 
         .todo-item:hover {
             background: linear-gradient(to right,
-                rgba(176, 68, 255, 0.12) 0%,
-                rgba(176, 68, 255, 0.18) 50%,
-                rgba(176, 68, 255, 0.12) 100%);
-            border-color: rgba(176, 68, 255, 0.5);
-            box-shadow: 0 2px 6px rgba(176, 68, 255, 0.2);
+                rgba(139, 69, 19, 0.2) 0%,
+                rgba(139, 69, 19, 0.28) 50%,
+                rgba(139, 69, 19, 0.2) 100%);
+            border-color: rgba(107, 52, 16, 0.6);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
             transform: translateX(2px);
         }
 
@@ -1880,28 +1948,30 @@
         }
 
         .todo-text {
-            color: #e0d5ff;
+            color: #4a2511;
             font-size: 0.95rem;
             line-height: 1.4;
             word-wrap: break-word;
+            font-weight: 500;
         }
 
         .task-title-input {
             width: 100%;
             background: transparent;
             border: none;
-            color: #e0d5ff;
+            color: #4a2511;
             font-size: 0.95rem;
             font-family: 'Courier New', monospace;
             line-height: 1.4;
             outline: none;
             padding: 2px 4px;
             border-radius: 2px;
+            font-weight: 500;
         }
 
         .task-title-input:focus {
-            background: rgba(176, 68, 255, 0.1);
-            outline: 1px solid #b044ff;
+            background: rgba(139, 69, 19, 0.15);
+            outline: 2px solid #8B4513;
         }
 
         .todo-item.completed .task-title-input {
@@ -3580,6 +3650,12 @@ function bindAllEventListeners() {
     if (quickAddBtn) {
         quickAddBtn.addEventListener('click', handleTaskQuickAdd);
     }
+
+    // Filter button
+    const filterBtn = document.getElementById('taskFilterBtn');
+    if (filterBtn) {
+        filterBtn.addEventListener('click', cycleTaskFilter);
+    }
 }
 
 // ============================================
@@ -3750,6 +3826,24 @@ function renderCurrentPage() {
             if (nextBtn) nextBtn.disabled = false;
         }
 
+        // Task filter state
+        let currentTaskFilter = 'all'; // 'all', 'active', 'completed'
+
+        function cycleTaskFilter() {
+            const filters = ['all', 'active', 'completed'];
+            const currentIdx = filters.indexOf(currentTaskFilter);
+            currentTaskFilter = filters[(currentIdx + 1) % filters.length];
+
+            const filterBtn = document.getElementById('taskFilterBtn');
+            if (filterBtn) {
+                const filterIcons = { all: '⚡', active: '📝', completed: '✅' };
+                const filterLabels = { all: 'All', active: 'Active', completed: 'Done' };
+                filterBtn.textContent = `${filterIcons[currentTaskFilter]} ${filterLabels[currentTaskFilter]}`;
+            }
+
+            renderTodos();
+        }
+
         function addTask() {
             const input = document.getElementById('end-task-input');
             if (!input) {
@@ -3759,9 +3853,19 @@ function renderCurrentPage() {
 
             const text = input.value.trim();
             if (!text) {
-                console.log('No text entered');
+                // Add visual feedback for empty input
+                input.style.borderColor = '#ff4500';
+                input.placeholder = '⚠️ Please enter a task!';
+                setTimeout(() => {
+                    input.style.borderColor = '';
+                    input.placeholder = 'Add a quick task...';
+                }, 2000);
                 return;
             }
+
+            // Get pages and index using helper functions
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
 
             // Ensure pages array exists and has content
             if (!pages || pages.length === 0) {
@@ -3792,7 +3896,7 @@ function renderCurrentPage() {
                 done: false,
                 createdAt: Date.now(),
                 dueDate: null,
-                priority: null,
+                priority: 'none',
                 section: 'today',
                 subtasks: []
             };
@@ -3801,12 +3905,20 @@ function renderCurrentPage() {
             currentPage.todos.push(newTodo);
             input.value = '';
 
+            // Visual feedback for successful add
+            input.style.borderColor = '#4ade80';
+            setTimeout(() => {
+                input.style.borderColor = '';
+            }, 500);
+
             saveState();
             renderTodos();
             console.log('Task added successfully. Total todos:', currentPage.todos.length);
         }
 
         function toggleTodo(todoId) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
 
@@ -3828,6 +3940,8 @@ function renderCurrentPage() {
         }
 
         function deleteTodo(todoId) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             page.todos = page.todos.filter(t => t.id !== todoId);
             saveState();
@@ -3835,6 +3949,8 @@ function renderCurrentPage() {
         }
 
         function updateTodoText(todoId, newText) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
             if (todo) {
@@ -3844,16 +3960,23 @@ function renderCurrentPage() {
         }
 
         function setPriority(todoId, priority) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
             if (todo) {
-                todo.priority = todo.priority === priority ? null : priority;
+                // Cycle through priority: none -> low -> medium -> high -> none
+                const priorities = ['none', 'low', 'medium', 'high'];
+                const currentIdx = priorities.indexOf(todo.priority || 'none');
+                todo.priority = priorities[(currentIdx + 1) % priorities.length];
                 saveState();
                 renderTodos();
             }
         }
 
         function toggleSection(todoId) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
             if (todo) {
@@ -3867,6 +3990,8 @@ function renderCurrentPage() {
             const options = ['Today', 'Tomorrow', 'Next Week', 'Custom', 'Clear'];
             const choice = prompt('Set due date:\n1. Today\n2. Tomorrow\n3. Next Week\n4. Custom\n5. Clear', '1');
 
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
             if (!todo) return;
@@ -3902,12 +4027,17 @@ function renderCurrentPage() {
         }
 
         function addSubtask(todoId) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
 
             if (todo) {
                 const text = prompt('Enter subtask:');
                 if (text && text.trim()) {
+                    if (!Array.isArray(todo.subtasks)) {
+                        todo.subtasks = [];
+                    }
                     todo.subtasks.push({
                         id: Date.now().toString(),
                         text: text.trim(),
@@ -3920,10 +4050,12 @@ function renderCurrentPage() {
         }
 
         function toggleSubtask(todoId, subtaskId) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
 
-            if (todo) {
+            if (todo && todo.subtasks) {
                 const subtask = todo.subtasks.find(s => s.id === subtaskId);
                 if (subtask) {
                     subtask.done = !subtask.done;
@@ -3934,10 +4066,12 @@ function renderCurrentPage() {
         }
 
         function updateSubtaskText(todoId, subtaskId, newText) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
 
-            if (todo) {
+            if (todo && todo.subtasks) {
                 const subtask = todo.subtasks.find(s => s.id === subtaskId);
                 if (subtask) {
                     subtask.text = newText;
@@ -3947,10 +4081,12 @@ function renderCurrentPage() {
         }
 
         function deleteSubtask(todoId, subtaskId) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const todo = page.todos.find(t => t.id === todoId);
 
-            if (todo) {
+            if (todo && todo.subtasks) {
                 todo.subtasks = todo.subtasks.filter(s => s.id !== subtaskId);
                 saveState();
                 renderTodos();
@@ -3958,6 +4094,8 @@ function renderCurrentPage() {
         }
 
         function moveTodoUp(todoId, section) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const sectionTodos = page.todos.filter(t => !t.done && t.section === section);
             const index = sectionTodos.findIndex(t => t.id === todoId);
@@ -3972,6 +4110,8 @@ function renderCurrentPage() {
         }
 
         function moveTodoDown(todoId, section) {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
             const sectionTodos = page.todos.filter(t => !t.done && t.section === section);
             const index = sectionTodos.findIndex(t => t.id === todoId);
@@ -3986,11 +4126,26 @@ function renderCurrentPage() {
         }
 
         function renderTodos() {
+            const pages = getPages();
+            const currentPageIndex = getCurrentPageIndex();
             const page = pages[currentPageIndex];
 
-            const todayTodos = page.todos.filter(t => !t.done && t.section === 'today');
-            const upcomingTodos = page.todos.filter(t => !t.done && t.section === 'upcoming');
-            const completedTodos = page.todos.filter(t => t.done);
+            // Apply filter
+            let todayTodos, upcomingTodos, completedTodos;
+
+            if (currentTaskFilter === 'active') {
+                todayTodos = page.todos.filter(t => !t.done && t.section === 'today');
+                upcomingTodos = page.todos.filter(t => !t.done && t.section === 'upcoming');
+                completedTodos = [];
+            } else if (currentTaskFilter === 'completed') {
+                todayTodos = [];
+                upcomingTodos = [];
+                completedTodos = page.todos.filter(t => t.done);
+            } else { // 'all'
+                todayTodos = page.todos.filter(t => !t.done && t.section === 'today');
+                upcomingTodos = page.todos.filter(t => !t.done && t.section === 'upcoming');
+                completedTodos = page.todos.filter(t => t.done);
+            }
 
             const todayContainer = document.getElementById('todayTodos');
             const upcomingContainer = document.getElementById('upcomingTodos');
