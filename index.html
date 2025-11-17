@@ -451,6 +451,384 @@
             }
         }
 
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #4ade80;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10000;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
+        }
+
+        .music-control.muted {
+            border-color: #ff4500;
+        }
+
+        /* Writing Effect */
+        @keyframes typing-cursor {
+            0%, 100% { border-right-color: transparent; }
+            50% { border-right-color: rgba(138, 102, 170, 0.7); }
+        }
+
+        .writing-effect {
+            animation: typing-cursor 1s step-end infinite;
+        }
+
+        [contenteditable="true"]:focus,
+        input[type="text"]:focus,
+        textarea:focus {
+            position: relative;
+            animation: subtle-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes subtle-pulse {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(138, 102, 170, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(138, 102, 170, 0.5);
+            }
+        }
+
+        @keyframes ink-spread {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .ink-effect {
+            animation: ink-spread 0.3s ease-out;
+        }
+
+        /* Journal Book Icon (Bottom Right) */
+        .journal-book-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #8B4513 0%, #6B3410 100%);
+            border: 4px solid #4a2511;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 4px 8px rgba(0, 0, 0, 0.5),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.3),
+                inset 2px 2px 4px rgba(139, 69, 19, 0.4);
+        }
+
+        .journal-book-icon:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(139, 69, 19, 0.5),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.3),
+                inset 2px 2px 4px rgba(139, 69, 19, 0.4);
+        }
+
+        .journal-book-icon::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 10%;
+            bottom: 10%;
+            width: 3px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1px;
+        }
+
+        /* Full Journal Book Modal */
+        .journal-book-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .journal-book-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .journal-book-container {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            perspective: 2000px;
+        }
+
+        .journal-book {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            background: linear-gradient(135deg, #C9A875 0%, #B8926A 50%, #A67C52 100%);
+            border: 8px solid #4a2511;
+            border-radius: 12px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.8),
+                inset 0 2px 8px rgba(255, 255, 255, 0.2),
+                inset 0 -2px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* Book Spine */
+        .book-spine {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg,
+                rgba(0, 0, 0, 0.4) 0%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.4) 100%);
+            box-shadow:
+                -2px 0 4px rgba(0, 0, 0, 0.3),
+                2px 0 4px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        /* Book Pages */
+        .book-page {
+            flex: 1;
+            padding: 40px;
+            background: linear-gradient(135deg, #F4E7D7 0%, #EDD9C3 100%);
+            position: relative;
+            overflow-y: auto;
+            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-origin: center;
+        }
+
+        .book-page.left {
+            border-right: 1px solid rgba(139, 69, 19, 0.2);
+        }
+
+        .book-page.right {
+            border-left: 1px solid rgba(139, 69, 19, 0.2);
+        }
+
+        /* Page turning animation */
+        .book-page.turning-left {
+            animation: page-turn-left 0.8s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+        }
+
+        .book-page.turning-right {
+            animation: page-turn-right 0.8s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
+        }
+
+        @keyframes page-turn-left {
+            0% {
+                transform: rotateY(0deg);
+                transform-origin: left center;
+            }
+            50% {
+                transform: rotateY(-90deg);
+                transform-origin: left center;
+                box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+            }
+            100% {
+                transform: rotateY(-180deg);
+                transform-origin: left center;
+            }
+        }
+
+        @keyframes page-turn-right {
+            0% {
+                transform: rotateY(0deg);
+                transform-origin: right center;
+            }
+            50% {
+                transform: rotateY(90deg);
+                transform-origin: right center;
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+            }
+            100% {
+                transform: rotateY(180deg);
+                transform-origin: right center;
+            }
+        }
+
+        /* Page curl effect */
+        .page-curl {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .page-curl.top-right {
+            top: 0;
+            right: 0;
+            border-width: 0 60px 60px 0;
+            border-color: transparent #DCC9B3 transparent transparent;
+            filter: drop-shadow(-2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .page-curl.bottom-right {
+            bottom: 0;
+            right: 0;
+            border-width: 0 0 60px 60px;
+            border-color: transparent transparent #DCC9B3 transparent;
+            filter: drop-shadow(-2px -2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Paper texture */
+        .book-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(139, 69, 19, 0.03) 2px,
+                    rgba(139, 69, 19, 0.03) 3px
+                );
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Close button for journal book */
+        .journal-close-btn {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 50px;
+            height: 50px;
+            background: #8B4513;
+            border: 4px solid #4a2511;
+            border-radius: 50%;
+            color: #F4E7D7;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .journal-close-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: #ff4500;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Page navigation buttons */
+        .page-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 80px;
+            background: rgba(139, 69, 19, 0.3);
+            border: 3px solid #4a2511;
+            color: #4a2511;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 101;
+        }
+
+        .page-nav-btn:hover {
+            background: rgba(139, 69, 19, 0.6);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .page-nav-btn.prev {
+            left: -25px;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .page-nav-btn.next {
+            right: -25px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .page-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Journal Filter Button Active State */
+        .journal-filter-btn.active {
+            background: rgba(139, 69, 19, 0.4) !important;
+            border-color: #6B3410 !important;
+            font-weight: bold;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .journal-filter-btn:hover {
+            background: rgba(139, 69, 19, 0.3) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(139, 69, 19, 0.3);
+        }
+
+        /* Custom Scrollbar for Journal Book */
+        .book-page::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .book-page::-webkit-scrollbar-track {
+            background: rgba(139, 69, 19, 0.1);
+            border-radius: 4px;
+        }
+
+        .book-page::-webkit-scrollbar-thumb {
+            background: rgba(139, 69, 19, 0.4);
+            border-radius: 4px;
+        }
+
+        .book-page::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 69, 19, 0.6);
+        }
+
         /* AI Welcome Screen */
         .ai-welcome {
             position: fixed;
@@ -1896,6 +2274,17 @@
     </style>
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-serene-view-443.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Control -->
+    <div class="music-control" id="musicControl" onclick="toggleMusic()" title="Toggle Music">
+        <span id="musicIcon">🔊</span>
+    </div>
+
     <!-- MAIN HUB VIEW -->
     <div id="hub-view">
         <!-- AI Welcome Screen -->
@@ -3829,6 +4218,744 @@ function renderCurrentPage() {
                 }
             }
         }
+
+        // ============================================
+        // MUSIC CONTROL
+        // ============================================
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const control = document.getElementById('musicControl');
+            const icon = document.getElementById('musicIcon');
+
+            if (musicPlaying) {
+                music.pause();
+                icon.textContent = '🔇';
+                control.classList.add('muted');
+            } else {
+                music.play().catch(e => console.log('Music autoplay prevented:', e));
+                icon.textContent = '🔊';
+                control.classList.remove('muted');
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        // Auto-start music when user interacts
+        document.addEventListener('click', function initMusic() {
+            if (!musicPlaying) {
+                toggleMusic();
+            }
+            document.removeEventListener('click', initMusic);
+        }, { once: true });
+
+        // ============================================
+        // JOURNAL BOOK MODAL - Full To-Do System
+        // ============================================
+        let journalBookOpen = false;
+        let journalTodos = [];
+        let currentJournalFilter = 'all';
+        let journalCalendarPicker = null;
+        const JOURNAL_STORAGE_KEY = 'mcTools_journalTodos';
+
+        function loadJournalTodos() {
+            const saved = localStorage.getItem(JOURNAL_STORAGE_KEY);
+            if (saved) {
+                try {
+                    journalTodos = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Failed to load journal todos:', e);
+                    journalTodos = [];
+                }
+            }
+        }
+
+        function saveJournalTodos() {
+            try {
+                localStorage.setItem(JOURNAL_STORAGE_KEY, JSON.stringify(journalTodos));
+            } catch (e) {
+                console.error('Failed to save journal todos:', e);
+            }
+        }
+
+        function openJournalBook() {
+            const modal = document.getElementById('journalBookModal');
+            if (modal) {
+                modal.classList.add('active');
+                journalBookOpen = true;
+                loadJournalTodos();
+                renderJournalTodos();
+                updateJournalStats();
+            }
+        }
+
+        function closeJournalBook() {
+            const modal = document.getElementById('journalBookModal');
+            if (modal) {
+                modal.classList.remove('active');
+                journalBookOpen = false;
+            }
+        }
+
+        function addJournalTodo() {
+            const input = document.getElementById('journalTodoInput');
+            if (!input || !input.value.trim()) return;
+
+            const newTodo = {
+                id: 'todo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                text: input.value.trim(),
+                done: false,
+                priority: 'none',
+                dueDate: null,
+                subtasks: [],
+                createdAt: new Date().toISOString()
+            };
+
+            journalTodos.unshift(newTodo);
+            input.value = '';
+            saveJournalTodos();
+            renderJournalTodos();
+            updateJournalStats();
+        }
+
+        function toggleJournalTodo(todoId) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (todo) {
+                todo.done = !todo.done;
+                saveJournalTodos();
+                renderJournalTodos();
+                updateJournalStats();
+            }
+        }
+
+        function deleteJournalTodo(todoId) {
+            journalTodos = journalTodos.filter(t => t.id !== todoId);
+            saveJournalTodos();
+            renderJournalTodos();
+            updateJournalStats();
+        }
+
+        function updateJournalTodoText(todoId, newText) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (todo) {
+                todo.text = newText;
+                saveJournalTodos();
+            }
+        }
+
+        function cycleJournalPriority(todoId) {
+            const priorities = ['none', 'low', 'medium', 'high'];
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (todo) {
+                const currentIdx = priorities.indexOf(todo.priority);
+                todo.priority = priorities[(currentIdx + 1) % priorities.length];
+                saveJournalTodos();
+                renderJournalTodos();
+            }
+        }
+
+        function showJournalCalendar(todoId, event) {
+            closeJournalCalendar();
+
+            const picker = document.createElement('div');
+            picker.className = 'calendar-picker';
+            picker.id = 'journalCalendarPicker';
+
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth();
+
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+
+            const todo = journalTodos.find(t => t.id === todoId);
+            let selectedDate = todo && todo.dueDate ? new Date(todo.dueDate) : null;
+
+            picker.innerHTML = `
+                <div class="calendar-quick-options">
+                    <button class="calendar-quick-btn" onclick="setJournalQuickDate('${todoId}', 'today')">📅 Today</button>
+                    <button class="calendar-quick-btn" onclick="setJournalQuickDate('${todoId}', 'tomorrow')">📅 Tomorrow</button>
+                    <button class="calendar-quick-btn" onclick="setJournalQuickDate('${todoId}', 'week')">📅 Next Week</button>
+                    <button class="calendar-quick-btn" onclick="clearJournalDate('${todoId}')">❌ Clear Date</button>
+                </div>
+                <div class="calendar-header">
+                    <button class="calendar-nav-btn" onclick="changeJournalMonth(-1)">◀</button>
+                    <span class="calendar-month" id="journalCalendarMonth">${monthNames[currentMonth]} ${currentYear}</span>
+                    <button class="calendar-nav-btn" onclick="changeJournalMonth(1)">▶</button>
+                </div>
+                <div class="calendar-grid" id="journalCalendarGrid">
+                    <div class="calendar-day-label">Su</div>
+                    <div class="calendar-day-label">Mo</div>
+                    <div class="calendar-day-label">Tu</div>
+                    <div class="calendar-day-label">We</div>
+                    <div class="calendar-day-label">Th</div>
+                    <div class="calendar-day-label">Fr</div>
+                    <div class="calendar-day-label">Sa</div>
+                </div>
+            `;
+
+            document.body.appendChild(picker);
+
+            const rect = event.target.getBoundingClientRect();
+            picker.style.left = rect.left + 'px';
+            picker.style.top = (rect.bottom + 5) + 'px';
+
+            journalCalendarPicker = {
+                element: picker,
+                todoId: todoId,
+                currentYear: currentYear,
+                currentMonth: currentMonth
+            };
+
+            renderJournalCalendarDays();
+        }
+
+        function renderJournalCalendarDays() {
+            if (!journalCalendarPicker) return;
+
+            const grid = document.getElementById('journalCalendarGrid');
+            if (!grid) return;
+
+            const { currentYear, currentMonth, todoId } = journalCalendarPicker;
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+
+            // Update month display
+            document.getElementById('journalCalendarMonth').textContent =
+                `${monthNames[currentMonth]} ${currentYear}`;
+
+            // Clear previous days (keep headers)
+            const dayLabels = grid.querySelectorAll('.calendar-day-label');
+            grid.innerHTML = '';
+            dayLabels.forEach(label => grid.appendChild(label));
+
+            // Get first day of month and number of days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+            const todo = journalTodos.find(t => t.id === todoId);
+            const selectedDateStr = todo && todo.dueDate ? todo.dueDate : null;
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const dayEl = createCalendarDay(day, 'other-month');
+                grid.appendChild(dayEl);
+            }
+
+            // Current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayEl = createCalendarDay(day, '');
+
+                if (dateStr === todayStr) {
+                    dayEl.classList.add('today');
+                }
+                if (dateStr === selectedDateStr) {
+                    dayEl.classList.add('selected');
+                }
+
+                dayEl.onclick = () => selectJournalDate(todoId, dateStr);
+                grid.appendChild(dayEl);
+            }
+
+            // Next month days
+            const totalCells = firstDay + daysInMonth;
+            const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+            for (let day = 1; day <= remainingCells; day++) {
+                const dayEl = createCalendarDay(day, 'other-month');
+                grid.appendChild(dayEl);
+            }
+        }
+
+        function createCalendarDay(day, className) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day ' + className;
+            dayEl.textContent = day;
+            return dayEl;
+        }
+
+        function changeJournalMonth(delta) {
+            if (!journalCalendarPicker) return;
+
+            journalCalendarPicker.currentMonth += delta;
+            if (journalCalendarPicker.currentMonth > 11) {
+                journalCalendarPicker.currentMonth = 0;
+                journalCalendarPicker.currentYear++;
+            } else if (journalCalendarPicker.currentMonth < 0) {
+                journalCalendarPicker.currentMonth = 11;
+                journalCalendarPicker.currentYear--;
+            }
+
+            renderJournalCalendarDays();
+        }
+
+        function selectJournalDate(todoId, dateStr) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (todo) {
+                todo.dueDate = dateStr;
+                saveJournalTodos();
+                renderJournalTodos();
+                closeJournalCalendar();
+            }
+        }
+
+        function setJournalQuickDate(todoId, option) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (!todo) return;
+
+            const today = new Date();
+            let dateStr;
+
+            switch(option) {
+                case 'today':
+                    dateStr = today.toISOString().split('T')[0];
+                    break;
+                case 'tomorrow':
+                    today.setDate(today.getDate() + 1);
+                    dateStr = today.toISOString().split('T')[0];
+                    break;
+                case 'week':
+                    today.setDate(today.getDate() + 7);
+                    dateStr = today.toISOString().split('T')[0];
+                    break;
+            }
+
+            todo.dueDate = dateStr;
+            saveJournalTodos();
+            renderJournalTodos();
+            closeJournalCalendar();
+        }
+
+        function clearJournalDate(todoId) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (todo) {
+                todo.dueDate = null;
+                saveJournalTodos();
+                renderJournalTodos();
+                closeJournalCalendar();
+            }
+        }
+
+        function closeJournalCalendar() {
+            if (journalCalendarPicker && journalCalendarPicker.element) {
+                journalCalendarPicker.element.remove();
+                journalCalendarPicker = null;
+            }
+        }
+
+        function addJournalSubtask(todoId) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (!todo) return;
+
+            const subtaskText = prompt('Enter subtask:');
+            if (!subtaskText || !subtaskText.trim()) return;
+
+            const subtask = {
+                id: 'subtask_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                text: subtaskText.trim(),
+                done: false
+            };
+
+            if (!todo.subtasks) todo.subtasks = [];
+            todo.subtasks.push(subtask);
+            saveJournalTodos();
+            renderJournalTodos();
+        }
+
+        function toggleJournalSubtask(todoId, subtaskId) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (todo && todo.subtasks) {
+                const subtask = todo.subtasks.find(s => s.id === subtaskId);
+                if (subtask) {
+                    subtask.done = !subtask.done;
+                    saveJournalTodos();
+                    renderJournalTodos();
+                }
+            }
+        }
+
+        function deleteJournalSubtask(todoId, subtaskId) {
+            const todo = journalTodos.find(t => t.id === todoId);
+            if (todo && todo.subtasks) {
+                todo.subtasks = todo.subtasks.filter(s => s.id !== subtaskId);
+                saveJournalTodos();
+                renderJournalTodos();
+            }
+        }
+
+        function setJournalFilter(filter) {
+            currentJournalFilter = filter;
+
+            // Update button states
+            document.querySelectorAll('.journal-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderJournalTodos();
+        }
+
+        function updateJournalStats() {
+            const statsContainer = document.getElementById('journalStats');
+            if (!statsContainer) return;
+
+            const total = journalTodos.length;
+            const completed = journalTodos.filter(t => t.done).length;
+            const active = total - completed;
+            const highPriority = journalTodos.filter(t => t.priority === 'high' && !t.done).length;
+            const dueSoon = journalTodos.filter(t => {
+                if (!t.dueDate || t.done) return false;
+                const dueDate = new Date(t.dueDate);
+                const today = new Date();
+                const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                return diffDays >= 0 && diffDays <= 3;
+            }).length;
+
+            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            statsContainer.innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <strong>📊 Overall Progress:</strong>
+                    <div style="margin-top: 0.5rem; background: rgba(139, 69, 19, 0.2); border-radius: 10px; height: 20px; overflow: hidden;">
+                        <div style="width: ${completionRate}%; height: 100%; background: linear-gradient(90deg, #4ade80, #22c55e);
+                                    transition: width 0.5s ease;"></div>
+                    </div>
+                    <div style="margin-top: 0.25rem; text-align: center; font-size: 0.85rem;">${completionRate}% Complete</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="padding: 1rem; background: rgba(139, 69, 19, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #4ade80;">${active}</div>
+                        <div style="font-size: 0.85rem;">Active Tasks</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(139, 69, 19, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #22c55e;">${completed}</div>
+                        <div style="font-size: 0.85rem;">Completed</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(139, 69, 19, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #ff4466;">${highPriority}</div>
+                        <div style="font-size: 0.85rem;">High Priority</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(139, 69, 19, 0.1); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #7de8ff;">${dueSoon}</div>
+                        <div style="font-size: 0.85rem;">Due Soon</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(139, 69, 19, 0.1); border-radius: 8px;">
+                    <strong>🏆 Achievements:</strong>
+                    <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                        ${completed >= 10 ? '✅ Task Master - Completed 10+ tasks<br>' : ''}
+                        ${highPriority === 0 && active > 0 ? '✅ Priority Clear - No high priority tasks!<br>' : ''}
+                        ${completionRate === 100 && total > 0 ? '✅ Perfect Record - All tasks done!<br>' : ''}
+                        ${total >= 20 ? '✅ Productivity Pro - 20+ total tasks<br>' : ''}
+                        ${completed === 0 && total === 0 ? '📝 Start your journey by adding your first task!' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderJournalTodos() {
+            const container = document.getElementById('journalTodosList');
+            if (!container) return;
+
+            let filteredTodos = journalTodos;
+
+            switch(currentJournalFilter) {
+                case 'active':
+                    filteredTodos = journalTodos.filter(t => !t.done);
+                    break;
+                case 'completed':
+                    filteredTodos = journalTodos.filter(t => t.done);
+                    break;
+                case 'high':
+                    filteredTodos = journalTodos.filter(t => t.priority === 'high' && !t.done);
+                    break;
+                default:
+                    // 'all' - show everything
+                    break;
+            }
+
+            container.innerHTML = '';
+
+            if (filteredTodos.length === 0) {
+                container.innerHTML = '<div style="color: #8866aa; text-align: center; padding: 2rem;">No tasks found</div>';
+                return;
+            }
+
+            filteredTodos.forEach(todo => {
+                const todoEl = createJournalTodoElement(todo);
+                container.appendChild(todoEl);
+            });
+        }
+
+        function createJournalTodoElement(todo) {
+            const item = document.createElement('div');
+            item.className = 'todo-item ink-effect' + (todo.done ? ' completed' : '');
+            item.setAttribute('data-todo-id', todo.id);
+            item.style.background = 'linear-gradient(to right, rgba(139, 69, 19, 0.08) 0%, rgba(139, 69, 19, 0.12) 50%, rgba(139, 69, 19, 0.08) 100%)';
+            item.style.borderColor = 'rgba(139, 69, 19, 0.3)';
+
+            const main = document.createElement('div');
+            main.className = 'todo-main';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'todo-checkbox';
+            checkbox.checked = todo.done;
+            checkbox.onchange = () => toggleJournalTodo(todo.id);
+
+            const content = document.createElement('div');
+            content.className = 'todo-content';
+
+            const text = document.createElement('div');
+            text.className = 'todo-text writing-effect';
+            text.textContent = todo.text;
+            text.style.color = '#4a2511';
+            if (!todo.done) {
+                text.contentEditable = 'true';
+                text.onblur = function() {
+                    updateJournalTodoText(todo.id, this.textContent);
+                };
+                text.onkeypress = function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.blur();
+                    }
+                };
+            }
+
+            content.appendChild(text);
+
+            if (!todo.done) {
+                const meta = document.createElement('div');
+                meta.className = 'todo-meta';
+
+                // Priority dots
+                const priorityDots = document.createElement('div');
+                priorityDots.className = 'priority-dots';
+                priorityDots.title = 'Click to cycle priority';
+                priorityDots.onclick = () => cycleJournalPriority(todo.id);
+
+                ['high', 'medium', 'low', 'none'].forEach(level => {
+                    const dot = document.createElement('div');
+                    dot.className = `priority-dot ${level}`;
+                    if (todo.priority === level) dot.classList.add('active');
+                    priorityDots.appendChild(dot);
+                });
+
+                meta.appendChild(priorityDots);
+
+                // Due date
+                const dueDateTag = document.createElement('span');
+                dueDateTag.className = 'due-date-tag' + (!todo.dueDate ? ' no-date' : '');
+                dueDateTag.textContent = todo.dueDate ? formatDate(todo.dueDate) : 'No due date';
+                dueDateTag.onclick = (e) => showJournalCalendar(todo.id, e);
+                meta.appendChild(dueDateTag);
+
+                content.appendChild(meta);
+
+                // Subtasks
+                if (todo.subtasks && todo.subtasks.length > 0) {
+                    const subtasksContainer = document.createElement('div');
+                    subtasksContainer.className = 'subtasks-container';
+
+                    todo.subtasks.forEach(subtask => {
+                        const subtaskItem = document.createElement('div');
+                        subtaskItem.className = 'subtask-item' + (subtask.done ? ' completed' : '');
+
+                        const subtaskCheckbox = document.createElement('input');
+                        subtaskCheckbox.type = 'checkbox';
+                        subtaskCheckbox.className = 'subtask-checkbox';
+                        subtaskCheckbox.checked = subtask.done;
+                        subtaskCheckbox.onchange = () => toggleJournalSubtask(todo.id, subtask.id);
+
+                        const subtaskText = document.createElement('span');
+                        subtaskText.className = 'subtask-text';
+                        subtaskText.textContent = subtask.text;
+                        subtaskText.style.color = '#6B3410';
+
+                        const subtaskDelete = document.createElement('span');
+                        subtaskDelete.className = 'subtask-delete';
+                        subtaskDelete.textContent = '×';
+                        subtaskDelete.onclick = () => deleteJournalSubtask(todo.id, subtask.id);
+
+                        subtaskItem.appendChild(subtaskCheckbox);
+                        subtaskItem.appendChild(subtaskText);
+                        subtaskItem.appendChild(subtaskDelete);
+                        subtasksContainer.appendChild(subtaskItem);
+                    });
+
+                    content.appendChild(subtasksContainer);
+                }
+
+                // Actions
+                const actions = document.createElement('div');
+                actions.className = 'todo-actions';
+
+                const addSubtaskBtn = document.createElement('button');
+                addSubtaskBtn.className = 'action-btn';
+                addSubtaskBtn.textContent = '+ Subtask';
+                addSubtaskBtn.style.background = 'rgba(139, 69, 19, 0.2)';
+                addSubtaskBtn.style.borderColor = 'rgba(139, 69, 19, 0.4)';
+                addSubtaskBtn.style.color = '#8B4513';
+                addSubtaskBtn.onclick = () => addJournalSubtask(todo.id);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn delete-btn';
+                deleteBtn.textContent = '🗑 Delete';
+                deleteBtn.onclick = () => {
+                    if (confirm('Delete this task?')) {
+                        deleteJournalTodo(todo.id);
+                    }
+                };
+
+                actions.appendChild(addSubtaskBtn);
+                actions.appendChild(deleteBtn);
+                content.appendChild(actions);
+            }
+
+            main.appendChild(checkbox);
+            main.appendChild(content);
+            item.appendChild(main);
+
+            return item;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dateOnly = new Date(date);
+            dateOnly.setHours(0, 0, 0, 0);
+
+            const diffTime = dateOnly - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Tomorrow';
+            if (diffDays === -1) return 'Yesterday';
+            if (diffDays < 0) return `${Math.abs(diffDays)} days ago`;
+            if (diffDays <= 7) return `In ${diffDays} days`;
+
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        // Close calendar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (journalCalendarPicker &&
+                !journalCalendarPicker.element.contains(e.target) &&
+                !e.target.classList.contains('due-date-tag')) {
+                closeJournalCalendar();
+            }
+        });
+
+        // Initialize journal book on load
+        loadJournalTodos();
     </script>
+
+    <!-- Journal Book Icon (Bottom Right) -->
+    <div class="journal-book-icon" onclick="openJournalBook()" title="Open Full To-Do Journal">
+        📖
+    </div>
+
+    <!-- Journal Book Modal -->
+    <div class="journal-book-modal" id="journalBookModal">
+        <div class="journal-book-container">
+            <button class="journal-close-btn" onclick="closeJournalBook()">✕</button>
+
+            <div class="journal-book">
+                <div class="book-spine"></div>
+
+                <!-- Left Page -->
+                <div class="book-page left">
+                    <h2 style="color: #4a2511; font-family: 'Courier New', monospace; margin-bottom: 1.5rem; text-align: center;">
+                        📋 My Tasks
+                    </h2>
+
+                    <!-- Filter Buttons -->
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <button class="journal-filter-btn active" onclick="setJournalFilter('all')"
+                                style="padding: 0.5rem 1rem; background: rgba(139, 69, 19, 0.2); border: 2px solid #8B4513;
+                                       border-radius: 4px; color: #4a2511; cursor: pointer; font-family: 'Courier New', monospace;
+                                       transition: all 0.3s ease;">
+                            ⚡ All
+                        </button>
+                        <button class="journal-filter-btn" onclick="setJournalFilter('active')"
+                                style="padding: 0.5rem 1rem; background: rgba(139, 69, 19, 0.2); border: 2px solid #8B4513;
+                                       border-radius: 4px; color: #4a2511; cursor: pointer; font-family: 'Courier New', monospace;
+                                       transition: all 0.3s ease;">
+                            📝 Active
+                        </button>
+                        <button class="journal-filter-btn" onclick="setJournalFilter('completed')"
+                                style="padding: 0.5rem 1rem; background: rgba(139, 69, 19, 0.2); border: 2px solid #8B4513;
+                                       border-radius: 4px; color: #4a2511; cursor: pointer; font-family: 'Courier New', monospace;
+                                       transition: all 0.3s ease;">
+                            ✅ Done
+                        </button>
+                        <button class="journal-filter-btn" onclick="setJournalFilter('high')"
+                                style="padding: 0.5rem 1rem; background: rgba(139, 69, 19, 0.2); border: 2px solid #8B4513;
+                                       border-radius: 4px; color: #4a2511; cursor: pointer; font-family: 'Courier New', monospace;
+                                       transition: all 0.3s ease;">
+                            🔥 Priority
+                        </button>
+                    </div>
+
+                    <!-- Add Task Input -->
+                    <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem;">
+                        <input type="text" id="journalTodoInput" placeholder="Add a new task..."
+                               style="flex: 1; padding: 0.75rem; background: rgba(255, 255, 255, 0.5);
+                                      border: 2px solid #8B4513; border-radius: 4px; color: #4a2511;
+                                      font-family: 'Courier New', monospace;"
+                               onkeypress="if(event.key==='Enter') addJournalTodo()" />
+                        <button onclick="addJournalTodo()"
+                                style="padding: 0.75rem 1.5rem; background: #8B4513; border: none;
+                                       border-radius: 4px; color: #F4E7D7; cursor: pointer; font-weight: bold;
+                                       font-family: 'Courier New', monospace; transition: all 0.3s ease;">
+                            ➕
+                        </button>
+                    </div>
+
+                    <!-- Tasks List -->
+                    <div id="journalTodosList" style="display: flex; flex-direction: column; gap: 0.75rem;
+                                                       max-height: calc(85vh - 250px); overflow-y: auto;
+                                                       padding-right: 10px;">
+                        <!-- Tasks will be rendered here -->
+                    </div>
+
+                    <div class="page-curl top-right"></div>
+                </div>
+
+                <!-- Right Page -->
+                <div class="book-page right">
+                    <h2 style="color: #4a2511; font-family: 'Courier New', monospace; margin-bottom: 1.5rem; text-align: center;">
+                        📊 Statistics
+                    </h2>
+
+                    <div id="journalStats" style="color: #4a2511; font-family: 'Courier New', monospace; line-height: 2;">
+                        <!-- Stats will be rendered here -->
+                    </div>
+
+                    <div style="margin-top: 2rem; padding: 1rem; background: rgba(139, 69, 19, 0.1);
+                                border: 2px solid #8B4513; border-radius: 8px; color: #4a2511;
+                                font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                        <h3 style="margin-bottom: 0.5rem;">📖 How to Use:</h3>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Click <strong>priority dots</strong> to cycle through priority levels</li>
+                            <li>Click <strong>due date</strong> to open calendar picker</li>
+                            <li>Use <strong>+ Subtask</strong> to break tasks into smaller steps</li>
+                            <li>Filter tasks using the buttons at the top</li>
+                            <li>Text fields have <strong>subtle animations</strong> when focused</li>
+                        </ul>
+                    </div>
+
+                    <div class="page-curl bottom-right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
