@@ -548,6 +548,11 @@
             text-shadow: 2px 2px 0px #000;
         }
 
+        @keyframes pulse {
+            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5); }
+            50% { transform: translateY(-12px) scale(1.03); box-shadow: 0 16px 0 rgba(0, 0, 0, 0.5), 0 16px 32px rgba(74, 222, 128, 0.6); }
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.2rem;
@@ -626,6 +631,11 @@
                     <button class="control-btn" data-category="sky">Sky</button>
                     <button class="control-btn" data-category="nether">Nether</button>
                     <button class="control-btn" data-category="end">End</button>
+                    <button class="control-btn" data-category="halloween">Halloween</button>
+                    <button class="control-btn" data-category="christmas">Christmas</button>
+                    <button class="control-btn" data-category="fall">Fall/Autumn</button>
+                    <button class="control-btn" data-category="spring">Spring</button>
+                    <button class="control-btn" data-category="winter">Winter</button>
                 </div>
             </div>
 
@@ -654,6 +664,7 @@
                 <div class="control-title">ACTIONS</div>
                 <div class="button-group">
                     <button class="control-btn random" id="randomBtn">🎲 Random Build</button>
+                    <button class="control-btn" id="clearFiltersBtn">🔄 Clear Filters</button>
                     <button class="control-btn favorite" id="showFavoritesBtn">⭐ Show Favorites</button>
                     <button class="control-btn" id="gridViewBtn">📱 Grid View</button>
                     <button class="control-btn" id="listViewBtn">📋 List View</button>
@@ -718,7 +729,7 @@
                 tags: ['Castle', 'Medieval', 'Survival'],
                 buildTime: '10-15 hours',
                 blocks: 50000,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=grian+medieval+castle+tutorial',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=medieval+castle+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=medieval+castle'
             },
             {
@@ -731,7 +742,7 @@
                 tags: ['Cottage', 'Starter', 'Easy'],
                 buildTime: '1-2 hours',
                 blocks: 2000,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=fwhip+cozy+cottage+tutorial',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=cozy+cottage+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=starter+cottage'
             },
             {
@@ -744,7 +755,7 @@
                 tags: ['Modern', 'Mansion', 'Luxury'],
                 buildTime: '8-12 hours',
                 blocks: 40000,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=keralis+modern+mansion+tutorial',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=modern+mansion+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=modern+mansion'
             },
             {
@@ -757,7 +768,7 @@
                 tags: ['Fantasy', 'Tower', 'Magic'],
                 buildTime: '4-6 hours',
                 blocks: 8000,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=bdoubleo100+wizard+tower+tutorial',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=wizard+tower+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=wizard+tower'
             },
             {
@@ -783,7 +794,7 @@
                 tags: ['Underground', 'Hidden', 'Survival'],
                 buildTime: '3-5 hours',
                 blocks: 5000,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=pixlriffs+underground+base+tutorial',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=underground+base+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=underground+base'
             },
             {
@@ -1304,7 +1315,7 @@
                 tags: ['Restaurant', 'Food', 'Dining'],
                 buildTime: '3-5 hours',
                 blocks: 6500,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=restaurant+minecraft',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=restaurant+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=restaurant'
             },
             {
@@ -1317,7 +1328,7 @@
                 tags: ['Coffee', 'Cafe', 'Cozy'],
                 buildTime: '2-4 hours',
                 blocks: 4200,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=coffee+shop+minecraft',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=coffee+shop+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=coffee+shop'
             },
             {
@@ -1330,7 +1341,7 @@
                 tags: ['Store', 'Shop', 'Urban'],
                 buildTime: '2-3 hours',
                 blocks: 3500,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=convenience+store+minecraft',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=convenience+store+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=store'
             },
             {
@@ -1499,8 +1510,230 @@
                 tags: ['Cave', 'Secret', 'Superhero'],
                 buildTime: '12-16 hours',
                 blocks: 32000,
-                tutorialUrl: 'https://www.youtube.com/results?search_query=secret+base+minecraft',
+                tutorialUrl: 'https://www.youtube.com/results?search_query=secret+base+build+minecraft+tutorial',
                 downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=secret+hideout'
+            },
+            // SEASONAL BUILDS
+            {
+                icon: '🎃',
+                title: 'Haunted Mansion',
+                creator: 'fWhip',
+                category: ['halloween', 'fantasy'],
+                difficulty: 'hard',
+                description: 'Spooky haunted mansion perfect for Halloween. Features cobwebs, dark corners, and eerie lighting. Includes graveyard and ghost decorations. Great for horror maps.',
+                tags: ['Halloween', 'Spooky', 'Mansion'],
+                buildTime: '10-14 hours',
+                blocks: 42000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=haunted+mansion+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=haunted+mansion'
+            },
+            {
+                icon: '👻',
+                title: 'Pumpkin Patch',
+                creator: 'GoodTimesWithScar',
+                category: ['halloween', 'fall', 'nature'],
+                difficulty: 'easy',
+                description: 'Festive pumpkin patch with carved jack-o-lanterns and hay bales. Perfect autumn/Halloween decoration. Includes scarecrows and corn stalks.',
+                tags: ['Pumpkin', 'Autumn', 'Halloween'],
+                buildTime: '2-4 hours',
+                blocks: 3500,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=pumpkin+patch+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=pumpkin+patch'
+            },
+            {
+                icon: '🦴',
+                title: 'Skeleton Dungeon',
+                creator: 'Tango Tek',
+                category: ['halloween', 'fantasy'],
+                difficulty: 'medium',
+                description: 'Creepy skeleton-themed dungeon with bone decorations and dark passages. Perfect for Halloween adventure maps. Includes treasure room and traps.',
+                tags: ['Skeleton', 'Dungeon', 'Halloween'],
+                buildTime: '5-8 hours',
+                blocks: 14000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=skeleton+dungeon+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=skeleton+dungeon'
+            },
+            {
+                icon: '🕷️',
+                title: 'Spider Lair',
+                creator: 'Bdouble0100',
+                category: ['halloween', 'fantasy'],
+                difficulty: 'medium',
+                description: 'Giant spider lair covered in webs. Creepy Halloween build with cocoons and spider eggs. Perfect for spooky adventure maps.',
+                tags: ['Spider', 'Webs', 'Halloween'],
+                buildTime: '4-6 hours',
+                blocks: 9000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=spider+lair+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=spider+lair'
+            },
+            {
+                icon: '🎄',
+                title: 'Christmas Village',
+                creator: 'GoodTimesWithScar',
+                category: ['christmas', 'winter', 'mega'],
+                difficulty: 'hard',
+                description: 'Festive Christmas village with decorated houses and snow. Features Christmas tree, lights, and presents. Includes Santa\'s workshop and reindeer stable.',
+                tags: ['Christmas', 'Village', 'Winter'],
+                buildTime: '18-24 hours',
+                blocks: 65000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=christmas+village+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=christmas+village'
+            },
+            {
+                icon: '⛄',
+                title: 'Snowman Army',
+                creator: 'Pixlriffs',
+                category: ['christmas', 'winter'],
+                difficulty: 'easy',
+                description: 'Collection of festive snowmen with various decorations. Fun winter/Christmas build. Includes different sizes and accessories. Quick and easy!',
+                tags: ['Snowman', 'Winter', 'Christmas'],
+                buildTime: '1-2 hours',
+                blocks: 1200,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=snowman+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=snowman'
+            },
+            {
+                icon: '🔔',
+                title: 'Santa\'s Workshop',
+                creator: 'Keralis',
+                category: ['christmas', 'winter'],
+                difficulty: 'hard',
+                description: 'Santa\'s toy workshop with elves\' workstations and gift wrapping area. Features conveyor belts and present storage. Includes reindeer stable outside.',
+                tags: ['Santa', 'Workshop', 'Christmas'],
+                buildTime: '12-16 hours',
+                blocks: 38000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=santa+workshop+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=santa+workshop'
+            },
+            {
+                icon: '🎁',
+                title: 'Giant Gift Box',
+                creator: 'Trixyblox',
+                category: ['christmas', 'winter'],
+                difficulty: 'easy',
+                description: 'Huge present-shaped building with bow on top. Festive Christmas decoration that can be a house or shop. Colorful and fun design.',
+                tags: ['Present', 'Gift', 'Christmas'],
+                buildTime: '2-4 hours',
+                blocks: 5500,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=giant+present+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=present+build'
+            },
+            {
+                icon: '🍂',
+                title: 'Autumn Cottage',
+                creator: 'Bdouble0100',
+                category: ['fall', 'starter', 'nature'],
+                difficulty: 'easy',
+                description: 'Cozy cottage surrounded by autumn leaves and pumpkins. Perfect fall-themed starter house. Features warm colors and harvest decorations.',
+                tags: ['Autumn', 'Cottage', 'Fall'],
+                buildTime: '2-3 hours',
+                blocks: 3800,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=autumn+cottage+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=autumn+cottage'
+            },
+            {
+                icon: '🌾',
+                title: 'Harvest Festival',
+                creator: 'Fwhip',
+                category: ['fall', 'nature'],
+                difficulty: 'medium',
+                description: 'Autumn harvest festival with market stalls and decorations. Features hay bales, pumpkins, and corn. Perfect for fall celebrations.',
+                tags: ['Harvest', 'Festival', 'Autumn'],
+                buildTime: '6-9 hours',
+                blocks: 16000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=harvest+festival+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=harvest+festival'
+            },
+            {
+                icon: '🍁',
+                title: 'Maple Forest Cabin',
+                creator: 'Pixlriffs',
+                category: ['fall', 'nature', 'survival'],
+                difficulty: 'medium',
+                description: 'Rustic cabin nestled in maple forest with autumn foliage. Warm fall colors and cozy atmosphere. Includes fireplace and covered porch.',
+                tags: ['Cabin', 'Maple', 'Autumn'],
+                buildTime: '4-6 hours',
+                blocks: 7200,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=forest+cabin+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=forest+cabin'
+            },
+            {
+                icon: '🌷',
+                title: 'Flower Garden',
+                creator: 'GoodTimesWithScar',
+                category: ['spring', 'nature'],
+                difficulty: 'easy',
+                description: 'Beautiful flower garden with paths and fountains. Perfect spring build with colorful blooms. Includes bee hives and butterfly decorations.',
+                tags: ['Flowers', 'Garden', 'Spring'],
+                buildTime: '3-5 hours',
+                blocks: 6800,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=flower+garden+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=flower+garden'
+            },
+            {
+                icon: '🐰',
+                title: 'Easter Village',
+                creator: 'Keralis',
+                category: ['spring', 'nature'],
+                difficulty: 'medium',
+                description: 'Pastel-colored Easter village with egg decorations. Features bunny statues and spring flowers. Includes egg hunt areas and festive shops.',
+                tags: ['Easter', 'Spring', 'Village'],
+                buildTime: '8-12 hours',
+                blocks: 24000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=easter+village+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=easter+village'
+            },
+            {
+                icon: '🌸',
+                title: 'Cherry Blossom Park',
+                creator: 'Trixyblox',
+                category: ['spring', 'nature'],
+                difficulty: 'medium',
+                description: 'Serene park filled with cherry blossom trees in bloom. Pink petals and peaceful paths. Perfect spring aesthetic with benches and lanterns.',
+                tags: ['Cherry', 'Blossom', 'Spring'],
+                buildTime: '5-8 hours',
+                blocks: 13000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=cherry+blossom+park+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=cherry+blossom'
+            },
+            {
+                icon: '⛸️',
+                title: 'Ice Skating Rink',
+                creator: 'Keralis',
+                category: ['winter', 'modern'],
+                difficulty: 'medium',
+                description: 'Outdoor ice skating rink with lights and decorations. Winter wonderland setting. Includes warming hut, hot cocoa stand, and seating area.',
+                tags: ['Ice', 'Skating', 'Winter'],
+                buildTime: '4-7 hours',
+                blocks: 10000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=ice+skating+rink+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=skating+rink'
+            },
+            {
+                icon: '🎿',
+                title: 'Ski Lodge',
+                creator: 'Bdouble0100',
+                category: ['winter', 'survival'],
+                difficulty: 'medium',
+                description: 'Cozy mountain ski lodge with fireplace and warm interior. Winter resort building with ski storage and lounge area. Perfect for snowy biomes.',
+                tags: ['Ski', 'Lodge', 'Winter'],
+                buildTime: '6-10 hours',
+                blocks: 18000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=ski+lodge+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=ski+lodge'
+            },
+            {
+                icon: '☃️',
+                title: 'Snow Fort',
+                creator: 'Pixlriffs',
+                category: ['winter', 'survival'],
+                difficulty: 'easy',
+                description: 'Fun snow fort with walls and towers made of snow. Winter-themed defensive build. Includes snowball ammunition and ice windows.',
+                tags: ['Snow', 'Fort', 'Winter'],
+                buildTime: '2-4 hours',
+                blocks: 5000,
+                tutorialUrl: 'https://www.youtube.com/results?search_query=snow+fort+build+minecraft+tutorial',
+                downloadUrl: 'https://www.planetminecraft.com/projects/?keywords=snow+fort'
             }
         ];
 
@@ -1560,10 +1793,47 @@
             // Random build
             document.getElementById('randomBtn').addEventListener('click', () => {
                 const randomBuild = buildsData[Math.floor(Math.random() * buildsData.length)];
-                currentSearch = randomBuild.title.toLowerCase();
-                document.getElementById('searchInput').value = randomBuild.title;
+                // Find the build card and scroll to it with highlight
                 renderGallery();
-                window.scrollTo({ top: 300, behavior: 'smooth' });
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.build-card');
+                    let targetCard = null;
+                    cards.forEach(card => {
+                        if (card.querySelector('.build-title').textContent === randomBuild.title) {
+                            targetCard = card;
+                        }
+                    });
+                    if (targetCard) {
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetCard.style.animation = 'pulse 1s ease-in-out 3';
+                    }
+                }, 100);
+            });
+
+            // Clear filters
+            document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+                // Reset all filters
+                currentCategory = 'all';
+                currentDifficulty = 'all';
+                currentSort = 'default';
+                currentSearch = '';
+                showOnlyFavorites = false;
+                document.getElementById('searchInput').value = '';
+
+                // Reset button states
+                document.querySelectorAll('[data-category]').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-category="all"]').classList.add('active');
+
+                document.querySelectorAll('[data-difficulty]').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-difficulty="all"]').classList.add('active');
+
+                document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-sort="default"]').classList.add('active');
+
+                document.getElementById('showFavoritesBtn').classList.remove('active');
+
+                renderGallery();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
             // Show favorites
