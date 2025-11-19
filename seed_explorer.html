@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Explorer - Minecraft Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #05060a;
+            --bg-panel: #10111a;
+            --bg-panel-alt: #151624;
+            --accent: #A066FF;
+            --accent-soft: #C68CFF;
+            --accent-hover: #8844DD;
+            --accent-warn: #FFB347;
+            --grid-line: #262738;
+            --text-main: #F5F5F7;
+            --text-muted: #9EA0A8;
+            --border-subtle: #28293A;
+            --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+            --input-bg: #1a1b2e;
+            --input-border: #2a2b3e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--bg-panel);
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-soft), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            max-width: 1600px;
+            margin: 0 auto;
+            gap: 2rem;
+            padding: 2rem;
+            min-height: calc(100vh - 140px);
+        }
+
+        .control-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .control-group h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-soft);
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(160, 102, 255, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.25rem;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-panel-alt);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            background: var(--input-bg);
+            border-color: var(--accent);
+        }
+
+        .dimension-toggle {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .dimension-btn {
+            padding: 0.75rem;
+            background: var(--bg-panel-alt);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .dimension-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-main);
+        }
+
+        .dimension-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-item label {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .map-container {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .canvas-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        #mapCanvas {
+            display: block;
+            cursor: grab;
+        }
+
+        #mapCanvas:active {
+            cursor: grabbing;
+        }
+
+        .map-tooltip {
+            position: absolute;
+            background: rgba(16, 17, 26, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.75rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            white-space: nowrap;
+        }
+
+        .map-tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tooltip-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .tooltip-label {
+            color: var(--text-muted);
+        }
+
+        .tooltip-value {
+            color: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        .info-bar {
+            background: var(--bg-panel-alt);
+            border-top: 1px solid var(--border-subtle);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            color: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        .biome-finder-result {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-panel-alt);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .biome-finder-result.visible {
+            display: block;
+        }
+
+        .biome-finder-result.success {
+            border-color: var(--accent);
+            background: rgba(160, 102, 255, 0.05);
+        }
+
+        .biome-finder-result.error {
+            border-color: var(--accent-warn);
+            background: rgba(255, 179, 71, 0.05);
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .control-panel {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .dimension-toggle {
+                grid-template-columns: 1fr;
+            }
+
+            .info-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>🗺️ Seed Explorer</h1>
+            <p>Client-side Minecraft seed visualizer</p>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="control-panel">
+            <div class="control-group">
+                <h3>Seed Configuration</h3>
+                <div class="input-group">
+                    <label for="seedInput">World Seed</label>
+                    <input type="text" id="seedInput" placeholder="Enter seed or leave random">
+                </div>
+                <div class="button-group">
+                    <button class="btn" id="randomSeedBtn">Random Seed</button>
+                    <button class="btn btn-secondary" id="generateBtn">Generate</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Platform</h3>
+                <div class="input-group">
+                    <label for="editionSelect">Edition</label>
+                    <select id="editionSelect">
+                        <option value="Java">Java Edition</option>
+                        <option value="Bedrock">Bedrock Edition</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="versionSelect">Version</label>
+                    <select id="versionSelect">
+                        <option value="1.20">1.20</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Dimension</h3>
+                <div class="dimension-toggle">
+                    <button class="dimension-btn active" data-dimension="overworld">Overworld</button>
+                    <button class="dimension-btn" data-dimension="nether">Nether</button>
+                    <button class="dimension-btn" data-dimension="end">The End</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Structure Overlays</h3>
+                <div class="checkbox-group" id="structureOverlays">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showVillages" checked>
+                        <label for="showVillages">Villages</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showStrongholds" checked>
+                        <label for="showStrongholds">Strongholds</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showMonuments" checked>
+                        <label for="showMonuments">Ocean Monuments</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Biome Finder</h3>
+                <div class="input-group">
+                    <label for="biomeSelect">Target Biome</label>
+                    <select id="biomeSelect">
+                        <option value="plains">Plains</option>
+                    </select>
+                </div>
+                <button class="btn" id="findBiomeBtn">Find Nearest Biome</button>
+                <div class="biome-finder-result" id="biomeFinderResult"></div>
+            </div>
+        </aside>
+
+        <main class="map-container">
+            <div class="canvas-wrapper">
+                <canvas id="mapCanvas"></canvas>
+                <div class="map-tooltip" id="mapTooltip">
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Position:</span>
+                        <span class="tooltip-value" id="tooltipCoords">X: 0, Z: 0</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Biome:</span>
+                        <span class="tooltip-value" id="tooltipBiome">Plains</span>
+                    </div>
+                    <div class="tooltip-row" id="tooltipStructureRow" style="display: none;">
+                        <span class="tooltip-label">Structure:</span>
+                        <span class="tooltip-value" id="tooltipStructure">None</span>
+                    </div>
+                </div>
+            </div>
+            <div class="info-bar">
+                <div class="info-item">
+                    <span class="info-label">Edition:</span>
+                    <span class="info-value" id="infoEdition">Java 1.20</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Dimension:</span>
+                    <span class="info-value" id="infoDimension">Overworld</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Center:</span>
+                    <span class="info-value" id="infoCenter">X: 0, Z: 0</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ========================================
+        // PRNG and Hashing Utilities
+        // ========================================
+
+        function createPRNG(baseSeed) {
+            let s = baseSeed | 0;
+            return function next() {
+                s = (s * 1664525 + 1013904223) | 0;
+                return (s >>> 0) / 4294967296;
+            };
+        }
+
+        function hashSeedString(seedStr, edition, version, dimension) {
+            let h = 2166136261 >>> 0;
+            const key = `${seedStr}|${edition}|${version}|${dimension}`;
+            for (let i = 0; i < key.length; i++) {
+                h ^= key.charCodeAt(i);
+                h = Math.imul(h, 16777619);
+            }
+            return h | 0;
+        }
+
+        function hashCoords(seed, x, z) {
+            let h = seed;
+            h ^= x;
+            h = Math.imul(h, 0x9E3779B9);
+            h ^= z;
+            h = Math.imul(h, 0x9E3779B9);
+            return h | 0;
+        }
+
+        // ========================================
+        // Biome Data and Colors
+        // ========================================
+
+        const BIOME_COLORS = {
+            // Overworld
+            plains: '#91BD59',
+            forest: '#507D2A',
+            dark_forest: '#2D4A1A',
+            desert: '#FADE55',
+            taiga: '#336633',
+            snowy_plains: '#FFFFFF',
+            ice_spikes: '#B4DCE8',
+            savanna: '#BDB25F',
+            jungle: '#2E7C3B',
+            bamboo_jungle: '#3E8C4B',
+            swamp: '#4C6B4B',
+            ocean: '#4060D6',
+            deep_ocean: '#2040B0',
+            frozen_ocean: '#7090D0',
+            mushroom_fields: '#A561A8',
+            beach: '#F0E68C',
+            river: '#5090D6',
+            mountains: '#8B8B8B',
+            snowy_taiga: '#4A5F5F',
+            birch_forest: '#5A7D3A',
+            // Nether
+            nether_wastes: '#8A3B26',
+            crimson_forest: '#B02E26',
+            warped_forest: '#178384',
+            basalt_deltas: '#4A4A4A',
+            soul_sand_valley: '#6B4A3B',
+            // End
+            the_end: '#CFC58D',
+            end_highlands: '#D7D39C',
+            end_midlands: '#C9C187',
+            small_end_islands: '#B4AB70',
+            end_barrens: '#A8A365'
+        };
+
+        const BIOME_SETS = {
+            overworld_java: ['plains', 'forest', 'dark_forest', 'desert', 'taiga', 'snowy_plains', 'ice_spikes', 'savanna', 'jungle', 'bamboo_jungle', 'swamp', 'ocean', 'deep_ocean', 'frozen_ocean', 'mushroom_fields', 'beach', 'river', 'mountains', 'snowy_taiga', 'birch_forest'],
+            overworld_bedrock: ['plains', 'forest', 'desert', 'taiga', 'snowy_plains', 'savanna', 'jungle', 'swamp', 'ocean', 'mushroom_fields', 'beach', 'mountains', 'birch_forest'],
+            nether: ['nether_wastes', 'crimson_forest', 'warped_forest', 'basalt_deltas', 'soul_sand_valley'],
+            end: ['the_end', 'end_highlands', 'end_midlands', 'small_end_islands', 'end_barrens']
+        };
+
+        // ========================================
+        // Worldgen Module
+        // ========================================
+        // This module provides deterministic worldgen.
+        // INTEGRATION POINT: Replace with cubiomes or similar library for accurate generation.
+
+        function createWorldContext(seedString, edition, version, dimension) {
+            const numericSeed = hashSeedString(seedString, edition, version, dimension);
+            const biomeSet = dimension === 'overworld'
+                ? (edition === 'Java' ? BIOME_SETS.overworld_java : BIOME_SETS.overworld_bedrock)
+                : BIOME_SETS[dimension];
+
+            return {
+                seedString,
+                numericSeed,
+                edition,
+                version,
+                dimension,
+                biomeSet
+            };
+        }
+
+        function sampleBiomeAt(ctx, x, z) {
+            // Simplified biome sampling using noise-like pattern
+            // INTEGRATION POINT: Replace with real biome generation algorithm
+            const scale = ctx.dimension === 'end' ? 8 : 4;
+            const h = hashCoords(ctx.numericSeed, Math.floor(x / scale), Math.floor(z / scale));
+            const rng = createPRNG(h);
+
+            // Different generation for each dimension
+            if (ctx.dimension === 'end') {
+                const distFromCenter = Math.sqrt(x * x + z * z);
+                if (distFromCenter < 5) return 'the_end';
+                if (distFromCenter < 100) return 'end_midlands';
+                if (rng() < 0.3) return 'end_barrens';
+                return 'end_highlands';
+            }
+
+            // Weight-based selection with some spatial coherence
+            const biomeIndex = Math.floor(rng() * ctx.biomeSet.length);
+            return ctx.biomeSet[biomeIndex];
+        }
+
+        function getStructuresInArea(ctx, bounds) {
+            // Simplified structure generation
+            // INTEGRATION POINT: Replace with accurate structure generation
+            const structures = [];
+            const { minX, minZ, maxX, maxZ } = bounds;
+
+            const structureSpacing = 32; // tiles
+            const startX = Math.floor(minX / structureSpacing) * structureSpacing;
+            const startZ = Math.floor(minZ / structureSpacing) * structureSpacing;
+
+            for (let tx = startX; tx <= maxX; tx += structureSpacing) {
+                for (let tz = startZ; tz <= maxZ; tz += structureSpacing) {
+                    const h = hashCoords(ctx.numericSeed, tx, tz);
+                    const rng = createPRNG(h);
+
+                    if (ctx.dimension === 'overworld') {
+                        const biome = sampleBiomeAt(ctx, tx, tz);
+
+                        // Villages
+                        if ((biome === 'plains' || biome === 'savanna' || biome === 'desert') && rng() < 0.15) {
+                            structures.push({ type: 'village', x: tx, z: tz, biome });
+                        }
+
+                        // Ocean monuments
+                        if ((biome === 'ocean' || biome === 'deep_ocean') && rng() < 0.05) {
+                            structures.push({ type: 'monument', x: tx, z: tz, biome });
+                        }
+
+                        // Strongholds (very rare)
+                        const dist = Math.sqrt(tx * tx + tz * tz);
+                        if (dist > 50 && dist < 150 && rng() < 0.005) {
+                            structures.push({ type: 'stronghold', x: tx, z: tz, biome });
+                        }
+                    } else if (ctx.dimension === 'nether') {
+                        // Bastions and fortresses
+                        if (rng() < 0.1) {
+                            structures.push({ type: rng() < 0.5 ? 'bastion' : 'fortress', x: tx, z: tz });
+                        }
+                    } else if (ctx.dimension === 'end') {
+                        const biome = sampleBiomeAt(ctx, tx, tz);
+                        if ((biome === 'end_highlands' || biome === 'end_midlands') && rng() < 0.08) {
+                            structures.push({ type: 'end_city', x: tx, z: tz, biome });
+                        }
+                    }
+                }
+            }
+
+            return structures;
+        }
+
+        // ========================================
+        // State Management
+        // ========================================
+
+        const state = {
+            seedString: '',
+            edition: 'Java',
+            version: '1.20',
+            dimension: 'overworld',
+            worldContext: null,
+            gridSize: 256,
+            tileSize: 16,
+            camera: {
+                offsetX: 0,
+                offsetZ: 0,
+                zoom: 3
+            },
+            structures: [],
+            overlays: {
+                villages: true,
+                strongholds: true,
+                monuments: true,
+                bastions: true,
+                fortresses: true,
+                end_cities: true
+            },
+            biomeCache: new Map(),
+            findResult: null
+        };
+
+        // ========================================
+        // Rendering Module
+        // ========================================
+
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId = null;
+
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = wrapper.clientWidth * dpr;
+            canvas.height = wrapper.clientHeight * dpr;
+            canvas.style.width = wrapper.clientWidth + 'px';
+            canvas.style.height = wrapper.clientHeight + 'px';
+            ctx.scale(dpr, dpr);
+            renderMap();
+        }
+
+        function worldToScreen(worldX, worldZ) {
+            const screenX = (worldX - state.camera.offsetX) * state.camera.zoom + canvas.clientWidth / 2;
+            const screenZ = (worldZ - state.camera.offsetZ) * state.camera.zoom + canvas.clientHeight / 2;
+            return { x: screenX, z: screenZ };
+        }
+
+        function screenToWorld(screenX, screenZ) {
+            const worldX = (screenX - canvas.clientWidth / 2) / state.camera.zoom + state.camera.offsetX;
+            const worldZ = (screenZ - canvas.clientHeight / 2) / state.camera.zoom + state.camera.offsetZ;
+            return { x: worldX, z: worldZ };
+        }
+
+        function worldToTile(worldX, worldZ) {
+            return {
+                x: Math.floor(worldX / state.tileSize),
+                z: Math.floor(worldZ / state.tileSize)
+            };
+        }
+
+        function getBiomeAtTile(tileX, tileZ) {
+            const key = `${tileX},${tileZ}`;
+            if (!state.biomeCache.has(key)) {
+                const biome = sampleBiomeAt(state.worldContext, tileX, tileZ);
+                state.biomeCache.set(key, biome);
+            }
+            return state.biomeCache.get(key);
+        }
+
+        function renderMap() {
+            if (!state.worldContext) return;
+
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+
+            // Clear
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, width, height);
+
+            // Calculate visible tile range
+            const topLeft = screenToWorld(0, 0);
+            const bottomRight = screenToWorld(width, height);
+            const startTile = worldToTile(topLeft.x, topLeft.z);
+            const endTile = worldToTile(bottomRight.x, bottomRight.z);
+
+            // Draw biomes
+            for (let tz = startTile.z - 1; tz <= endTile.z + 1; tz++) {
+                for (let tx = startTile.x - 1; tx <= endTile.x + 1; tx++) {
+                    const biome = getBiomeAtTile(tx, tz);
+                    const worldX = tx * state.tileSize;
+                    const worldZ = tz * state.tileSize;
+                    const screen = worldToScreen(worldX, worldZ);
+                    const size = state.tileSize * state.camera.zoom;
+
+                    ctx.fillStyle = BIOME_COLORS[biome] || '#444444';
+                    ctx.fillRect(screen.x, screen.z, size, size);
+                }
+            }
+
+            // Draw grid (subtle)
+            if (state.camera.zoom > 1.5) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.lineWidth = 0.5;
+                for (let tz = startTile.z - 1; tz <= endTile.z + 1; tz++) {
+                    for (let tx = startTile.x - 1; tx <= endTile.x + 1; tx++) {
+                        const worldX = tx * state.tileSize;
+                        const worldZ = tz * state.tileSize;
+                        const screen = worldToScreen(worldX, worldZ);
+                        const size = state.tileSize * state.camera.zoom;
+                        ctx.strokeRect(screen.x, screen.z, size, size);
+                    }
+                }
+            }
+
+            // Draw structures
+            drawStructures();
+
+            // Draw find result highlight
+            if (state.findResult) {
+                const screen = worldToScreen(state.findResult.x * state.tileSize, state.findResult.z * state.tileSize);
+                const size = state.tileSize * state.camera.zoom;
+                ctx.strokeStyle = '#A066FF';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(screen.x - 5, screen.z - 5, size + 10, size + 10);
+                ctx.setLineDash([]);
+            }
+
+            // Update info bar
+            updateInfoBar();
+        }
+
+        function drawStructures() {
+            if (!state.structures.length) return;
+
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const topLeft = screenToWorld(0, 0);
+            const bottomRight = screenToWorld(width, height);
+
+            const structureIcons = {
+                village: { color: '#8B4513', symbol: '🏘️' },
+                stronghold: { color: '#4A4A4A', symbol: '⚔️' },
+                monument: { color: '#40E0D0', symbol: '🏛️' },
+                bastion: { color: '#8B0000', symbol: '🏰' },
+                fortress: { color: '#654321', symbol: '🏯' },
+                end_city: { color: '#E6E6FA', symbol: '🏙️' }
+            };
+
+            state.structures.forEach(structure => {
+                const worldX = structure.x * state.tileSize;
+                const worldZ = structure.z * state.tileSize;
+
+                if (worldX < topLeft.x || worldX > bottomRight.x || worldZ < topLeft.z || worldZ > bottomRight.z) {
+                    return;
+                }
+
+                const overlayKey = structure.type === 'bastion' || structure.type === 'fortress'
+                    ? structure.type + 's'
+                    : structure.type + 's';
+                if (!state.overlays[overlayKey]) return;
+
+                const screen = worldToScreen(worldX, worldZ);
+                const icon = structureIcons[structure.type];
+
+                if (state.camera.zoom > 2) {
+                    // Draw icon
+                    ctx.font = `${16 * Math.min(state.camera.zoom / 3, 1.5)}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(icon.symbol, screen.x + state.tileSize * state.camera.zoom / 2, screen.z + state.tileSize * state.camera.zoom / 2);
+                } else {
+                    // Draw dot
+                    ctx.fillStyle = icon.color;
+                    ctx.beginPath();
+                    ctx.arc(screen.x + state.tileSize * state.camera.zoom / 2, screen.z + state.tileSize * state.camera.zoom / 2, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        }
+
+        function updateInfoBar() {
+            document.getElementById('infoEdition').textContent = `${state.edition} ${state.version}`;
+            document.getElementById('infoDimension').textContent = state.dimension.charAt(0).toUpperCase() + state.dimension.slice(1);
+            document.getElementById('infoCenter').textContent = `X: ${Math.round(state.camera.offsetX)}, Z: ${Math.round(state.camera.offsetZ)}`;
+        }
+
+        // ========================================
+        // Interaction Handling
+        // ========================================
+
+        let isDragging = false;
+        let lastMouseX = 0;
+        let lastMouseZ = 0;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastMouseX = e.clientX;
+            lastMouseZ = e.clientY;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const dx = e.clientX - lastMouseX;
+                const dz = e.clientY - lastMouseZ;
+                state.camera.offsetX -= dx / state.camera.zoom;
+                state.camera.offsetZ -= dz / state.camera.zoom;
+                lastMouseX = e.clientX;
+                lastMouseZ = e.clientY;
+                renderMap();
+            }
+
+            // Tooltip
+            updateTooltip(e);
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+            document.getElementById('mapTooltip').classList.remove('visible');
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseZ = e.clientY - rect.top;
+
+            const worldBefore = screenToWorld(mouseX, mouseZ);
+
+            const zoomDelta = e.deltaY > 0 ? 0.9 : 1.1;
+            state.camera.zoom = Math.max(0.5, Math.min(12, state.camera.zoom * zoomDelta));
+
+            const worldAfter = screenToWorld(mouseX, mouseZ);
+            state.camera.offsetX += worldBefore.x - worldAfter.x;
+            state.camera.offsetZ += worldBefore.z - worldAfter.z;
+
+            renderMap();
+        });
+
+        function updateTooltip(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseZ = e.clientY - rect.top;
+            const world = screenToWorld(mouseX, mouseZ);
+            const tile = worldToTile(world.x, world.z);
+
+            const biome = getBiomeAtTile(tile.x, tile.z);
+            const worldX = Math.round(world.x);
+            const worldZ = Math.round(world.z);
+
+            document.getElementById('tooltipCoords').textContent = `X: ${worldX}, Z: ${worldZ}`;
+            document.getElementById('tooltipBiome').textContent = biome.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+            // Check for nearby structure
+            const nearbyStructure = state.structures.find(s =>
+                Math.abs(s.x - tile.x) < 2 && Math.abs(s.z - tile.z) < 2
+            );
+
+            if (nearbyStructure) {
+                document.getElementById('tooltipStructure').textContent = nearbyStructure.type.charAt(0).toUpperCase() + nearbyStructure.type.slice(1);
+                document.getElementById('tooltipStructureRow').style.display = 'flex';
+            } else {
+                document.getElementById('tooltipStructureRow').style.display = 'none';
+            }
+
+            const tooltip = document.getElementById('mapTooltip');
+            tooltip.style.left = Math.min(mouseX + 15, rect.width - tooltip.offsetWidth - 10) + 'px';
+            tooltip.style.top = Math.min(mouseZ + 15, rect.height - tooltip.offsetHeight - 10) + 'px';
+            tooltip.classList.add('visible');
+        }
+
+        // ========================================
+        // UI Event Handlers
+        // ========================================
+
+        function generateWorld() {
+            const seed = document.getElementById('seedInput').value || String(Math.floor(Math.random() * 1000000000));
+            document.getElementById('seedInput').value = seed;
+
+            state.seedString = seed;
+            state.edition = document.getElementById('editionSelect').value;
+            state.version = document.getElementById('versionSelect').value;
+
+            state.worldContext = createWorldContext(state.seedString, state.edition, state.version, state.dimension);
+            state.biomeCache.clear();
+            state.findResult = null;
+
+            // Generate structures
+            const bounds = {
+                minX: -state.gridSize / 2,
+                minZ: -state.gridSize / 2,
+                maxX: state.gridSize / 2,
+                maxZ: state.gridSize / 2
+            };
+            state.structures = getStructuresInArea(state.worldContext, bounds);
+
+            // Update biome selector
+            updateBiomeSelector();
+
+            // Reset camera
+            state.camera.offsetX = 0;
+            state.camera.offsetZ = 0;
+
+            renderMap();
+            saveState();
+        }
+
+        function updateBiomeSelector() {
+            const select = document.getElementById('biomeSelect');
+            select.innerHTML = '';
+
+            const biomes = state.worldContext.biomeSet;
+            biomes.forEach(biome => {
+                const option = document.createElement('option');
+                option.value = biome;
+                option.textContent = biome.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                select.appendChild(option);
+            });
+        }
+
+        function findNearestBiome() {
+            const targetBiome = document.getElementById('biomeSelect').value;
+            const resultDiv = document.getElementById('biomeFinderResult');
+
+            // Spiral search from origin
+            let found = false;
+            let foundTile = null;
+            const maxRadius = 100;
+
+            for (let radius = 0; radius < maxRadius && !found; radius++) {
+                for (let angle = 0; angle < 360 && !found; angle += 10) {
+                    const rad = angle * Math.PI / 180;
+                    const tx = Math.round(Math.cos(rad) * radius);
+                    const tz = Math.round(Math.sin(rad) * radius);
+
+                    const biome = getBiomeAtTile(tx, tz);
+                    if (biome === targetBiome) {
+                        foundTile = { x: tx, z: tz };
+                        found = true;
+                    }
+                }
+            }
+
+            if (found) {
+                const worldX = foundTile.x * state.tileSize;
+                const worldZ = foundTile.z * state.tileSize;
+                const distance = Math.round(Math.sqrt(worldX * worldX + worldZ * worldZ));
+
+                resultDiv.innerHTML = `<strong>Found!</strong><br>Coordinates: X: ${worldX}, Z: ${worldZ}<br>Distance: ~${distance} blocks`;
+                resultDiv.className = 'biome-finder-result visible success';
+
+                state.findResult = foundTile;
+
+                // Pan to location
+                state.camera.offsetX = worldX;
+                state.camera.offsetZ = worldZ;
+                renderMap();
+            } else {
+                resultDiv.innerHTML = `<strong>Not Found</strong><br>Biome not found within current map range.`;
+                resultDiv.className = 'biome-finder-result visible error';
+                state.findResult = null;
+            }
+        }
+
+        function updateDimension(dimension) {
+            state.dimension = dimension;
+
+            document.querySelectorAll('.dimension-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update structure overlays visibility
+            const overlaysDiv = document.getElementById('structureOverlays');
+            overlaysDiv.innerHTML = '';
+
+            if (dimension === 'overworld') {
+                overlaysDiv.innerHTML = `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showVillages" ${state.overlays.villages ? 'checked' : ''}>
+                        <label for="showVillages">Villages</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showStrongholds" ${state.overlays.strongholds ? 'checked' : ''}>
+                        <label for="showStrongholds">Strongholds</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showMonuments" ${state.overlays.monuments ? 'checked' : ''}>
+                        <label for="showMonuments">Ocean Monuments</label>
+                    </div>
+                `;
+            } else if (dimension === 'nether') {
+                overlaysDiv.innerHTML = `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showBastions" ${state.overlays.bastions ? 'checked' : ''}>
+                        <label for="showBastions">Bastions</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showFortresses" ${state.overlays.fortresses ? 'checked' : ''}>
+                        <label for="showFortresses">Nether Fortresses</label>
+                    </div>
+                `;
+            } else if (dimension === 'end') {
+                overlaysDiv.innerHTML = `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showEnd_cities" ${state.overlays.end_cities ? 'checked' : ''}>
+                        <label for="showEnd_cities">End Cities</label>
+                    </div>
+                `;
+            }
+
+            attachOverlayListeners();
+            generateWorld();
+        }
+
+        function attachOverlayListeners() {
+            document.querySelectorAll('#structureOverlays input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const key = e.target.id.replace('show', '').toLowerCase();
+                    state.overlays[key] = e.target.checked;
+                    renderMap();
+                });
+            });
+        }
+
+        // ========================================
+        // Version Management
+        // ========================================
+
+        const versions = {
+            Java: ['1.20', '1.19', '1.18', '1.17', '1.16'],
+            Bedrock: ['1.21', '1.20', '1.19', '1.18']
+        };
+
+        function updateVersionOptions() {
+            const edition = document.getElementById('editionSelect').value;
+            const versionSelect = document.getElementById('versionSelect');
+            versionSelect.innerHTML = '';
+
+            versions[edition].forEach(version => {
+                const option = document.createElement('option');
+                option.value = version;
+                option.textContent = version;
+                versionSelect.appendChild(option);
+            });
+        }
+
+        // ========================================
+        // Persistence
+        // ========================================
+
+        function saveState() {
+            localStorage.setItem('seedExplorer', JSON.stringify({
+                seedString: state.seedString,
+                edition: state.edition,
+                version: state.version,
+                dimension: state.dimension
+            }));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('seedExplorer');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    document.getElementById('seedInput').value = data.seedString || '';
+                    document.getElementById('editionSelect').value = data.edition || 'Java';
+                    updateVersionOptions();
+                    document.getElementById('versionSelect').value = data.version || '1.20';
+                    state.dimension = data.dimension || 'overworld';
+
+                    document.querySelectorAll('.dimension-btn').forEach(btn => {
+                        btn.classList.toggle('active', btn.dataset.dimension === state.dimension);
+                    });
+                } catch (e) {
+                    console.error('Error loading state:', e);
+                }
+            }
+        }
+
+        // ========================================
+        // Initialization
+        // ========================================
+
+        window.addEventListener('load', () => {
+            loadState();
+            updateVersionOptions();
+            resizeCanvas();
+
+            // Generate initial world
+            generateWorld();
+
+            // Event listeners
+            document.getElementById('randomSeedBtn').addEventListener('click', () => {
+                document.getElementById('seedInput').value = String(Math.floor(Math.random() * 9999999999));
+            });
+
+            document.getElementById('generateBtn').addEventListener('click', generateWorld);
+
+            document.getElementById('editionSelect').addEventListener('change', () => {
+                updateVersionOptions();
+            });
+
+            document.querySelectorAll('.dimension-btn').forEach(btn => {
+                btn.addEventListener('click', () => updateDimension(btn.dataset.dimension));
+            });
+
+            document.getElementById('findBiomeBtn').addEventListener('click', findNearestBiome);
+
+            attachOverlayListeners();
+
+            window.addEventListener('resize', resizeCanvas);
+        });
+    </script>
+</body>
+</html>
