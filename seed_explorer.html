@@ -133,6 +133,7 @@
         }
 
         input[type="text"],
+        input[type="number"],
         select {
             width: 100%;
             padding: 0.75rem;
@@ -146,10 +147,16 @@
         }
 
         input[type="text"]:focus,
+        input[type="number"]:focus,
         select:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(160, 102, 255, 0.1);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 0.5;
         }
 
         .button-group {
@@ -420,9 +427,45 @@
                     <label for="seedInput">World Seed</label>
                     <input type="text" id="seedInput" placeholder="Enter seed or leave random">
                 </div>
+                <div class="input-group">
+                    <label for="exampleSeeds">Example Seeds</label>
+                    <select id="exampleSeeds">
+                        <option value="">-- Select Example --</option>
+                        <option value="12345">Village at Spawn (12345)</option>
+                        <option value="8678942899319966093">Mega Taiga Spawn</option>
+                        <option value="3257840388504953787">Desert Temple & Village</option>
+                        <option value="-4172144997902289642">Mushroom Island & Jungle</option>
+                        <option value="2151901553968352745">Mesa Biome Start</option>
+                        <option value="-1654510255">Ice Spikes & Igloo</option>
+                        <option value="609096724780813647">Mansion Near Spawn</option>
+                    </select>
+                </div>
                 <div class="button-group">
                     <button class="btn" id="randomSeedBtn">Random Seed</button>
                     <button class="btn btn-secondary" id="generateBtn">Generate</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Navigation</h3>
+                <div class="input-group">
+                    <label>Jump to Coordinates</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                        <input type="number" id="jumpX" placeholder="X">
+                        <input type="number" id="jumpZ" placeholder="Z">
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="jumpBtn">Jump</button>
+                    <button class="btn btn-secondary" id="copyCoords">Copy Coords</button>
+                </div>
+                <div class="button-group" style="margin-top: 0.5rem;">
+                    <button class="btn btn-secondary" id="zoomInBtn">Zoom +</button>
+                    <button class="btn btn-secondary" id="zoomOutBtn">Zoom -</button>
+                    <button class="btn btn-secondary" id="addMarkerBtn">📍 Pin</button>
+                </div>
+                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+                    Zoom: <span id="zoomDisplay" style="color: var(--accent-soft); font-weight: 600;">3.0x</span>
                 </div>
             </div>
 
@@ -454,18 +497,76 @@
 
             <div class="control-group">
                 <h3>Structure Overlays</h3>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <button class="btn btn-secondary" id="toggleAllStructures" style="flex: 1; padding: 0.5rem;">Toggle All</button>
+                </div>
                 <div class="checkbox-group" id="structureOverlays">
+                    <!-- Overworld structures -->
                     <div class="checkbox-item">
                         <input type="checkbox" id="showVillages" checked>
-                        <label for="showVillages">Villages</label>
+                        <label for="showVillages">🏘️ Villages</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showDesert_temples" checked>
+                        <label for="showDesert_temples">🏜️ Desert Temples</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showJungle_temples" checked>
+                        <label for="showJungle_temples">🛕 Jungle Temples</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showWitch_huts" checked>
+                        <label for="showWitch_huts">🧙 Witch Huts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showPillager_outposts" checked>
+                        <label for="showPillager_outposts">⚡ Pillager Outposts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showMansions" checked>
+                        <label for="showMansions">🏚️ Mansions</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showStrongholds" checked>
-                        <label for="showStrongholds">Strongholds</label>
+                        <label for="showStrongholds">⚔️ Strongholds</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showMonuments" checked>
-                        <label for="showMonuments">Ocean Monuments</label>
+                        <label for="showMonuments">🏛️ Ocean Monuments</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showShipwrecks" checked>
+                        <label for="showShipwrecks">🚢 Shipwrecks</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showOcean_ruins" checked>
+                        <label for="showOcean_ruins">🗿 Ocean Ruins</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showBuried_treasures" checked>
+                        <label for="showBuried_treasures">💰 Buried Treasure</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showIgloos" checked>
+                        <label for="showIgloos">⛺ Igloos</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showMineshafts" checked>
+                        <label for="showMineshafts">⛏️ Mineshafts</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Special Overlays</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showSpawn_point" checked>
+                        <label for="showSpawn_point">🎯 Spawn Point</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showSlime_chunks">
+                        <label for="showSlime_chunks">🟢 Slime Chunks</label>
                     </div>
                 </div>
             </div>
@@ -641,7 +742,7 @@
         }
 
         function getStructuresInArea(ctx, bounds) {
-            // Simplified structure generation
+            // Enhanced structure generation with more structure types
             // INTEGRATION POINT: Replace with accurate structure generation
             const structures = [];
             const { minX, minZ, maxX, maxZ } = bounds;
@@ -658,28 +759,92 @@
                     if (ctx.dimension === 'overworld') {
                         const biome = sampleBiomeAt(ctx, tx, tz);
 
-                        // Villages
-                        if ((biome === 'plains' || biome === 'savanna' || biome === 'desert') && rng() < 0.15) {
+                        // Villages (plains, savanna, desert, taiga, snowy)
+                        if ((biome === 'plains' || biome === 'savanna' || biome === 'desert' || biome === 'taiga' || biome === 'snowy_plains') && rng() < 0.12) {
                             structures.push({ type: 'village', x: tx, z: tz, biome });
                         }
 
-                        // Ocean monuments
-                        if ((biome === 'ocean' || biome === 'deep_ocean') && rng() < 0.05) {
+                        // Desert Temples
+                        if (biome === 'desert' && rng() < 0.08) {
+                            structures.push({ type: 'desert_temple', x: tx, z: tz, biome });
+                        }
+
+                        // Jungle Temples
+                        if ((biome === 'jungle' || biome === 'bamboo_jungle') && rng() < 0.07) {
+                            structures.push({ type: 'jungle_temple', x: tx, z: tz, biome });
+                        }
+
+                        // Witch Huts
+                        if (biome === 'swamp' && rng() < 0.06) {
+                            structures.push({ type: 'witch_hut', x: tx, z: tz, biome });
+                        }
+
+                        // Pillager Outposts
+                        if ((biome === 'plains' || biome === 'savanna' || biome === 'taiga') && rng() < 0.05) {
+                            structures.push({ type: 'pillager_outpost', x: tx, z: tz, biome });
+                        }
+
+                        // Ocean Monuments
+                        if ((biome === 'ocean' || biome === 'deep_ocean') && rng() < 0.04) {
                             structures.push({ type: 'monument', x: tx, z: tz, biome });
                         }
 
-                        // Strongholds (very rare)
+                        // Shipwrecks
+                        if ((biome === 'ocean' || biome === 'deep_ocean' || biome === 'beach') && rng() < 0.15) {
+                            structures.push({ type: 'shipwreck', x: tx, z: tz, biome });
+                        }
+
+                        // Ocean Ruins
+                        if ((biome === 'ocean' || biome === 'deep_ocean') && rng() < 0.12) {
+                            structures.push({ type: 'ocean_ruins', x: tx, z: tz, biome });
+                        }
+
+                        // Buried Treasure
+                        if (biome === 'beach' && rng() < 0.1) {
+                            structures.push({ type: 'buried_treasure', x: tx, z: tz, biome });
+                        }
+
+                        // Woodland Mansions (very rare)
+                        if (biome === 'dark_forest' && rng() < 0.02) {
+                            structures.push({ type: 'mansion', x: tx, z: tz, biome });
+                        }
+
+                        // Strongholds (very rare, ring-based)
                         const dist = Math.sqrt(tx * tx + tz * tz);
-                        if (dist > 50 && dist < 150 && rng() < 0.005) {
+                        if (dist > 50 && dist < 150 && rng() < 0.004) {
                             structures.push({ type: 'stronghold', x: tx, z: tz, biome });
                         }
-                    } else if (ctx.dimension === 'nether') {
-                        // Bastions and fortresses
-                        if (rng() < 0.1) {
-                            structures.push({ type: rng() < 0.5 ? 'bastion' : 'fortress', x: tx, z: tz });
+
+                        // Igloo
+                        if ((biome === 'snowy_plains' || biome === 'ice_spikes' || biome === 'snowy_taiga') && rng() < 0.06) {
+                            structures.push({ type: 'igloo', x: tx, z: tz, biome });
                         }
+
+                        // Mineshafts
+                        if (rng() < 0.08) {
+                            structures.push({ type: 'mineshaft', x: tx, z: tz, biome });
+                        }
+
+                    } else if (ctx.dimension === 'nether') {
+                        // Bastions
+                        if (rng() < 0.08) {
+                            structures.push({ type: 'bastion', x: tx, z: tz });
+                        }
+
+                        // Nether Fortresses
+                        if (rng() < 0.07) {
+                            structures.push({ type: 'fortress', x: tx, z: tz });
+                        }
+
+                        // Ruined Portals
+                        if (rng() < 0.12) {
+                            structures.push({ type: 'ruined_portal', x: tx, z: tz });
+                        }
+
                     } else if (ctx.dimension === 'end') {
                         const biome = sampleBiomeAt(ctx, tx, tz);
+
+                        // End Cities
                         if ((biome === 'end_highlands' || biome === 'end_midlands') && rng() < 0.08) {
                             structures.push({ type: 'end_city', x: tx, z: tz, biome });
                         }
@@ -714,8 +879,22 @@
                 monuments: true,
                 bastions: true,
                 fortresses: true,
-                end_cities: true
+                end_cities: true,
+                desert_temples: true,
+                jungle_temples: true,
+                witch_huts: true,
+                pillager_outposts: true,
+                shipwrecks: true,
+                ocean_ruins: true,
+                buried_treasures: true,
+                mansions: true,
+                igloos: true,
+                mineshafts: true,
+                ruined_portals: true,
+                slime_chunks: false,
+                spawn_point: true
             },
+            markers: [],
             biomeCache: new Map(),
             findResult: null
         };
@@ -831,8 +1010,6 @@
         }
 
         function drawStructures() {
-            if (!state.structures.length) return;
-
             const width = canvas.clientWidth;
             const height = canvas.clientHeight;
             const topLeft = screenToWorld(0, 0);
@@ -844,9 +1021,76 @@
                 monument: { color: '#40E0D0', symbol: '🏛️' },
                 bastion: { color: '#8B0000', symbol: '🏰' },
                 fortress: { color: '#654321', symbol: '🏯' },
-                end_city: { color: '#E6E6FA', symbol: '🏙️' }
+                end_city: { color: '#E6E6FA', symbol: '🏙️' },
+                desert_temple: { color: '#FADE55', symbol: '🏜️' },
+                jungle_temple: { color: '#2E7C3B', symbol: '🛕' },
+                witch_hut: { color: '#4C6B4B', symbol: '🧙' },
+                pillager_outpost: { color: '#696969', symbol: '⚡' },
+                shipwreck: { color: '#8B7355', symbol: '🚢' },
+                ocean_ruins: { color: '#5F9EA0', symbol: '🗿' },
+                buried_treasure: { color: '#FFD700', symbol: '💰' },
+                mansion: { color: '#2D2D2D', symbol: '🏚️' },
+                igloo: { color: '#E0FFFF', symbol: '⛺' },
+                mineshaft: { color: '#8B7355', symbol: '⛏️' },
+                ruined_portal: { color: '#800080', symbol: '🌀' }
             };
 
+            // Draw spawn point
+            if (state.overlays.spawn_point && state.worldContext) {
+                const spawnX = 0;
+                const spawnZ = 0;
+                const screen = worldToScreen(spawnX, spawnZ);
+
+                if (screen.x >= 0 && screen.x <= width && screen.z >= 0 && screen.z <= height) {
+                    ctx.save();
+                    ctx.fillStyle = '#00FF00';
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(screen.x, screen.z, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Draw crosshair
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(screen.x - 12, screen.z);
+                    ctx.lineTo(screen.x + 12, screen.z);
+                    ctx.moveTo(screen.x, screen.z - 12);
+                    ctx.lineTo(screen.x, screen.z + 12);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+
+            // Draw slime chunks
+            if (state.overlays.slime_chunks && state.worldContext) {
+                const startTile = worldToTile(topLeft.x, topLeft.z);
+                const endTile = worldToTile(bottomRight.x, bottomRight.z);
+
+                for (let tz = startTile.z - 1; tz <= endTile.z + 1; tz++) {
+                    for (let tx = startTile.x - 1; tx <= endTile.x + 1; tx++) {
+                        if (isSlimeChunk(tx, tz)) {
+                            const worldX = tx * state.tileSize;
+                            const worldZ = tz * state.tileSize;
+                            const screen = worldToScreen(worldX, worldZ);
+                            const size = state.tileSize * state.camera.zoom;
+
+                            ctx.fillStyle = 'rgba(0, 255, 0, 0.15)';
+                            ctx.fillRect(screen.x, screen.z, size, size);
+
+                            if (state.camera.zoom > 3) {
+                                ctx.strokeStyle = 'rgba(0, 255, 0, 0.4)';
+                                ctx.lineWidth = 1;
+                                ctx.strokeRect(screen.x, screen.z, size, size);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Draw structures
             state.structures.forEach(structure => {
                 const worldX = structure.x * state.tileSize;
                 const worldZ = structure.z * state.tileSize;
@@ -855,13 +1099,13 @@
                     return;
                 }
 
-                const overlayKey = structure.type === 'bastion' || structure.type === 'fortress'
-                    ? structure.type + 's'
-                    : structure.type + 's';
+                const overlayKey = structure.type + 's';
                 if (!state.overlays[overlayKey]) return;
 
                 const screen = worldToScreen(worldX, worldZ);
                 const icon = structureIcons[structure.type];
+
+                if (!icon) return;
 
                 if (state.camera.zoom > 2) {
                     // Draw icon
@@ -877,6 +1121,41 @@
                     ctx.fill();
                 }
             });
+
+            // Draw custom markers
+            state.markers.forEach((marker, index) => {
+                const screen = worldToScreen(marker.x, marker.z);
+
+                if (screen.x >= 0 && screen.x <= width && screen.z >= 0 && screen.z <= height) {
+                    ctx.save();
+                    ctx.fillStyle = marker.color || '#FF00FF';
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(screen.x, screen.z, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    if (state.camera.zoom > 2 && marker.label) {
+                        ctx.font = 'bold 12px Inter';
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.strokeStyle = '#000000';
+                        ctx.lineWidth = 3;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.strokeText(marker.label, screen.x, screen.z - 8);
+                        ctx.fillText(marker.label, screen.x, screen.z - 8);
+                    }
+                    ctx.restore();
+                }
+            });
+        }
+
+        function isSlimeChunk(chunkX, chunkZ) {
+            // Slime chunk determination based on seed and chunk coordinates
+            const h = hashCoords(state.worldContext.numericSeed, chunkX, chunkZ);
+            const rng = createPRNG(h);
+            return rng() < 0.1; // 10% of chunks are slime chunks
         }
 
         function updateInfoBar() {
@@ -938,6 +1217,7 @@
             state.camera.offsetX += worldBefore.x - worldAfter.x;
             state.camera.offsetZ += worldBefore.z - worldAfter.z;
 
+            updateZoomDisplay();
             renderMap();
         });
 
@@ -1082,33 +1362,77 @@
                 overlaysDiv.innerHTML = `
                     <div class="checkbox-item">
                         <input type="checkbox" id="showVillages" ${state.overlays.villages ? 'checked' : ''}>
-                        <label for="showVillages">Villages</label>
+                        <label for="showVillages">🏘️ Villages</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showDesert_temples" ${state.overlays.desert_temples ? 'checked' : ''}>
+                        <label for="showDesert_temples">🏜️ Desert Temples</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showJungle_temples" ${state.overlays.jungle_temples ? 'checked' : ''}>
+                        <label for="showJungle_temples">🛕 Jungle Temples</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showWitch_huts" ${state.overlays.witch_huts ? 'checked' : ''}>
+                        <label for="showWitch_huts">🧙 Witch Huts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showPillager_outposts" ${state.overlays.pillager_outposts ? 'checked' : ''}>
+                        <label for="showPillager_outposts">⚡ Pillager Outposts</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showMansions" ${state.overlays.mansions ? 'checked' : ''}>
+                        <label for="showMansions">🏚️ Mansions</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showStrongholds" ${state.overlays.strongholds ? 'checked' : ''}>
-                        <label for="showStrongholds">Strongholds</label>
+                        <label for="showStrongholds">⚔️ Strongholds</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showMonuments" ${state.overlays.monuments ? 'checked' : ''}>
-                        <label for="showMonuments">Ocean Monuments</label>
+                        <label for="showMonuments">🏛️ Ocean Monuments</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showShipwrecks" ${state.overlays.shipwrecks ? 'checked' : ''}>
+                        <label for="showShipwrecks">🚢 Shipwrecks</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showOcean_ruins" ${state.overlays.ocean_ruins ? 'checked' : ''}>
+                        <label for="showOcean_ruins">🗿 Ocean Ruins</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showBuried_treasures" ${state.overlays.buried_treasures ? 'checked' : ''}>
+                        <label for="showBuried_treasures">💰 Buried Treasure</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showIgloos" ${state.overlays.igloos ? 'checked' : ''}>
+                        <label for="showIgloos">⛺ Igloos</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showMineshafts" ${state.overlays.mineshafts ? 'checked' : ''}>
+                        <label for="showMineshafts">⛏️ Mineshafts</label>
                     </div>
                 `;
             } else if (dimension === 'nether') {
                 overlaysDiv.innerHTML = `
                     <div class="checkbox-item">
                         <input type="checkbox" id="showBastions" ${state.overlays.bastions ? 'checked' : ''}>
-                        <label for="showBastions">Bastions</label>
+                        <label for="showBastions">🏰 Bastions</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showFortresses" ${state.overlays.fortresses ? 'checked' : ''}>
-                        <label for="showFortresses">Nether Fortresses</label>
+                        <label for="showFortresses">🏯 Nether Fortresses</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="showRuined_portals" ${state.overlays.ruined_portals ? 'checked' : ''}>
+                        <label for="showRuined_portals">🌀 Ruined Portals</label>
                     </div>
                 `;
             } else if (dimension === 'end') {
                 overlaysDiv.innerHTML = `
                     <div class="checkbox-item">
                         <input type="checkbox" id="showEnd_cities" ${state.overlays.end_cities ? 'checked' : ''}>
-                        <label for="showEnd_cities">End Cities</label>
+                        <label for="showEnd_cities">🏙️ End Cities</label>
                     </div>
                 `;
             }
@@ -1201,6 +1525,14 @@
 
             document.getElementById('generateBtn').addEventListener('click', generateWorld);
 
+            document.getElementById('exampleSeeds').addEventListener('change', (e) => {
+                if (e.target.value) {
+                    document.getElementById('seedInput').value = e.target.value;
+                    generateWorld();
+                    e.target.value = ''; // Reset selection
+                }
+            });
+
             document.getElementById('editionSelect').addEventListener('change', () => {
                 updateVersionOptions();
             });
@@ -1211,10 +1543,86 @@
 
             document.getElementById('findBiomeBtn').addEventListener('click', findNearestBiome);
 
+            // Navigation controls
+            document.getElementById('jumpBtn').addEventListener('click', () => {
+                const x = parseInt(document.getElementById('jumpX').value) || 0;
+                const z = parseInt(document.getElementById('jumpZ').value) || 0;
+                state.camera.offsetX = x;
+                state.camera.offsetZ = z;
+                renderMap();
+            });
+
+            document.getElementById('copyCoords').addEventListener('click', () => {
+                const x = Math.round(state.camera.offsetX);
+                const z = Math.round(state.camera.offsetZ);
+                const text = `${x}, ${z}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = document.getElementById('copyCoords');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 1500);
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+            });
+
+            document.getElementById('zoomInBtn').addEventListener('click', () => {
+                state.camera.zoom = Math.min(12, state.camera.zoom * 1.3);
+                updateZoomDisplay();
+                renderMap();
+            });
+
+            document.getElementById('zoomOutBtn').addEventListener('click', () => {
+                state.camera.zoom = Math.max(0.5, state.camera.zoom / 1.3);
+                updateZoomDisplay();
+                renderMap();
+            });
+
+            document.getElementById('addMarkerBtn').addEventListener('click', () => {
+                const label = prompt('Enter marker name (optional):');
+                if (label !== null) {
+                    state.markers.push({
+                        x: Math.round(state.camera.offsetX),
+                        z: Math.round(state.camera.offsetZ),
+                        label: label || `Marker ${state.markers.length + 1}`,
+                        color: '#FF00FF'
+                    });
+                    renderMap();
+                }
+            });
+
+            document.getElementById('toggleAllStructures').addEventListener('click', () => {
+                const checkboxes = document.querySelectorAll('#structureOverlays input[type="checkbox"]');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                checkboxes.forEach(cb => {
+                    cb.checked = !allChecked;
+                    const key = cb.id.replace('show', '').toLowerCase();
+                    state.overlays[key] = cb.checked;
+                });
+                renderMap();
+            });
+
+            // Special overlays
+            document.getElementById('showSpawn_point').addEventListener('change', (e) => {
+                state.overlays.spawn_point = e.target.checked;
+                renderMap();
+            });
+
+            document.getElementById('showSlime_chunks').addEventListener('change', (e) => {
+                state.overlays.slime_chunks = e.target.checked;
+                renderMap();
+            });
+
             attachOverlayListeners();
 
             window.addEventListener('resize', resizeCanvas);
         });
+
+        function updateZoomDisplay() {
+            document.getElementById('zoomDisplay').textContent = state.camera.zoom.toFixed(1) + 'x';
+        }
     </script>
 </body>
 </html>
