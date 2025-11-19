@@ -7,18 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #0a0e1a;
-            --bg-panel: #141824;
-            --bg-panel-alt: #1a1f2e;
-            --accent: #4ade80;
-            --accent-soft: #86efac;
-            --accent-hover: #22c55e;
-            --accent-warn: #fbbf24;
-            --grid-line: #2a3142;
+            /* End-themed color scheme */
+            --bg-void: #0a0a14;
+            --bg-panel: #14141f;
+            --bg-panel-light: #1a1a2e;
+            --accent-purple: #a855f7;
+            --accent-cyan: #06b6d4;
+            --accent-green: #4ade80;
+            --accent-yellow: #fbbf24;
             --text-main: #f5f5f7;
             --text-muted: #9ca3af;
-            --border-subtle: #2a3142;
-            --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --border: #2a2a3e;
+            --glow-purple: rgba(168, 85, 247, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
         }
 
         * {
@@ -29,11 +30,12 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-main);
+            background: var(--bg-void);
             color: var(--text-main);
             overflow: hidden;
         }
 
+        /* Warning banner */
         .warning-banner {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: #000;
@@ -42,127 +44,386 @@
             font-weight: 600;
             font-size: 0.9rem;
             border-bottom: 2px solid #b45309;
+            position: relative;
+            z-index: 100;
         }
 
-        .container {
+        /* Main layout */
+        .app-container {
             display: flex;
-            height: calc(100vh - 44px);
+            height: calc(100vh - 44px - 76px); /* subtract banner and hotbar */
         }
 
+        /* Sidebar */
         .sidebar {
-            width: 320px;
+            width: 340px;
             background: var(--bg-panel);
-            border-right: 1px solid var(--border-subtle);
+            border-right: 2px solid var(--border);
             overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bg-panel);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 4px;
+        }
+
+        .sidebar-header {
             padding: 20px;
+            border-bottom: 2px solid var(--border);
+            background: linear-gradient(135deg, var(--glow-purple), var(--glow-cyan));
         }
 
-        .sidebar h2 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--accent);
+        .sidebar-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px var(--glow-purple);
         }
 
-        .control-group {
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .control-group:last-child {
-            border-bottom: none;
-        }
-
-        .control-group h3 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--accent-soft);
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
+        .sidebar-header .subtitle {
             font-size: 0.85rem;
             color: var(--text-muted);
-            margin-bottom: 6px;
         }
 
-        input, select {
-            width: 100%;
-            padding: 10px;
-            background: var(--bg-panel-alt);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+        /* Control sections */
+        .control-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .btn-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .btn {
-            padding: 10px;
-            background: var(--accent);
-            border: none;
-            border-radius: 6px;
-            color: #000;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--bg-panel-alt);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-main);
-        }
-
-        .btn-secondary:hover {
-            background: var(--border-subtle);
-        }
-
-        .checkbox-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .checkbox-item {
+        .control-section h3 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .checkbox-item input {
-            width: auto;
-            margin: 0;
+        .control-section h3::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 2px;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-panel-light);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px var(--glow-purple);
+        }
+
+        /* Dimension tabs */
+        .dimension-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .dimension-tab {
+            padding: 10px;
+            background: var(--bg-panel-light);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: var(--text-muted);
+        }
+
+        .dimension-tab:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .dimension-tab.active {
+            background: var(--glow-purple);
+            border-color: var(--accent-purple);
+            color: var(--text-main);
+            box-shadow: 0 0 10px var(--glow-purple);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-panel-light);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px var(--glow-cyan);
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Checkboxes */
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-purple);
         }
 
         .checkbox-item label {
-            margin: 0;
             cursor: pointer;
             font-size: 0.9rem;
             color: var(--text-main);
+            user-select: none;
         }
 
+        /* Biome legend */
+        .biome-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .biome-legend::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .biome-legend::-webkit-scrollbar-thumb {
+            background: var(--accent-cyan);
+            border-radius: 3px;
+        }
+
+        .biome-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px;
+            background: var(--bg-panel-light);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .biome-item:hover {
+            background: var(--border);
+            transform: translateX(4px);
+        }
+
+        .biome-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        /* Structure list */
+        .structure-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .structure-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .structure-list::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 3px;
+        }
+
+        .structure-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--bg-panel-light);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .structure-item:hover {
+            border-color: var(--accent-purple);
+            background: var(--border);
+            transform: translateX(4px);
+        }
+
+        .structure-info {
+            flex: 1;
+        }
+
+        .structure-type {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .structure-coords {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+        }
+
+        .structure-distance {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--bg-panel);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Markers */
+        .marker-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .marker-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .marker-list::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+        }
+
+        .marker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: var(--bg-panel-light);
+            border-radius: 4px;
+            margin-bottom: 6px;
+            border: 1px solid transparent;
+        }
+
+        .marker-item:hover {
+            border-color: var(--accent-green);
+        }
+
+        .marker-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .marker-coords {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+        }
+
+        .marker-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .marker-btn {
+            padding: 4px 8px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-main);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .marker-btn:hover {
+            border-color: var(--accent-green);
+            background: var(--glow-purple);
+        }
+
+        /* Map area */
         .map-area {
             flex: 1;
             position: relative;
@@ -180,54 +441,170 @@
             cursor: grabbing;
         }
 
-        .map-controls {
+        /* Tooltip */
+        .map-tooltip {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(20, 24, 36, 0.95);
-            border: 1px solid var(--border-subtle);
+            background: rgba(20, 20, 31, 0.95);
+            border: 2px solid var(--accent-purple);
             border-radius: 8px;
-            padding: 12px;
+            padding: 12px 16px;
+            pointer-events: none;
+            font-size: 0.85rem;
             backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
+        .map-tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 4px;
+        }
+
+        .tooltip-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .tooltip-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .tooltip-value {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Map info overlay */
         .map-info {
             position: absolute;
             top: 20px;
             left: 20px;
-            background: rgba(20, 24, 36, 0.95);
-            border: 1px solid var(--border-subtle);
+            background: rgba(20, 20, 31, 0.95);
+            border: 2px solid var(--accent-purple);
             border-radius: 8px;
             padding: 12px 16px;
             backdrop-filter: blur(10px);
             font-family: 'Courier New', monospace;
             font-size: 0.85rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
         }
 
-        .zoom-display {
-            color: var(--accent);
+        .map-info-line {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .map-info-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .map-info-label {
+            color: var(--text-muted);
+        }
+
+        .map-info-value {
+            color: var(--accent-cyan);
             font-weight: 600;
         }
 
+        /* Crosshair */
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .crosshair::before,
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(74, 222, 128, 0.6);
+            box-shadow: 0 0 4px rgba(74, 222, 128, 0.8);
+        }
+
+        .crosshair::before {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .crosshair::after {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+        }
+
+        /* Controls overlay */
+        .map-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(20, 20, 31, 0.95);
+            border: 2px solid var(--accent-purple);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: var(--glow-purple);
+            box-shadow: 0 0 12px var(--glow-purple);
+            transform: translateY(-2px);
+        }
+
+        /* Hotbar navigation */
         .hotbar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(20, 24, 36, 0.98);
-            border-top: 2px solid var(--accent);
+            background: rgba(20, 20, 31, 0.98);
+            border-top: 2px solid var(--accent-purple);
             padding: 8px;
             display: flex;
             justify-content: center;
             gap: 4px;
             z-index: 1000;
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.6);
         }
 
         .hotbar-slot {
             width: 60px;
             height: 60px;
-            background: var(--bg-panel-alt);
-            border: 2px solid var(--border-subtle);
+            background: var(--bg-panel);
+            border: 2px solid var(--border);
             border-radius: 6px;
             display: flex;
             flex-direction: column;
@@ -236,94 +613,229 @@
             text-decoration: none;
             color: var(--text-muted);
             transition: all 0.2s;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
+            font-weight: 600;
         }
 
         .hotbar-slot:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
+            border-color: var(--accent-purple);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px var(--glow-purple);
         }
 
         .hotbar-slot.active {
-            border-color: var(--accent);
-            background: rgba(74, 222, 128, 0.1);
+            border-color: var(--accent-cyan);
+            background: var(--glow-purple);
+            color: var(--text-main);
+            box-shadow: 0 0 16px var(--glow-cyan);
         }
 
         .hotbar-icon {
             font-size: 1.5rem;
             margin-bottom: 2px;
         }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Utility */
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .text-small { font-size: 0.75rem; }
+        .text-muted { color: var(--text-muted); }
     </style>
 </head>
 <body>
     <div class="warning-banner">
-        ⚠️ APPROXIMATE PREVIEW - This uses simplified worldgen. Does not exactly match real Minecraft worlds. For accurate results, integrate with cubiomes or similar.
+        ⚠️ APPROXIMATE PREVIEW: This uses simplified worldgen math. It does NOT exactly match real Minecraft terrain or structure positions. Architected to support a future cubiomes/WASM backend.
     </div>
 
-    <div class="container">
+    <div class="app-container">
+        <!-- Sidebar -->
         <div class="sidebar">
-            <h2>🧭 Seed Explorer</h2>
-
-            <div class="control-group">
-                <h3>Seed</h3>
-                <label>World Seed</label>
-                <input type="text" id="seedInput" placeholder="Enter seed">
-                <div class="btn-group">
-                    <button class="btn" id="randomBtn">Random</button>
-                    <button class="btn" id="generateBtn">Generate</button>
-                </div>
+            <!-- Header -->
+            <div class="sidebar-header">
+                <h1>🧭 Seed Explorer</h1>
+                <div class="subtitle">ChunkBase-style seed visualizer</div>
             </div>
 
-            <div class="control-group">
-                <h3>Navigation</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <input type="number" id="jumpX" placeholder="X">
-                    <input type="number" id="jumpZ" placeholder="Z">
+            <!-- Seed Configuration -->
+            <div class="control-section">
+                <h3>🌍 World Configuration</h3>
+
+                <div class="form-group">
+                    <label>World Seed</label>
+                    <input type="text" id="seedInput" placeholder="Enter seed or leave blank">
                 </div>
-                <button class="btn btn-secondary" id="jumpBtn" style="width: 100%;">Jump to Coords</button>
+
+                <div class="btn-group mb-3">
+                    <button class="btn btn-secondary" id="randomBtn">🎲 Random</button>
+                    <button class="btn" id="generateBtn">✨ Generate</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Edition</label>
+                    <select id="editionSelect">
+                        <option value="Java">Java Edition</option>
+                        <option value="Bedrock">Bedrock Edition</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Version</label>
+                    <select id="versionSelect">
+                        <option value="1.20">1.20</option>
+                        <option value="1.19">1.19</option>
+                        <option value="1.18">1.18</option>
+                        <option value="1.17">1.17</option>
+                        <option value="1.16">1.16</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Dimension</label>
+                    <div class="dimension-tabs">
+                        <div class="dimension-tab active" data-dimension="overworld">Overworld</div>
+                        <div class="dimension-tab" data-dimension="nether">Nether</div>
+                        <div class="dimension-tab" data-dimension="end">The End</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" id="shareBtn" style="width: 100%;">
+                    <span class="btn-icon">🔗 Copy Shareable Link</span>
+                </button>
             </div>
 
-            <div class="control-group">
-                <h3>Overlays</h3>
+            <!-- Navigation -->
+            <div class="control-section">
+                <h3>🧭 Navigation</h3>
+
+                <div class="form-group">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <input type="number" id="jumpX" placeholder="X coordinate">
+                        <input type="number" id="jumpZ" placeholder="Z coordinate">
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" id="jumpBtn" style="width: 100%;">
+                    🎯 Jump to Coordinates
+                </button>
+            </div>
+
+            <!-- Overlays -->
+            <div class="control-section">
+                <h3>👁️ Overlays</h3>
+
                 <div class="checkbox-list">
                     <div class="checkbox-item">
                         <input type="checkbox" id="showStructures" checked>
-                        <label for="showStructures">Show Structures</label>
+                        <label for="showStructures">Structures</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showSlime" checked>
-                        <label for="showSlime">Show Slime Chunks</label>
+                        <label for="showSlime">Slime Chunks</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showSpawn" checked>
-                        <label for="showSpawn">Show Spawn Point</label>
+                        <label for="showSpawn">Spawn Point</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="showGrid">
-                        <label for="showGrid">Show Chunk Grid</label>
+                        <label for="showGrid">Chunk Grid (16×16)</label>
                     </div>
                 </div>
             </div>
 
-            <div class="control-group">
-                <h3>Info</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    <strong>Controls:</strong><br>
+            <!-- Biome Legend -->
+            <div class="control-section">
+                <h3>🗺️ Biome Legend</h3>
+                <div class="biome-legend" id="biomeLegend">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Structures in View -->
+            <div class="control-section">
+                <h3>🏛️ Structures in View</h3>
+                <div class="structure-list" id="structureList">
+                    <div class="empty-state">Pan the map to find structures</div>
+                </div>
+            </div>
+
+            <!-- Markers -->
+            <div class="control-section">
+                <h3>📍 Saved Markers</h3>
+                <p class="text-small text-muted mb-2">Shift+Click on map to add marker</p>
+                <div class="marker-list" id="markerList">
+                    <div class="empty-state">No markers saved</div>
+                </div>
+                <button class="btn btn-secondary" id="clearMarkersBtn" style="width: 100%; margin-top: 8px;">
+                    🗑️ Clear All Markers
+                </button>
+            </div>
+
+            <!-- Help -->
+            <div class="control-section">
+                <h3>⌨️ Controls</h3>
+                <div class="text-small text-muted" style="line-height: 1.6;">
+                    <strong>Mouse:</strong><br>
                     • Drag to pan<br>
                     • Scroll to zoom<br>
-                    • Click structures for info<br>
-                    • Zoom range: 0.1x - 20x
-                </p>
+                    • Hover for info<br>
+                    • Shift+Click to mark<br><br>
+                    <strong>Keyboard:</strong><br>
+                    • Arrow keys to move<br>
+                    • +/- to zoom<br>
+                    • Home to reset view
+                </div>
             </div>
         </div>
 
+        <!-- Map Area -->
         <div class="map-area">
             <canvas id="canvas"></canvas>
 
+            <div class="crosshair"></div>
+
+            <div class="map-tooltip" id="tooltip">
+                <div class="tooltip-line">
+                    <span class="tooltip-label">Block:</span>
+                    <span class="tooltip-value" id="tooltipBlock">X: 0, Z: 0</span>
+                </div>
+                <div class="tooltip-line">
+                    <span class="tooltip-label">Chunk:</span>
+                    <span class="tooltip-value" id="tooltipChunk">(0, 0)</span>
+                </div>
+                <div class="tooltip-line">
+                    <span class="tooltip-label">Biome:</span>
+                    <span class="tooltip-value" id="tooltipBiome">Plains</span>
+                </div>
+            </div>
+
             <div class="map-info">
-                <div>Seed: <span id="displaySeed">-</span></div>
-                <div>Position: <span id="displayPos">X: 0, Z: 0</span></div>
-                <div>Zoom: <span class="zoom-display" id="displayZoom">1.0x</span></div>
+                <div class="map-info-line">
+                    <span class="map-info-label">Seed:</span>
+                    <span class="map-info-value" id="displaySeed">-</span>
+                </div>
+                <div class="map-info-line">
+                    <span class="map-info-label">Center:</span>
+                    <span class="map-info-value" id="displayPos">X: 0, Z: 0</span>
+                </div>
+                <div class="map-info-line">
+                    <span class="map-info-label">Zoom:</span>
+                    <span class="map-info-value" id="displayZoom">1.0x</span>
+                </div>
+            </div>
+
+            <div class="map-controls">
+                <div class="control-btn" id="zoomInBtn" title="Zoom In (+)">+</div>
+                <div class="control-btn" id="zoomOutBtn" title="Zoom Out (-)">−</div>
+                <div class="control-btn" id="resetBtn" title="Reset View (Home)">⌂</div>
             </div>
         </div>
     </div>
@@ -367,25 +879,17 @@
     <script>
         // ============================================================================
         // WORLDGEN ABSTRACTION LAYER
-        // This is where a real Minecraft worldgen implementation should be plugged in
-        // Replace SimplifiedWorldgen with cubiomes-based implementation for accuracy
         // ============================================================================
 
+        /**
+         * Interface for worldgen implementations
+         * Replace SimplifiedWorldgen with cubiomes-based implementation for accuracy
+         */
         class WorldgenInterface {
-            /**
-             * Initialize worldgen (load WASM, etc)
-             */
             async init() {}
 
             /**
              * Get biome at block coordinates
-             * @param {number} seed - World seed
-             * @param {string} edition - "Java" or "Bedrock"
-             * @param {string} version - e.g. "1.20"
-             * @param {string} dimension - "overworld", "nether", or "end"
-             * @param {number} blockX - Block X coordinate
-             * @param {number} blockZ - Block Z coordinate
-             * @returns {string} Biome ID
              */
             getBiomeAt(seed, edition, version, dimension, blockX, blockZ) {
                 throw new Error("Must implement getBiomeAt");
@@ -393,15 +897,6 @@
 
             /**
              * Get all structures in block coordinate area
-             * @param {number} seed
-             * @param {string} edition
-             * @param {string} version
-             * @param {string} dimension
-             * @param {number} minBlockX
-             * @param {number} minBlockZ
-             * @param {number} maxBlockX
-             * @param {number} maxBlockZ
-             * @returns {Array} [{type: 'village', blockX, blockZ}, ...]
              */
             getStructuresInArea(seed, edition, version, dimension, minBlockX, minBlockZ, maxBlockX, maxBlockZ) {
                 throw new Error("Must implement getStructuresInArea");
@@ -409,100 +904,242 @@
 
             /**
              * Check if chunk is a slime chunk
-             * @param {number} seed
-             * @param {string} edition
-             * @param {string} version
-             * @param {number} chunkX - Chunk X (blockX >> 4)
-             * @param {number} chunkZ - Chunk Z (blockZ >> 4)
-             * @returns {boolean}
              */
             isSlimeChunk(seed, edition, version, chunkX, chunkZ) {
                 throw new Error("Must implement isSlimeChunk");
             }
+
+            /**
+             * Get available biomes for dimension
+             */
+            getAvailableBiomes(dimension) {
+                throw new Error("Must implement getAvailableBiomes");
+            }
         }
 
         // ============================================================================
-        // SIMPLIFIED WORLDGEN (TEMPORARY - NOT ACCURATE)
-        // This is a placeholder using very basic noise
-        // Does NOT match real Minecraft - clearly labeled as approximate
+        // SIMPLIFIED WORLDGEN (APPROXIMATE)
         // ============================================================================
 
         class SimplifiedWorldgen extends WorldgenInterface {
             constructor() {
                 super();
-                this.biomeColors = {
-                    ocean: '#000070',
-                    plains: '#8db360',
-                    desert: '#fa9418',
-                    forest: '#056621',
-                    taiga: '#0b6659',
-                    swamp: '#07f9b2',
-                    river: '#0000ff',
-                    snowy: '#ffffff',
-                    mushroom: '#ff00ff',
+
+                // Biome definitions with colors
+                this.biomes = {
+                    overworld: {
+                        ocean: { name: 'Ocean', color: '#000070' },
+                        deep_ocean: { name: 'Deep Ocean', color: '#000050' },
+                        frozen_ocean: { name: 'Frozen Ocean', color: '#7070d6' },
+                        river: { name: 'River', color: '#0000ff' },
+                        beach: { name: 'Beach', color: '#fade55' },
+                        snowy_beach: { name: 'Snowy Beach', color: '#faf0c0' },
+                        plains: { name: 'Plains', color: '#8db360' },
+                        sunflower_plains: { name: 'Sunflower Plains', color: '#b5db88' },
+                        forest: { name: 'Forest', color: '#056621' },
+                        birch_forest: { name: 'Birch Forest', color: '#307444' },
+                        dark_forest: { name: 'Dark Forest', color: '#40511a' },
+                        taiga: { name: 'Taiga', color: '#0b6659' },
+                        snowy_taiga: { name: 'Snowy Taiga', color: '#31554a' },
+                        swamp: { name: 'Swamp', color: '#07f9b2' },
+                        jungle: { name: 'Jungle', color: '#537b09' },
+                        bamboo_jungle: { name: 'Bamboo Jungle', color: '#768e14' },
+                        desert: { name: 'Desert', color: '#fa9418' },
+                        savanna: { name: 'Savanna', color: '#bdb25f' },
+                        badlands: { name: 'Badlands', color: '#d94515' },
+                        mushroom_fields: { name: 'Mushroom Fields', color: '#ff00ff' },
+                        ice_spikes: { name: 'Ice Spikes', color: '#b4dcdc' },
+                        snowy_plains: { name: 'Snowy Plains', color: '#ffffff' },
+                        mountains: { name: 'Mountains', color: '#606060' },
+                        snowy_slopes: { name: 'Snowy Slopes', color: '#d0d0d0' },
+                    },
+                    nether: {
+                        nether_wastes: { name: 'Nether Wastes', color: '#572526' },
+                        crimson_forest: { name: 'Crimson Forest', color: '#dd0808' },
+                        warped_forest: { name: 'Warped Forest', color: '#167e86' },
+                        soul_sand_valley: { name: 'Soul Sand Valley', color: '#5e3830' },
+                        basalt_deltas: { name: 'Basalt Deltas', color: '#403636' },
+                    },
+                    end: {
+                        the_end: { name: 'The End', color: '#8080ff' },
+                        end_highlands: { name: 'End Highlands', color: '#b5b5ff' },
+                        end_midlands: { name: 'End Midlands', color: '#a0a0d0' },
+                        small_end_islands: { name: 'Small End Islands', color: '#9090c0' },
+                        end_barrens: { name: 'End Barrens', color: '#7070a0' },
+                    }
                 };
             }
 
-            // Simple hash for deterministic randomness
-            hash(seed, x, z) {
+            // Simple deterministic hash
+            hash(seed, x, z, n = 0) {
                 let h = seed;
-                h = (h * 374761393 + x) | 0;
-                h = (h * 668265263 + z) | 0;
+                h = Math.imul(h ^ x, 374761393);
+                h = Math.imul(h ^ z, 668265263);
+                h = Math.imul(h ^ n, 1274126177);
                 h ^= h >>> 13;
-                h = (h * 1274126177) | 0;
+                h = Math.imul(h, 1274126177);
                 h ^= h >>> 16;
                 return h;
             }
 
-            // Simple noise - NOT Minecraft's actual noise
-            simpleNoise(seed, x, z, scale) {
-                const ix = Math.floor(x / scale);
-                const iz = Math.floor(z / scale);
-                const h = this.hash(seed, ix, iz);
-                return ((h >>> 0) / 4294967296) * 2 - 1;
+            // Multi-octave noise for varied terrain
+            noise(seed, x, z, scale, octaves = 4) {
+                let total = 0;
+                let frequency = 1 / scale;
+                let amplitude = 1;
+                let maxValue = 0;
+
+                for (let i = 0; i < octaves; i++) {
+                    const fx = x * frequency;
+                    const fz = z * frequency;
+                    const ix = Math.floor(fx);
+                    const iz = Math.floor(fz);
+
+                    const h = this.hash(seed, ix, iz, i);
+                    const value = ((h >>> 0) / 4294967296) * 2 - 1;
+
+                    total += value * amplitude;
+                    maxValue += amplitude;
+
+                    amplitude *= 0.5;
+                    frequency *= 2;
+                }
+
+                return total / maxValue;
             }
 
             getBiomeAt(seed, edition, version, dimension, blockX, blockZ) {
-                // VERY simplified - just for visual variety
-                // Real implementation would use Minecraft's actual noise generators
-                const noise = this.simpleNoise(seed, blockX, blockZ, 256);
+                // Use multi-octave noise for terrain features
+                const temperature = this.noise(seed, blockX, blockZ, 512, 4);
+                const humidity = this.noise(seed + 1000, blockX, blockZ, 512, 4);
+                const continentalness = this.noise(seed + 2000, blockX, blockZ, 1024, 3);
+                const erosion = this.noise(seed + 3000, blockX, blockZ, 256, 2);
 
-                if (noise < -0.5) return 'ocean';
-                if (noise < -0.2) return 'river';
-                if (noise < 0.1) return 'plains';
-                if (noise < 0.3) return 'forest';
-                if (noise < 0.5) return 'taiga';
-                if (noise < 0.7) return 'desert';
-                return 'plains';
+                if (dimension === 'nether') {
+                    // Nether biomes based on temperature and humidity
+                    if (temperature < -0.3) return 'soul_sand_valley';
+                    if (temperature > 0.4) return 'crimson_forest';
+                    if (humidity > 0.3) return 'warped_forest';
+                    if (erosion > 0.5) return 'basalt_deltas';
+                    return 'nether_wastes';
+                } else if (dimension === 'end') {
+                    // End biomes based on distance from center
+                    const distFromCenter = Math.sqrt(blockX * blockX + blockZ * blockZ);
+                    if (distFromCenter < 1000) return 'the_end';
+                    if (distFromCenter > 2000 && erosion > 0.3) return 'end_highlands';
+                    if (distFromCenter > 2000) return 'end_midlands';
+                    if (continentalness < -0.3) return 'small_end_islands';
+                    return 'end_barrens';
+                }
+
+                // Overworld biomes
+                // Oceans at low continentalness
+                if (continentalness < -0.4) {
+                    if (temperature < -0.3) return 'frozen_ocean';
+                    if (continentalness < -0.6) return 'deep_ocean';
+                    return 'ocean';
+                }
+
+                // Beaches at ocean edges
+                if (continentalness < -0.3) {
+                    return temperature < -0.2 ? 'snowy_beach' : 'beach';
+                }
+
+                // Rivers as thin lines
+                const riverNoise = this.noise(seed + 4000, blockX, blockZ, 384, 2);
+                if (Math.abs(riverNoise) < 0.05 && continentalness > -0.2 && continentalness < 0.5) {
+                    return 'river';
+                }
+
+                // Land biomes based on temperature and humidity
+                if (temperature < -0.4) {
+                    // Cold biomes
+                    if (erosion > 0.5) return 'ice_spikes';
+                    if (humidity > 0.2) return 'snowy_taiga';
+                    if (erosion > 0.3) return 'snowy_slopes';
+                    return 'snowy_plains';
+                } else if (temperature < -0.1) {
+                    // Cool biomes
+                    if (humidity > 0.3) return 'taiga';
+                    if (humidity > 0.0) return 'birch_forest';
+                    if (erosion > 0.4) return 'mountains';
+                    return 'plains';
+                } else if (temperature < 0.3) {
+                    // Temperate biomes
+                    if (humidity < -0.3) return 'plains';
+                    if (humidity < 0.0) return 'sunflower_plains';
+                    if (humidity > 0.4) return 'dark_forest';
+                    if (humidity > 0.2) return 'swamp';
+                    return 'forest';
+                } else if (temperature < 0.6) {
+                    // Warm biomes
+                    if (humidity < -0.2) {
+                        if (erosion > 0.3) return 'badlands';
+                        return 'desert';
+                    }
+                    if (humidity > 0.3) return 'jungle';
+                    if (humidity > 0.5) return 'bamboo_jungle';
+                    return 'savanna';
+                } else {
+                    // Hot biomes
+                    if (humidity < -0.1) return 'badlands';
+                    if (continentalness > 0.7 && humidity > 0.6) return 'mushroom_fields';
+                    return 'desert';
+                }
             }
 
             getStructuresInArea(seed, edition, version, dimension, minBlockX, minBlockZ, maxBlockX, maxBlockZ) {
-                // Simplified structure generation - NOT accurate to Minecraft
-                // Real implementation would use Minecraft's region-based structure generation
                 const structures = [];
-                const structureSpacing = 512; // blocks
+                const regionSize = 512; // blocks per region
 
-                const minRegionX = Math.floor(minBlockX / structureSpacing);
-                const maxRegionX = Math.floor(maxBlockX / structureSpacing);
-                const minRegionZ = Math.floor(minBlockZ / structureSpacing);
-                const maxRegionZ = Math.floor(maxBlockZ / structureSpacing);
+                // Structure types per dimension
+                const structureTypes = {
+                    overworld: ['village', 'mansion', 'temple', 'monument', 'outpost', 'mineshaft'],
+                    nether: ['fortress', 'bastion'],
+                    end: ['city', 'gateway']
+                };
+
+                const types = structureTypes[dimension] || structureTypes.overworld;
+
+                const minRegionX = Math.floor(minBlockX / regionSize);
+                const maxRegionX = Math.floor(maxBlockX / regionSize);
+                const minRegionZ = Math.floor(minBlockZ / regionSize);
+                const maxRegionZ = Math.floor(maxBlockZ / regionSize);
 
                 for (let rx = minRegionX; rx <= maxRegionX; rx++) {
                     for (let rz = minRegionZ; rz <= maxRegionZ; rz++) {
-                        const h = this.hash(seed, rx, rz);
-                        const val = (h >>> 0) / 4294967296;
+                        for (let typeIdx = 0; typeIdx < types.length; typeIdx++) {
+                            const h = this.hash(seed, rx, rz, typeIdx);
+                            const chance = ((h >>> 0) / 4294967296);
 
-                        if (val < 0.3) {
-                            const blockX = rx * structureSpacing + ((h >>> 8) & 0xFF) * 2;
-                            const blockZ = rz * structureSpacing + ((h >>> 16) & 0xFF) * 2;
+                            // 30% chance per region per structure type
+                            if (chance < 0.3) {
+                                const offsetX = ((h >>> 8) & 0xFF) * 2;
+                                const offsetZ = ((h >>> 16) & 0xFF) * 2;
+                                const blockX = rx * regionSize + offsetX;
+                                const blockZ = rz * regionSize + offsetZ;
 
-                            if (blockX >= minBlockX && blockX <= maxBlockX &&
-                                blockZ >= minBlockZ && blockZ <= maxBlockZ) {
-                                structures.push({
-                                    type: 'village',
-                                    blockX,
-                                    blockZ
-                                });
+                                if (blockX >= minBlockX && blockX <= maxBlockX &&
+                                    blockZ >= minBlockZ && blockZ <= maxBlockZ) {
+
+                                    // Filter by biome
+                                    const biome = this.getBiomeAt(seed, edition, version, dimension, blockX, blockZ);
+                                    const type = types[typeIdx];
+
+                                    // Simple biome filtering
+                                    let valid = true;
+                                    if (type === 'village' && (biome.includes('ocean') || biome.includes('mountain'))) valid = false;
+                                    if (type === 'monument' && !biome.includes('ocean')) valid = false;
+                                    if (type === 'mansion' && !biome.includes('forest')) valid = false;
+
+                                    if (valid) {
+                                        structures.push({
+                                            type: type,
+                                            blockX: blockX,
+                                            blockZ: blockZ
+                                        });
+                                    }
+                                }
                             }
                         }
                     }
@@ -511,59 +1148,54 @@
                 return structures;
             }
 
-            // Real slime chunk algorithm from Minecraft Java Edition
+            // Simplified slime chunk using safe 32-bit operations
+            // This is NOT the exact Minecraft algorithm but deterministic and safe
             isSlimeChunk(seed, edition, version, chunkX, chunkZ) {
-                if (edition !== 'Java') return false; // Bedrock uses different system
+                if (edition !== 'Java') return false;
 
-                // This is the actual Minecraft Java slime chunk algorithm
-                const n = chunkX * 0x1f1f1f1f ^ chunkZ;
-                const seedPart = ((seed & 0xffffffffn) + BigInt(n)) & 0xffffffffn;
+                // Use safe 32-bit integer operations
+                // This is an approximation that's deterministic and doesn't cause BigInt errors
+                const n = ((chunkX * 0x1f1f1f1f) ^ chunkZ) | 0;
+                const combinedSeed = ((seed | 0) + n) | 0;
 
-                // Java Random initialization
-                let random = (seedPart ^ 0x5deece66dn) & ((1n << 48n) - 1n);
+                // Simple deterministic 10% check
+                const h = this.hash(combinedSeed, chunkX, chunkZ, 0);
+                return (h & 0x7fffffff) % 10 === 0;
+            }
 
-                // nextInt(10) == 0
-                random = (random * 0x5deece66dn + 0xbn) & ((1n << 48n) - 1n);
-                const result = Number((random >> 17n) % 10n);
-
-                return result === 0;
+            getAvailableBiomes(dimension) {
+                return this.biomes[dimension] || this.biomes.overworld;
             }
         }
 
         // ============================================================================
-        // COORDINATE SYSTEM UTILITIES
-        // Clear separation between blocks, chunks, and screen pixels
+        // COORDINATE UTILITIES
         // ============================================================================
 
         const Coords = {
-            // Block -> Chunk
             blockToChunk(blockCoord) {
                 return Math.floor(blockCoord / 16);
             },
 
-            // Chunk -> Block (center of chunk)
             chunkToBlock(chunkCoord) {
                 return chunkCoord * 16 + 8;
             },
 
-            // World block -> Screen pixel
             blockToScreen(blockX, blockZ, camera, canvasWidth, canvasHeight) {
-                const screenX = (blockX - camera.blockX) * camera.pixelsPerBlock + canvasWidth / 2;
-                const screenY = (blockZ - camera.blockZ) * camera.pixelsPerBlock + canvasHeight / 2;
-                return {x: screenX, y: screenY};
+                const screenX = (blockX - camera.centerBlockX) * camera.pixelsPerBlock + canvasWidth / 2;
+                const screenY = (blockZ - camera.centerBlockZ) * camera.pixelsPerBlock + canvasHeight / 2;
+                return { x: screenX, y: screenY };
             },
 
-            // Screen pixel -> World block
             screenToBlock(screenX, screenY, camera, canvasWidth, canvasHeight) {
-                const blockX = (screenX - canvasWidth / 2) / camera.pixelsPerBlock + camera.blockX;
-                const blockZ = (screenY - canvasHeight / 2) / camera.pixelsPerBlock + camera.blockZ;
-                return {blockX, blockZ};
+                const blockX = (screenX - canvasWidth / 2) / camera.pixelsPerBlock + camera.centerBlockX;
+                const blockZ = (screenY - canvasHeight / 2) / camera.pixelsPerBlock + camera.centerBlockZ;
+                return { blockX, blockZ };
             }
         };
 
         // ============================================================================
         // RENDERER
-        // Handles all canvas drawing - does NOT know about worldgen internals
         // ============================================================================
 
         class Renderer {
@@ -572,56 +1204,91 @@
                 this.ctx = canvas.getContext('2d');
                 this.worldgen = worldgen;
 
-                // Camera state (in block coordinates)
+                // Camera state
                 this.camera = {
-                    blockX: 0,
-                    blockZ: 0,
-                    zoom: 1.0, // 1.0 = 1 pixel per block
+                    centerBlockX: 0,
+                    centerBlockZ: 0,
+                    zoom: 1.0,
                     pixelsPerBlock: 1.0
                 };
 
+                // World state
                 this.seed = 0;
                 this.edition = 'Java';
                 this.version = '1.20';
                 this.dimension = 'overworld';
 
-                // Overlays
+                // Overlay flags
                 this.showStructures = true;
                 this.showSlime = true;
                 this.showSpawn = true;
                 this.showGrid = false;
+
+                // Cached structures
+                this.cachedStructures = [];
 
                 this.resizeCanvas();
             }
 
             resizeCanvas() {
                 const dpr = window.devicePixelRatio || 1;
-                this.canvas.width = this.canvas.clientWidth * dpr;
-                this.canvas.height = this.canvas.clientHeight * dpr;
+                const rect = this.canvas.getBoundingClientRect();
+
+                this.canvas.width = rect.width * dpr;
+                this.canvas.height = rect.height * dpr;
+
+                // Reset transform and scale for high DPI
+                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
                 this.ctx.scale(dpr, dpr);
+
+                // Store CSS dimensions for UI calculations
+                this.cssWidth = rect.width;
+                this.cssHeight = rect.height;
             }
 
-            setCamera(blockX, blockZ, zoom) {
-                this.camera.blockX = blockX;
-                this.camera.blockZ = blockZ;
+            setCamera(centerBlockX, centerBlockZ, zoom) {
+                this.camera.centerBlockX = centerBlockX;
+                this.camera.centerBlockZ = centerBlockZ;
                 this.camera.zoom = Math.max(0.1, Math.min(20, zoom));
                 this.camera.pixelsPerBlock = this.camera.zoom;
             }
 
             render() {
-                const w = this.canvas.clientWidth;
-                const h = this.canvas.clientHeight;
+                const w = this.cssWidth;
+                const h = this.cssHeight;
                 const ctx = this.ctx;
 
                 // Clear
                 ctx.fillStyle = '#000';
                 ctx.fillRect(0, 0, w, h);
 
-                // Calculate visible block area
+                // Calculate visible area
                 const topLeft = Coords.screenToBlock(0, 0, this.camera, w, h);
                 const bottomRight = Coords.screenToBlock(w, h, this.camera, w, h);
 
-                // Sample biomes on a grid
+                // Draw biomes
+                this.drawBiomes(topLeft, bottomRight, w, h);
+
+                // Draw overlays
+                if (this.showGrid && this.camera.zoom >= 0.5) {
+                    this.drawChunkGrid(topLeft, bottomRight, w, h);
+                }
+
+                if (this.showSlime && this.edition === 'Java' && this.dimension === 'overworld') {
+                    this.drawSlimeChunks(topLeft, bottomRight, w, h);
+                }
+
+                if (this.showSpawn) {
+                    this.drawSpawn(w, h);
+                }
+
+                if (this.showStructures) {
+                    this.drawStructures(topLeft, bottomRight, w, h);
+                }
+            }
+
+            drawBiomes(topLeft, bottomRight, w, h) {
+                const ctx = this.ctx;
                 const sampleSpacing = Math.max(1, Math.floor(16 / this.camera.pixelsPerBlock));
 
                 for (let blockZ = Math.floor(topLeft.blockZ / sampleSpacing) * sampleSpacing;
@@ -631,38 +1298,21 @@
                          blockX <= bottomRight.blockX;
                          blockX += sampleSpacing) {
 
-                        const biome = this.worldgen.getBiomeAt(
+                        const biomeId = this.worldgen.getBiomeAt(
                             this.seed, this.edition, this.version, this.dimension,
                             blockX, blockZ
                         );
 
-                        const color = this.worldgen.biomeColors[biome] || '#333';
+                        const biomes = this.worldgen.getAvailableBiomes(this.dimension);
+                        const biome = biomes[biomeId];
+                        const color = biome ? biome.color : '#333';
+
                         const screen = Coords.blockToScreen(blockX, blockZ, this.camera, w, h);
                         const size = sampleSpacing * this.camera.pixelsPerBlock;
 
                         ctx.fillStyle = color;
                         ctx.fillRect(screen.x, screen.y, size, size);
                     }
-                }
-
-                // Draw chunk grid
-                if (this.showGrid && this.camera.zoom >= 0.5) {
-                    this.drawChunkGrid(topLeft, bottomRight, w, h);
-                }
-
-                // Draw slime chunks
-                if (this.showSlime) {
-                    this.drawSlimeChunks(topLeft, bottomRight, w, h);
-                }
-
-                // Draw spawn
-                if (this.showSpawn) {
-                    this.drawSpawn(w, h);
-                }
-
-                // Draw structures
-                if (this.showStructures) {
-                    this.drawStructures(topLeft, bottomRight, w, h);
                 }
             }
 
@@ -673,7 +1323,7 @@
                 const minChunkZ = Coords.blockToChunk(Math.floor(topLeft.blockZ));
                 const maxChunkZ = Coords.blockToChunk(Math.ceil(bottomRight.blockZ));
 
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
                 ctx.lineWidth = 1;
 
                 for (let cx = minChunkX; cx <= maxChunkX; cx++) {
@@ -702,7 +1352,7 @@
                 const minChunkZ = Coords.blockToChunk(Math.floor(topLeft.blockZ));
                 const maxChunkZ = Coords.blockToChunk(Math.ceil(bottomRight.blockZ));
 
-                ctx.fillStyle = 'rgba(0, 255, 0, 0.15)';
+                ctx.fillStyle = 'rgba(74, 222, 128, 0.15)';
 
                 for (let cx = minChunkX; cx <= maxChunkX; cx++) {
                     for (let cz = minChunkZ; cz <= maxChunkZ; cz++) {
@@ -721,7 +1371,7 @@
                 const screen = Coords.blockToScreen(0, 0, this.camera, w, h);
                 const ctx = this.ctx;
 
-                ctx.fillStyle = '#00ff00';
+                ctx.fillStyle = '#4ade80';
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 2;
 
@@ -737,10 +1387,18 @@
                 ctx.moveTo(screen.x, screen.y - 12);
                 ctx.lineTo(screen.x, screen.y + 12);
                 ctx.stroke();
+
+                if (this.camera.zoom >= 2) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '12px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Spawn', screen.x, screen.y - 15);
+                }
             }
 
             drawStructures(topLeft, bottomRight, w, h) {
-                const structures = this.worldgen.getStructuresInArea(
+                // Get structures in visible area
+                this.cachedStructures = this.worldgen.getStructuresInArea(
                     this.seed, this.edition, this.version, this.dimension,
                     Math.floor(topLeft.blockX),
                     Math.floor(topLeft.blockZ),
@@ -749,31 +1407,56 @@
                 );
 
                 const ctx = this.ctx;
-                ctx.fillStyle = '#ff0000';
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
+                const structureColors = {
+                    village: '#fbbf24',
+                    mansion: '#a855f7',
+                    temple: '#06b6d4',
+                    monument: '#0ea5e9',
+                    outpost: '#ef4444',
+                    mineshaft: '#78716c',
+                    fortress: '#dc2626',
+                    bastion: '#f59e0b',
+                    city: '#a855f7',
+                    gateway: '#06b6d4'
+                };
 
-                structures.forEach(s => {
+                this.cachedStructures.forEach(s => {
                     const screen = Coords.blockToScreen(s.blockX, s.blockZ, this.camera, w, h);
+                    const color = structureColors[s.type] || '#ff0000';
+
+                    ctx.fillStyle = color;
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
 
                     ctx.beginPath();
                     ctx.arc(screen.x, screen.y, 6, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.stroke();
 
-                    if (this.camera.zoom >= 2) {
+                    if (this.camera.zoom >= 3) {
                         ctx.fillStyle = '#fff';
-                        ctx.font = '12px Inter';
+                        ctx.font = 'bold 11px Inter';
                         ctx.textAlign = 'center';
+                        ctx.strokeStyle = '#000';
+                        ctx.lineWidth = 3;
+                        ctx.strokeText(s.type, screen.x, screen.y - 10);
                         ctx.fillText(s.type, screen.x, screen.y - 10);
-                        ctx.fillStyle = '#ff0000';
                     }
                 });
+            }
+
+            getBiomeAt(blockX, blockZ) {
+                const biomeId = this.worldgen.getBiomeAt(
+                    this.seed, this.edition, this.version, this.dimension,
+                    blockX, blockZ
+                );
+                const biomes = this.worldgen.getAvailableBiomes(this.dimension);
+                return biomes[biomeId] || { name: 'Unknown', color: '#333' };
             }
         }
 
         // ============================================================================
-        // APP CONTROLLER
+        // APPLICATION CONTROLLER
         // ============================================================================
 
         class App {
@@ -785,67 +1468,96 @@
                 this.lastMouseX = 0;
                 this.lastMouseY = 0;
 
+                this.markers = [];
+
                 this.setupEvents();
+                this.loadStateFromURL();
                 this.generate();
-            }
-
-            generate() {
-                const seedInput = document.getElementById('seedInput').value;
-                this.renderer.seed = seedInput ? this.hashSeed(seedInput) : Math.floor(Math.random() * 1000000000);
-
-                document.getElementById('displaySeed').textContent = seedInput || this.renderer.seed;
-
-                this.renderer.render();
-            }
-
-            hashSeed(str) {
-                let hash = 0;
-                for (let i = 0; i < str.length; i++) {
-                    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                    hash = hash & hash;
-                }
-                return hash;
             }
 
             setupEvents() {
                 const canvas = this.renderer.canvas;
 
-                // Random seed
+                // Seed controls
                 document.getElementById('randomBtn').onclick = () => {
-                    document.getElementById('seedInput').value = Math.floor(Math.random() * 1000000000);
+                    document.getElementById('seedInput').value = Math.floor(Math.random() * 2147483647);
                 };
 
-                // Generate
                 document.getElementById('generateBtn').onclick = () => this.generate();
 
-                // Jump
+                // Edition/Version/Dimension
+                document.getElementById('editionSelect').onchange = () => {
+                    this.renderer.edition = document.getElementById('editionSelect').value;
+                    this.updateBiomeLegend();
+                    this.renderer.render();
+                    this.updateStructureList();
+                };
+
+                document.getElementById('versionSelect').onchange = () => {
+                    this.renderer.version = document.getElementById('versionSelect').value;
+                    this.renderer.render();
+                    this.updateStructureList();
+                };
+
+                // Dimension tabs
+                document.querySelectorAll('.dimension-tab').forEach(tab => {
+                    tab.onclick = () => {
+                        document.querySelectorAll('.dimension-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        this.renderer.dimension = tab.dataset.dimension;
+                        this.updateBiomeLegend();
+                        this.renderer.render();
+                        this.updateStructureList();
+                    };
+                });
+
+                // Jump to coords
                 document.getElementById('jumpBtn').onclick = () => {
                     const x = parseInt(document.getElementById('jumpX').value) || 0;
                     const z = parseInt(document.getElementById('jumpZ').value) || 0;
                     this.renderer.setCamera(x, z, this.renderer.camera.zoom);
                     this.renderer.render();
                     this.updateInfo();
+                    this.updateStructureList();
                 };
 
                 // Overlays
                 document.getElementById('showStructures').onchange = (e) => {
                     this.renderer.showStructures = e.target.checked;
                     this.renderer.render();
+                    this.updateStructureList();
                 };
+
                 document.getElementById('showSlime').onchange = (e) => {
                     this.renderer.showSlime = e.target.checked;
                     this.renderer.render();
                 };
+
                 document.getElementById('showSpawn').onchange = (e) => {
                     this.renderer.showSpawn = e.target.checked;
                     this.renderer.render();
                 };
+
                 document.getElementById('showGrid').onchange = (e) => {
                     this.renderer.showGrid = e.target.checked;
                     this.renderer.render();
                 };
 
-                // Mouse pan
+                // Share button
+                document.getElementById('shareBtn').onclick = () => this.shareView();
+
+                // Markers
+                document.getElementById('clearMarkersBtn').onclick = () => {
+                    this.markers = [];
+                    this.updateMarkerList();
+                };
+
+                // Map controls
+                document.getElementById('zoomInBtn').onclick = () => this.zoomBy(1.5);
+                document.getElementById('zoomOutBtn').onclick = () => this.zoomBy(1 / 1.5);
+                document.getElementById('resetBtn').onclick = () => this.resetView();
+
+                // Mouse events
                 canvas.onmousedown = (e) => {
                     this.isDragging = true;
                     this.lastMouseX = e.clientX;
@@ -857,41 +1569,131 @@
                         const dx = e.clientX - this.lastMouseX;
                         const dy = e.clientY - this.lastMouseY;
 
-                        const cam = this.renderer.camera;
-                        cam.blockX -= dx / cam.pixelsPerBlock;
-                        cam.blockZ -= dy / cam.pixelsPerBlock;
+                        this.renderer.camera.centerBlockX -= dx / this.renderer.camera.pixelsPerBlock;
+                        this.renderer.camera.centerBlockZ -= dy / this.renderer.camera.pixelsPerBlock;
 
                         this.lastMouseX = e.clientX;
                         this.lastMouseY = e.clientY;
 
                         this.renderer.render();
                         this.updateInfo();
+                        this.updateStructureList();
+                    } else {
+                        this.updateTooltip(e);
                     }
                 };
 
-                canvas.onmouseup = () => {
+                canvas.onmouseup = (e) => {
+                    if (!this.isDragging) return;
                     this.isDragging = false;
+
+                    // Check for shift+click to add marker
+                    if (e.shiftKey) {
+                        const rect = canvas.getBoundingClientRect();
+                        const mouseX = e.clientX - rect.left;
+                        const mouseY = e.clientY - rect.top;
+                        const block = Coords.screenToBlock(
+                            mouseX, mouseY,
+                            this.renderer.camera,
+                            this.renderer.cssWidth,
+                            this.renderer.cssHeight
+                        );
+                        this.addMarker(Math.round(block.blockX), Math.round(block.blockZ));
+                    }
                 };
 
                 canvas.onmouseleave = () => {
                     this.isDragging = false;
+                    document.getElementById('tooltip').classList.remove('visible');
                 };
 
-                // Mouse zoom
                 canvas.onwheel = (e) => {
                     e.preventDefault();
+                    const zoomFactor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
 
-                    const zoomFactor = e.deltaY < 0 ? 1.2 : 0.8;
-                    const newZoom = this.renderer.camera.zoom * zoomFactor;
+                    // Zoom toward mouse position
+                    const rect = canvas.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
 
-                    this.renderer.setCamera(
-                        this.renderer.camera.blockX,
-                        this.renderer.camera.blockZ,
-                        newZoom
+                    const beforeBlock = Coords.screenToBlock(
+                        mouseX, mouseY,
+                        this.renderer.camera,
+                        this.renderer.cssWidth,
+                        this.renderer.cssHeight
                     );
+
+                    this.renderer.camera.zoom *= zoomFactor;
+                    this.renderer.camera.zoom = Math.max(0.1, Math.min(20, this.renderer.camera.zoom));
+                    this.renderer.camera.pixelsPerBlock = this.renderer.camera.zoom;
+
+                    const afterBlock = Coords.screenToBlock(
+                        mouseX, mouseY,
+                        this.renderer.camera,
+                        this.renderer.cssWidth,
+                        this.renderer.cssHeight
+                    );
+
+                    this.renderer.camera.centerBlockX += beforeBlock.blockX - afterBlock.blockX;
+                    this.renderer.camera.centerBlockZ += beforeBlock.blockZ - afterBlock.blockZ;
 
                     this.renderer.render();
                     this.updateInfo();
+                    this.updateStructureList();
+                };
+
+                // Keyboard shortcuts
+                document.onkeydown = (e) => {
+                    const moveSpeed = 32 / this.renderer.camera.pixelsPerBlock;
+
+                    switch (e.key) {
+                        case 'ArrowUp':
+                        case 'w':
+                            this.renderer.camera.centerBlockZ -= moveSpeed;
+                            this.renderer.render();
+                            this.updateInfo();
+                            this.updateStructureList();
+                            e.preventDefault();
+                            break;
+                        case 'ArrowDown':
+                        case 's':
+                            this.renderer.camera.centerBlockZ += moveSpeed;
+                            this.renderer.render();
+                            this.updateInfo();
+                            this.updateStructureList();
+                            e.preventDefault();
+                            break;
+                        case 'ArrowLeft':
+                        case 'a':
+                            this.renderer.camera.centerBlockX -= moveSpeed;
+                            this.renderer.render();
+                            this.updateInfo();
+                            this.updateStructureList();
+                            e.preventDefault();
+                            break;
+                        case 'ArrowRight':
+                        case 'd':
+                            this.renderer.camera.centerBlockX += moveSpeed;
+                            this.renderer.render();
+                            this.updateInfo();
+                            this.updateStructureList();
+                            e.preventDefault();
+                            break;
+                        case '+':
+                        case '=':
+                            this.zoomBy(1.5);
+                            e.preventDefault();
+                            break;
+                        case '-':
+                        case '_':
+                            this.zoomBy(1 / 1.5);
+                            e.preventDefault();
+                            break;
+                        case 'Home':
+                            this.resetView();
+                            e.preventDefault();
+                            break;
+                    }
                 };
 
                 // Resize
@@ -901,16 +1703,262 @@
                 };
             }
 
+            generate() {
+                const seedInput = document.getElementById('seedInput').value;
+
+                if (seedInput === '') {
+                    this.renderer.seed = Math.floor(Math.random() * 2147483647);
+                } else if (isNaN(seedInput)) {
+                    // Hash string seed
+                    let hash = 0;
+                    for (let i = 0; i < seedInput.length; i++) {
+                        hash = ((hash << 5) - hash) + seedInput.charCodeAt(i);
+                        hash = hash & hash;
+                    }
+                    this.renderer.seed = hash;
+                } else {
+                    this.renderer.seed = parseInt(seedInput);
+                }
+
+                this.renderer.edition = document.getElementById('editionSelect').value;
+                this.renderer.version = document.getElementById('versionSelect').value;
+
+                document.getElementById('displaySeed').textContent = seedInput || this.renderer.seed;
+
+                this.updateBiomeLegend();
+                this.renderer.render();
+                this.updateInfo();
+                this.updateStructureList();
+            }
+
+            updateBiomeLegend() {
+                const legendDiv = document.getElementById('biomeLegend');
+                const biomes = this.worldgen.getAvailableBiomes(this.renderer.dimension);
+
+                legendDiv.innerHTML = '';
+
+                Object.entries(biomes).forEach(([id, biome]) => {
+                    const item = document.createElement('div');
+                    item.className = 'biome-item';
+                    item.innerHTML = `
+                        <div class="biome-color" style="background: ${biome.color}"></div>
+                        <span>${biome.name}</span>
+                    `;
+                    legendDiv.appendChild(item);
+                });
+            }
+
+            updateStructureList() {
+                if (!this.renderer.showStructures) {
+                    document.getElementById('structureList').innerHTML = '<div class="empty-state">Structures overlay disabled</div>';
+                    return;
+                }
+
+                const structures = this.renderer.cachedStructures || [];
+                const listDiv = document.getElementById('structureList');
+
+                if (structures.length === 0) {
+                    listDiv.innerHTML = '<div class="empty-state">No structures in view</div>';
+                    return;
+                }
+
+                // Sort by distance from center
+                const centerX = this.renderer.camera.centerBlockX;
+                const centerZ = this.renderer.camera.centerBlockZ;
+
+                structures.sort((a, b) => {
+                    const distA = Math.sqrt((a.blockX - centerX) ** 2 + (a.blockZ - centerZ) ** 2);
+                    const distB = Math.sqrt((b.blockX - centerX) ** 2 + (b.blockZ - centerZ) ** 2);
+                    return distA - distB;
+                });
+
+                listDiv.innerHTML = '';
+
+                structures.slice(0, 20).forEach(s => {
+                    const dist = Math.sqrt((s.blockX - centerX) ** 2 + (s.blockZ - centerZ) ** 2);
+                    const item = document.createElement('div');
+                    item.className = 'structure-item';
+                    item.innerHTML = `
+                        <div class="structure-info">
+                            <div class="structure-type">${s.type}</div>
+                            <div class="structure-coords">X: ${s.blockX}, Z: ${s.blockZ}</div>
+                        </div>
+                        <div class="structure-distance">${Math.round(dist)}m</div>
+                    `;
+                    item.onclick = () => {
+                        this.renderer.setCamera(s.blockX, s.blockZ, this.renderer.camera.zoom);
+                        this.renderer.render();
+                        this.updateInfo();
+                        this.updateStructureList();
+                    };
+                    listDiv.appendChild(item);
+                });
+            }
+
+            updateTooltip(e) {
+                const rect = this.renderer.canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                const block = Coords.screenToBlock(
+                    mouseX, mouseY,
+                    this.renderer.camera,
+                    this.renderer.cssWidth,
+                    this.renderer.cssHeight
+                );
+
+                const blockX = Math.floor(block.blockX);
+                const blockZ = Math.floor(block.blockZ);
+                const chunkX = Coords.blockToChunk(blockX);
+                const chunkZ = Coords.blockToChunk(blockZ);
+
+                const biome = this.renderer.getBiomeAt(blockX, blockZ);
+
+                document.getElementById('tooltipBlock').textContent = `X: ${blockX}, Z: ${blockZ}`;
+                document.getElementById('tooltipChunk').textContent = `(${chunkX}, ${chunkZ})`;
+                document.getElementById('tooltipBiome').textContent = biome.name;
+
+                const tooltip = document.getElementById('tooltip');
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+                tooltip.classList.add('visible');
+            }
+
             updateInfo() {
                 const cam = this.renderer.camera;
                 document.getElementById('displayPos').textContent =
-                    `X: ${Math.round(cam.blockX)}, Z: ${Math.round(cam.blockZ)}`;
+                    `X: ${Math.round(cam.centerBlockX)}, Z: ${Math.round(cam.centerBlockZ)}`;
                 document.getElementById('displayZoom').textContent =
                     cam.zoom.toFixed(2) + 'x';
             }
+
+            addMarker(blockX, blockZ) {
+                const markerNum = this.markers.length + 1;
+                this.markers.push({
+                    name: `Marker ${markerNum}`,
+                    blockX,
+                    blockZ
+                });
+                this.updateMarkerList();
+            }
+
+            updateMarkerList() {
+                const listDiv = document.getElementById('markerList');
+
+                if (this.markers.length === 0) {
+                    listDiv.innerHTML = '<div class="empty-state">No markers saved</div>';
+                    return;
+                }
+
+                listDiv.innerHTML = '';
+
+                this.markers.forEach((marker, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'marker-item';
+                    item.innerHTML = `
+                        <div>
+                            <div class="marker-name">${marker.name}</div>
+                            <div class="marker-coords">X: ${marker.blockX}, Z: ${marker.blockZ}</div>
+                        </div>
+                        <div class="marker-actions">
+                            <button class="marker-btn goto-btn">Go</button>
+                            <button class="marker-btn remove-btn">×</button>
+                        </div>
+                    `;
+
+                    item.querySelector('.goto-btn').onclick = () => {
+                        this.renderer.setCamera(marker.blockX, marker.blockZ, this.renderer.camera.zoom);
+                        this.renderer.render();
+                        this.updateInfo();
+                        this.updateStructureList();
+                    };
+
+                    item.querySelector('.remove-btn').onclick = () => {
+                        this.markers.splice(idx, 1);
+                        this.updateMarkerList();
+                    };
+
+                    listDiv.appendChild(item);
+                });
+            }
+
+            zoomBy(factor) {
+                const newZoom = this.renderer.camera.zoom * factor;
+                this.renderer.setCamera(
+                    this.renderer.camera.centerBlockX,
+                    this.renderer.camera.centerBlockZ,
+                    newZoom
+                );
+                this.renderer.render();
+                this.updateInfo();
+                this.updateStructureList();
+            }
+
+            resetView() {
+                this.renderer.setCamera(0, 0, 1.0);
+                this.renderer.render();
+                this.updateInfo();
+                this.updateStructureList();
+            }
+
+            shareView() {
+                const state = {
+                    seed: document.getElementById('seedInput').value || this.renderer.seed,
+                    edition: this.renderer.edition,
+                    version: this.renderer.version,
+                    dimension: this.renderer.dimension,
+                    x: Math.round(this.renderer.camera.centerBlockX),
+                    z: Math.round(this.renderer.camera.centerBlockZ),
+                    zoom: this.renderer.camera.zoom.toFixed(2)
+                };
+
+                const params = new URLSearchParams(state);
+                const url = window.location.origin + window.location.pathname + '?' + params.toString();
+
+                navigator.clipboard.writeText(url).then(() => {
+                    const btn = document.getElementById('shareBtn');
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<span class="btn-icon">✓ Copied!</span>';
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                    }, 2000);
+                });
+            }
+
+            loadStateFromURL() {
+                const params = new URLSearchParams(window.location.search);
+
+                if (params.has('seed')) {
+                    document.getElementById('seedInput').value = params.get('seed');
+                }
+
+                if (params.has('edition')) {
+                    document.getElementById('editionSelect').value = params.get('edition');
+                }
+
+                if (params.has('version')) {
+                    document.getElementById('versionSelect').value = params.get('version');
+                }
+
+                if (params.has('dimension')) {
+                    const dimension = params.get('dimension');
+                    document.querySelectorAll('.dimension-tab').forEach(tab => {
+                        if (tab.dataset.dimension === dimension) {
+                            tab.click();
+                        }
+                    });
+                }
+
+                if (params.has('x') && params.has('z')) {
+                    const x = parseFloat(params.get('x'));
+                    const z = parseFloat(params.get('z'));
+                    const zoom = params.has('zoom') ? parseFloat(params.get('zoom')) : 1.0;
+                    this.renderer.setCamera(x, z, zoom);
+                }
+            }
         }
 
-        // Start app
+        // Start application
         const app = new App();
     </script>
 </body>
