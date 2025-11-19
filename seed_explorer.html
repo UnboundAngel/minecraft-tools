@@ -652,6 +652,117 @@
         }
 
         // ========================================
+        // Simplex Noise Implementation
+        // Based on Stefan Gustavson's implementation
+        // ========================================
+
+        class SimplexNoise {
+            constructor(seed) {
+                this.p = new Uint8Array(512);
+                this.perm = new Uint8Array(512);
+                this.gradP = new Array(512);
+
+                // Generate permutation table from seed
+                const rng = createPRNG(seed);
+                const p = [];
+                for (let i = 0; i < 256; i++) p[i] = i;
+
+                // Shuffle using Fisher-Yates
+                for (let i = 255; i > 0; i--) {
+                    const j = Math.floor(rng() * (i + 1));
+                    [p[i], p[j]] = [p[j], p[i]];
+                }
+
+                // Duplicate permutation table
+                for (let i = 0; i < 512; i++) {
+                    this.perm[i] = p[i & 255];
+                    this.gradP[i] = this.grad3[this.perm[i] % 12];
+                }
+            }
+
+            grad3 = [
+                [1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
+                [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
+                [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]
+            ];
+
+            dot(g, x, y) {
+                return g[0] * x + g[1] * y;
+            }
+
+            noise2D(xin, yin) {
+                const F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+                const G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
+
+                let n0, n1, n2;
+
+                const s = (xin + yin) * F2;
+                const i = Math.floor(xin + s);
+                const j = Math.floor(yin + s);
+                const t = (i + j) * G2;
+                const X0 = i - t;
+                const Y0 = j - t;
+                const x0 = xin - X0;
+                const y0 = yin - Y0;
+
+                let i1, j1;
+                if (x0 > y0) { i1 = 1; j1 = 0; }
+                else { i1 = 0; j1 = 1; }
+
+                const x1 = x0 - i1 + G2;
+                const y1 = y0 - j1 + G2;
+                const x2 = x0 - 1.0 + 2.0 * G2;
+                const y2 = y0 - 1.0 + 2.0 * G2;
+
+                const ii = i & 255;
+                const jj = j & 255;
+                const gi0 = this.gradP[ii + this.perm[jj]];
+                const gi1 = this.gradP[ii + i1 + this.perm[jj + j1]];
+                const gi2 = this.gradP[ii + 1 + this.perm[jj + 1]];
+
+                let t0 = 0.5 - x0 * x0 - y0 * y0;
+                if (t0 < 0) n0 = 0.0;
+                else {
+                    t0 *= t0;
+                    n0 = t0 * t0 * this.dot(gi0, x0, y0);
+                }
+
+                let t1 = 0.5 - x1 * x1 - y1 * y1;
+                if (t1 < 0) n1 = 0.0;
+                else {
+                    t1 *= t1;
+                    n1 = t1 * t1 * this.dot(gi1, x1, y1);
+                }
+
+                let t2 = 0.5 - x2 * x2 - y2 * y2;
+                if (t2 < 0) n2 = 0.0;
+                else {
+                    t2 *= t2;
+                    n2 = t2 * t2 * this.dot(gi2, x2, y2);
+                }
+
+                return 70.0 * (n0 + n1 + n2);
+            }
+
+            // Fractal Brownian Motion (multiple octaves for natural terrain)
+            fbm(x, y, octaves = 4, persistence = 0.5, lacunarity = 2.0) {
+                let total = 0;
+                let frequency = 1;
+                let amplitude = 1;
+                let maxValue = 0;
+
+                for (let i = 0; i < octaves; i++) {
+                    total += this.noise2D(x * frequency, y * frequency) * amplitude;
+                    maxValue += amplitude;
+                    amplitude *= persistence;
+                    frequency *= lacunarity;
+                }
+
+                return total / maxValue;
+            }
+        }
+
+        // ========================================
         // Biome Data and Colors
         // ========================================
 
@@ -710,143 +821,336 @@
                 ? (edition === 'Java' ? BIOME_SETS.overworld_java : BIOME_SETS.overworld_bedrock)
                 : BIOME_SETS[dimension];
 
+            // Create noise generators for biome generation
+            const temperatureNoise = new SimplexNoise(numericSeed);
+            const humidityNoise = new SimplexNoise(numericSeed + 1);
+            const continentalNoise = new SimplexNoise(numericSeed + 2);
+            const erosionNoise = new SimplexNoise(numericSeed + 3);
+
             return {
                 seedString,
                 numericSeed,
                 edition,
                 version,
                 dimension,
-                biomeSet
+                biomeSet,
+                temperatureNoise,
+                humidityNoise,
+                continentalNoise,
+                erosionNoise
             };
         }
 
         function sampleBiomeAt(ctx, x, z) {
-            // Simplified biome sampling using noise-like pattern
-            // INTEGRATION POINT: Replace with real biome generation algorithm
-            const scale = ctx.dimension === 'end' ? 8 : 4;
-            const h = hashCoords(ctx.numericSeed, Math.floor(x / scale), Math.floor(z / scale));
-            const rng = createPRNG(h);
+            // More realistic biome sampling using noise functions
+            // Uses temperature, humidity, and continental values like modern Minecraft
 
             // Different generation for each dimension
             if (ctx.dimension === 'end') {
                 const distFromCenter = Math.sqrt(x * x + z * z);
                 if (distFromCenter < 5) return 'the_end';
-                if (distFromCenter < 100) return 'end_midlands';
-                if (rng() < 0.3) return 'end_barrens';
-                return 'end_highlands';
+                if (distFromCenter < 100) {
+                    // Use noise to vary between midlands and barrens
+                    const variation = ctx.temperatureNoise.fbm(x * 0.01, z * 0.01, 2);
+                    return variation > 0.2 ? 'end_midlands' : 'end_barrens';
+                }
+                // Use noise for highlands vs barrens
+                const highland = ctx.temperatureNoise.fbm(x * 0.008, z * 0.008, 3);
+                return highland > 0.1 ? 'end_highlands' : 'small_end_islands';
             }
 
-            // Weight-based selection with some spatial coherence
-            const biomeIndex = Math.floor(rng() * ctx.biomeSet.length);
-            return ctx.biomeSet[biomeIndex];
+            if (ctx.dimension === 'nether') {
+                // Nether uses similar multi-noise approach
+                const temp = ctx.temperatureNoise.fbm(x * 0.005, z * 0.005, 3);
+                const humid = ctx.humidityNoise.fbm(x * 0.005, z * 0.005, 3);
+
+                if (temp < -0.5) return 'soul_sand_valley';
+                if (temp > 0.5 && humid > 0.3) return 'warped_forest';
+                if (temp > 0.4 && humid < -0.2) return 'crimson_forest';
+                if (humid < -0.4) return 'basalt_deltas';
+                return 'nether_wastes';
+            }
+
+            // Overworld biome generation
+            // Uses multi-noise system similar to Minecraft 1.18+
+            const scale = 0.0025; // Biome scale - larger = bigger biomes
+
+            // Generate climate parameters using noise
+            const temperature = ctx.temperatureNoise.fbm(x * scale, z * scale, 4);
+            const humidity = ctx.humidityNoise.fbm(x * scale, z * scale, 4);
+            const continentalness = ctx.continentalNoise.fbm(x * scale * 0.5, z * scale * 0.5, 3);
+            const erosion = ctx.erosionNoise.fbm(x * scale, z * scale, 3);
+
+            // Ocean vs land (continental)
+            if (continentalness < -0.3) {
+                if (temperature < -0.5) return 'frozen_ocean';
+                if (continentalness < -0.5) return 'deep_ocean';
+                return 'ocean';
+            }
+
+            // Beach transition zone
+            if (continentalness < -0.15 && continentalness > -0.3) {
+                return 'beach';
+            }
+
+            // River generation (using erosion)
+            if (erosion < -0.6 && continentalness > -0.15) {
+                return 'river';
+            }
+
+            // Temperature-based biomes
+            if (temperature < -0.45) {
+                // Cold biomes
+                if (humidity > 0.3) return 'snowy_taiga';
+                if (erosion > 0.4) return 'ice_spikes';
+                return 'snowy_plains';
+            } else if (temperature < -0.15) {
+                // Cool biomes
+                if (humidity > 0.3) return 'taiga';
+                if (erosion < -0.2) return 'birch_forest';
+                return 'forest';
+            } else if (temperature < 0.2) {
+                // Temperate biomes
+                if (humidity < -0.3) {
+                    if (erosion > 0.3) return 'savanna';
+                    return 'plains';
+                }
+                if (humidity > 0.4) return 'dark_forest';
+                if (humidity > 0.1) return 'forest';
+                return 'plains';
+            } else if (temperature < 0.55) {
+                // Warm biomes
+                if (humidity > 0.4) {
+                    if (erosion > 0.2) return 'bamboo_jungle';
+                    return 'jungle';
+                }
+                if (humidity < -0.2) return 'savanna';
+                return 'plains';
+            } else {
+                // Hot biomes
+                if (humidity < -0.2) return 'desert';
+                if (humidity > 0.5) return 'swamp';
+                return 'savanna';
+            }
+
+            // Mountains/peaks (high erosion + continental)
+            if (erosion > 0.5 && continentalness > 0.2) {
+                if (temperature < -0.3) return 'snowy_plains';
+                return 'mountains';
+            }
+
+            // Rare biomes
+            if (continentalness > 0.7 && humidity > 0.6 && temperature > 0) {
+                const rare = hashCoords(ctx.numericSeed, Math.floor(x / 64), Math.floor(z / 64));
+                if ((rare & 0xFF) < 10) return 'mushroom_fields';
+            }
+
+            // Default fallback
+            return 'plains';
+        }
+
+        function getRegionCoord(coord, regionSize) {
+            return Math.floor(coord / regionSize);
+        }
+
+        function getStructurePos(seed, regionX, regionZ, regionSize, spacing, separation, salt) {
+            // Mimic Minecraft's structure position generation
+            // This uses the region grid system where structures attempt to generate
+            const regionSeed = (regionX * 341873128712 + regionZ * 132897987541 + seed + salt) | 0;
+            const rng = createPRNG(regionSeed);
+
+            const maxPos = regionSize - separation;
+            const offsetX = (rng() * maxPos) | 0;
+            const offsetZ = (rng() * maxPos) | 0;
+
+            return {
+                x: regionX * regionSize + offsetX,
+                z: regionZ * regionSize + offsetZ
+            };
+        }
+
+        function getStrongholds(ctx) {
+            // Stronghold generation using ring system (Java Edition)
+            // Ring 1: 3 strongholds at distance 1280-2816
+            // Ring 2: 6 strongholds at distance 4352-5888
+            // Ring 3+: increasing numbers at increasing distances
+            const strongholds = [];
+            const rings = [
+                { count: 3, minDist: 80, maxDist: 176 },  // tiles (blocks / 16)
+                { count: 6, minDist: 272, maxDist: 368 },
+                { count: 10, minDist: 544, maxDist: 688 },
+                { count: 15, minDist: 816, maxDist: 1008 },
+                { count: 21, minDist: 1088, maxDist: 1296 }
+            ];
+
+            rings.forEach((ring, ringIndex) => {
+                const angleStep = (Math.PI * 2) / ring.count;
+                const rng = createPRNG(ctx.numericSeed + ringIndex * 1000);
+
+                for (let i = 0; i < ring.count; i++) {
+                    const angle = angleStep * i + (rng() - 0.5) * angleStep * 0.5;
+                    const distance = ring.minDist + rng() * (ring.maxDist - ring.minDist);
+
+                    const x = Math.round(Math.cos(angle) * distance);
+                    const z = Math.round(Math.sin(angle) * distance);
+
+                    strongholds.push({ type: 'stronghold', x, z });
+                }
+            });
+
+            return strongholds;
         }
 
         function getStructuresInArea(ctx, bounds) {
-            // Enhanced structure generation with more structure types
-            // INTEGRATION POINT: Replace with accurate structure generation
+            // Enhanced structure generation using region-based grid
+            // Structures spawn in regions (32x32 chunk = 512x512 block grids)
             const structures = [];
             const { minX, minZ, maxX, maxZ } = bounds;
 
-            const structureSpacing = 32; // tiles
-            const startX = Math.floor(minX / structureSpacing) * structureSpacing;
-            const startZ = Math.floor(minZ / structureSpacing) * structureSpacing;
+            // Structure configuration (spacing in tiles, separation, salt for different types)
+            const structureConfigs = {
+                village: { regionSize: 34, spacing: 34, separation: 8, salt: 10387312 },
+                desert_temple: { regionSize: 32, spacing: 32, separation: 8, salt: 14357617 },
+                jungle_temple: { regionSize: 32, spacing: 32, separation: 8, salt: 14357618 },
+                witch_hut: { regionSize: 32, spacing: 32, separation: 8, salt: 14357619 },
+                pillager_outpost: { regionSize: 32, spacing: 32, separation: 10, salt: 165745296 },
+                mansion: { regionSize: 80, spacing: 80, separation: 20, salt: 10387319 },
+                monument: { regionSize: 32, spacing: 32, separation: 5, salt: 10387313 },
+                shipwreck: { regionSize: 24, spacing: 24, separation: 4, salt: 165745295 },
+                ocean_ruins: { regionSize: 20, spacing: 20, separation: 3, salt: 14357621 },
+                buried_treasure: { regionSize: 16, spacing: 16, separation: 3, salt: 10387320 },
+                igloo: { regionSize: 32, spacing: 32, separation: 8, salt: 14357620 },
+                mineshaft: { regionSize: 50, spacing: 50, separation: 10, salt: 10387315 }
+            };
 
-            for (let tx = startX; tx <= maxX; tx += structureSpacing) {
-                for (let tz = startZ; tz <= maxZ; tz += structureSpacing) {
-                    const h = hashCoords(ctx.numericSeed, tx, tz);
-                    const rng = createPRNG(h);
+            if (ctx.dimension === 'overworld') {
+                // Add strongholds (they use a different system)
+                const strongholds = getStrongholds(ctx);
+                strongholds.forEach(sh => {
+                    if (sh.x >= minX && sh.x <= maxX && sh.z >= minZ && sh.z <= maxZ) {
+                        const biome = sampleBiomeAt(ctx, sh.x, sh.z);
+                        structures.push({ ...sh, biome });
+                    }
+                });
 
-                    if (ctx.dimension === 'overworld') {
-                        const biome = sampleBiomeAt(ctx, tx, tz);
+                // Generate other structures using region-based system
+                Object.entries(structureConfigs).forEach(([structureType, config]) => {
+                    const minRegionX = getRegionCoord(minX, config.regionSize);
+                    const maxRegionX = getRegionCoord(maxX, config.regionSize);
+                    const minRegionZ = getRegionCoord(minZ, config.regionSize);
+                    const maxRegionZ = getRegionCoord(maxZ, config.regionSize);
 
-                        // Villages (plains, savanna, desert, taiga, snowy)
-                        if ((biome === 'plains' || biome === 'savanna' || biome === 'desert' || biome === 'taiga' || biome === 'snowy_plains') && rng() < 0.12) {
-                            structures.push({ type: 'village', x: tx, z: tz, biome });
+                    for (let regionX = minRegionX; regionX <= maxRegionX; regionX++) {
+                        for (let regionZ = minRegionZ; regionZ <= maxRegionZ; regionZ++) {
+                            const pos = getStructurePos(
+                                ctx.numericSeed,
+                                regionX,
+                                regionZ,
+                                config.regionSize,
+                                config.spacing,
+                                config.separation,
+                                config.salt
+                            );
+
+                            // Check if position is within bounds
+                            if (pos.x >= minX && pos.x <= maxX && pos.z >= minZ && pos.z <= maxZ) {
+                                const biome = sampleBiomeAt(ctx, pos.x, pos.z);
+
+                                // Biome checks for structure viability
+                                let canSpawn = false;
+
+                                if (structureType === 'village') {
+                                    canSpawn = ['plains', 'savanna', 'desert', 'taiga', 'snowy_plains'].includes(biome);
+                                } else if (structureType === 'desert_temple') {
+                                    canSpawn = biome === 'desert';
+                                } else if (structureType === 'jungle_temple') {
+                                    canSpawn = ['jungle', 'bamboo_jungle'].includes(biome);
+                                } else if (structureType === 'witch_hut') {
+                                    canSpawn = biome === 'swamp';
+                                } else if (structureType === 'pillager_outpost') {
+                                    canSpawn = ['plains', 'savanna', 'taiga', 'desert'].includes(biome);
+                                } else if (structureType === 'mansion') {
+                                    canSpawn = biome === 'dark_forest';
+                                } else if (structureType === 'monument') {
+                                    canSpawn = ['ocean', 'deep_ocean'].includes(biome);
+                                } else if (structureType === 'shipwreck') {
+                                    canSpawn = ['ocean', 'deep_ocean', 'beach'].includes(biome);
+                                } else if (structureType === 'ocean_ruins') {
+                                    canSpawn = ['ocean', 'deep_ocean'].includes(biome);
+                                } else if (structureType === 'buried_treasure') {
+                                    canSpawn = biome === 'beach';
+                                } else if (structureType === 'igloo') {
+                                    canSpawn = ['snowy_plains', 'ice_spikes', 'snowy_taiga'].includes(biome);
+                                } else if (structureType === 'mineshaft') {
+                                    canSpawn = true; // Mineshafts can spawn anywhere
+                                }
+
+                                if (canSpawn) {
+                                    structures.push({ type: structureType, x: pos.x, z: pos.z, biome });
+                                }
+                            }
                         }
+                    }
+                });
 
-                        // Desert Temples
-                        if (biome === 'desert' && rng() < 0.08) {
-                            structures.push({ type: 'desert_temple', x: tx, z: tz, biome });
+            } else if (ctx.dimension === 'nether') {
+                // Nether structures - simpler region-based generation
+                const netherConfigs = {
+                    bastion: { regionSize: 27, spacing: 27, separation: 4, salt: 30084232 },
+                    fortress: { regionSize: 27, spacing: 27, separation: 4, salt: 30084233 },
+                    ruined_portal: { regionSize: 25, spacing: 25, separation: 10, salt: 34222645 }
+                };
+
+                Object.entries(netherConfigs).forEach(([structureType, config]) => {
+                    const minRegionX = getRegionCoord(minX, config.regionSize);
+                    const maxRegionX = getRegionCoord(maxX, config.regionSize);
+                    const minRegionZ = getRegionCoord(minZ, config.regionSize);
+                    const maxRegionZ = getRegionCoord(maxZ, config.regionSize);
+
+                    for (let regionX = minRegionX; regionX <= maxRegionX; regionX++) {
+                        for (let regionZ = minRegionZ; regionZ <= maxRegionZ; regionZ++) {
+                            const pos = getStructurePos(
+                                ctx.numericSeed,
+                                regionX,
+                                regionZ,
+                                config.regionSize,
+                                config.spacing,
+                                config.separation,
+                                config.salt
+                            );
+
+                            if (pos.x >= minX && pos.x <= maxX && pos.z >= minZ && pos.z <= maxZ) {
+                                structures.push({ type: structureType, x: pos.x, z: pos.z });
+                            }
                         }
+                    }
+                });
 
-                        // Jungle Temples
-                        if ((biome === 'jungle' || biome === 'bamboo_jungle') && rng() < 0.07) {
-                            structures.push({ type: 'jungle_temple', x: tx, z: tz, biome });
-                        }
+            } else if (ctx.dimension === 'end') {
+                // End cities - region-based with biome checks
+                const endConfig = { regionSize: 20, spacing: 20, separation: 5, salt: 10387313 };
+                const minRegionX = getRegionCoord(minX, endConfig.regionSize);
+                const maxRegionX = getRegionCoord(maxX, endConfig.regionSize);
+                const minRegionZ = getRegionCoord(minZ, endConfig.regionSize);
+                const maxRegionZ = getRegionCoord(maxZ, endConfig.regionSize);
 
-                        // Witch Huts
-                        if (biome === 'swamp' && rng() < 0.06) {
-                            structures.push({ type: 'witch_hut', x: tx, z: tz, biome });
-                        }
+                for (let regionX = minRegionX; regionX <= maxRegionX; regionX++) {
+                    for (let regionZ = minRegionZ; regionZ <= maxRegionZ; regionZ++) {
+                        const pos = getStructurePos(
+                            ctx.numericSeed,
+                            regionX,
+                            regionZ,
+                            endConfig.regionSize,
+                            endConfig.spacing,
+                            endConfig.separation,
+                            endConfig.salt
+                        );
 
-                        // Pillager Outposts
-                        if ((biome === 'plains' || biome === 'savanna' || biome === 'taiga') && rng() < 0.05) {
-                            structures.push({ type: 'pillager_outpost', x: tx, z: tz, biome });
-                        }
-
-                        // Ocean Monuments
-                        if ((biome === 'ocean' || biome === 'deep_ocean') && rng() < 0.04) {
-                            structures.push({ type: 'monument', x: tx, z: tz, biome });
-                        }
-
-                        // Shipwrecks
-                        if ((biome === 'ocean' || biome === 'deep_ocean' || biome === 'beach') && rng() < 0.15) {
-                            structures.push({ type: 'shipwreck', x: tx, z: tz, biome });
-                        }
-
-                        // Ocean Ruins
-                        if ((biome === 'ocean' || biome === 'deep_ocean') && rng() < 0.12) {
-                            structures.push({ type: 'ocean_ruins', x: tx, z: tz, biome });
-                        }
-
-                        // Buried Treasure
-                        if (biome === 'beach' && rng() < 0.1) {
-                            structures.push({ type: 'buried_treasure', x: tx, z: tz, biome });
-                        }
-
-                        // Woodland Mansions (very rare)
-                        if (biome === 'dark_forest' && rng() < 0.02) {
-                            structures.push({ type: 'mansion', x: tx, z: tz, biome });
-                        }
-
-                        // Strongholds (very rare, ring-based)
-                        const dist = Math.sqrt(tx * tx + tz * tz);
-                        if (dist > 50 && dist < 150 && rng() < 0.004) {
-                            structures.push({ type: 'stronghold', x: tx, z: tz, biome });
-                        }
-
-                        // Igloo
-                        if ((biome === 'snowy_plains' || biome === 'ice_spikes' || biome === 'snowy_taiga') && rng() < 0.06) {
-                            structures.push({ type: 'igloo', x: tx, z: tz, biome });
-                        }
-
-                        // Mineshafts
-                        if (rng() < 0.08) {
-                            structures.push({ type: 'mineshaft', x: tx, z: tz, biome });
-                        }
-
-                    } else if (ctx.dimension === 'nether') {
-                        // Bastions
-                        if (rng() < 0.08) {
-                            structures.push({ type: 'bastion', x: tx, z: tz });
-                        }
-
-                        // Nether Fortresses
-                        if (rng() < 0.07) {
-                            structures.push({ type: 'fortress', x: tx, z: tz });
-                        }
-
-                        // Ruined Portals
-                        if (rng() < 0.12) {
-                            structures.push({ type: 'ruined_portal', x: tx, z: tz });
-                        }
-
-                    } else if (ctx.dimension === 'end') {
-                        const biome = sampleBiomeAt(ctx, tx, tz);
-
-                        // End Cities
-                        if ((biome === 'end_highlands' || biome === 'end_midlands') && rng() < 0.08) {
-                            structures.push({ type: 'end_city', x: tx, z: tz, biome });
+                        if (pos.x >= minX && pos.x <= maxX && pos.z >= minZ && pos.z <= maxZ) {
+                            const biome = sampleBiomeAt(ctx, pos.x, pos.z);
+                            if (['end_highlands', 'end_midlands'].includes(biome)) {
+                                structures.push({ type: 'end_city', x: pos.x, z: pos.z, biome });
+                            }
                         }
                     }
                 }
