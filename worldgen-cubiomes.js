@@ -23,50 +23,58 @@ class CubiomesWorldgen extends WorldgenInterface {
 
     async init() {
         try {
-            // Try to load cubiomes WASM module
-            // This expects a global CubiomesModule or Module object
-            if (typeof CubiomesModule !== 'undefined') {
-                await CubiomesModule.ready;
-                this.cubiomes = CubiomesModule;
-                console.log('[Cubiomes] Loaded cubiomes WASM module');
+            // If we already initialised once, skip
+            if (this.ready && this.cubiomes) {
+                return true;
+            }
+    
+            // Case 1: script tag already loaded cubiomes.js and it was built with MODULARIZE=1
+            if (typeof CubiomesModule === "function") {
+                this.cubiomes = await CubiomesModule();
+                console.log("[Cubiomes] Loaded cubiomes WASM module (MODULARIZE)");
                 this.ready = true;
                 return true;
             }
-
-            if (typeof Module !== 'undefined' && Module._setupGenerator) {
-                await Module.ready;
+    
+            // Case 2: non-modularised build that exposes global Module
+            if (typeof Module === "object" && Module._setupGenerator) {
                 this.cubiomes = Module;
-                console.log('[Cubiomes] Loaded cubiomes WASM module');
+                console.log("[Cubiomes] Loaded cubiomes WASM module (global Module)");
                 this.ready = true;
                 return true;
             }
-
-            // Try dynamic load
-            const script = document.createElement('script');
-            script.src = 'cubiomes.js';
-
+    
+            // Case 3: load cubiomes.js dynamically, then try again
             await new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.src = "cubiomes.js";
                 script.onload = resolve;
-                script.onerror = () => reject(new Error('Failed to load cubiomes.js'));
+                script.onerror = () => reject(new Error("Failed to load cubiomes.js"));
                 document.head.appendChild(script);
-                setTimeout(() => reject(new Error('Timeout loading cubiomes')), 5000);
             });
-
-            // Wait for Module to initialize
-            if (typeof CubiomesModule !== 'undefined') {
-                await CubiomesModule.ready;
-                this.cubiomes = CubiomesModule;
+    
+            if (typeof CubiomesModule === "function") {
+                this.cubiomes = await CubiomesModule();
+                console.log("[Cubiomes] Loaded cubiomes WASM module (dynamic MODULARIZE)");
                 this.ready = true;
                 return true;
             }
-
-            throw new Error('Cubiomes module not available after loading');
+    
+            if (typeof Module === "object" && Module._setupGenerator) {
+                this.cubiomes = Module;
+                console.log("[Cubiomes] Loaded cubiomes WASM module (dynamic Module)");
+                this.ready = true;
+                return true;
+            }
+    
+            throw new Error("Cubiomes module not available after loading cubiomes.js");
         } catch (error) {
-            console.warn('[Cubiomes] Failed to initialize:', error.message);
+            console.warn("[Cubiomes] Failed to initialize:", error);
             this.ready = false;
             return false;
         }
     }
+
 
     getName() {
         return "Cubiomes (Pixel-Perfect Minecraft Worldgen)";
@@ -397,3 +405,4 @@ class CubiomesWorldgen extends WorldgenInterface {
         };
     }
 }
+
