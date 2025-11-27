@@ -574,57 +574,85 @@
             justify-content: center;
         }
 
-        /* Hotbar */
+        /* Hotbar - EXPLORER Style */
         .hotbar {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(11, 13, 18, 0.98);
+            border-top: 2px solid #A066FF;
+            padding: 8px;
             display: flex;
-            gap: 5px;
-            background: rgba(0,0,0,0.8);
-            padding: 10px;
-            border-radius: 10px;
-            border: 3px solid #8b8b8b;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            justify-content: center;
+            gap: 4px;
             z-index: 1000;
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .hotbar.collapsed {
+            transform: translateY(100%);
         }
 
         .hotbar-slot {
-            width: 64px;
-            height: 64px;
-            background: #555;
-            border: 3px solid #8b8b8b;
-            border-top-color: #ffffff;
-            border-left-color: #ffffff;
-            border-bottom-color: #333333;
-            border-right-color: #333333;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, rgba(160, 102, 255, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(160, 102, 255, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
             text-decoration: none;
-            color: #fff;
-            font-size: 0.7em;
-            transition: all 0.2s;
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-width: 60px;
+            text-align: center;
         }
 
         .hotbar-slot:hover {
-            background: #666;
-            transform: translateY(-5px);
+            background: linear-gradient(135deg, rgba(160, 102, 255, 0.3), rgba(6, 182, 212, 0.3));
+            border-color: #A066FF;
+            transform: translateY(-2px);
+            color: #fff;
         }
 
         .hotbar-slot.active {
-            background: #777;
-            border-top-color: #333333;
-            border-left-color: #333333;
-            border-bottom-color: #ffffff;
-            border-right-color: #ffffff;
+            background: linear-gradient(135deg, #A066FF, #06b6d4);
+            border-color: #A066FF;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(160, 102, 255, 0.5);
         }
 
         .hotbar-icon {
-            font-size: 2em;
+            font-size: 1.8em;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-toggle {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            background: linear-gradient(135deg, #A066FF, #06b6d4);
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            cursor: pointer;
+            font-size: 1.2em;
+            border-radius: 8px 8px 0 0;
+            z-index: 999;
+            transition: transform 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hotbar.collapsed + .hotbar-toggle {
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Animations */
@@ -940,32 +968,53 @@
     </div>
 
     <!-- Hotbar Navigation -->
-    <div class="hotbar">
+    <div class="hotbar" id="hotbar">
         <a href="index.html" class="hotbar-slot">
             <div class="hotbar-icon">🏠</div>
-            <div>HOME</div>
+            HOME
+        </a>
+        <a href="../minecraft_journal.html" class="hotbar-slot">
+            <div class="hotbar-icon">📖</div>
+            JOURNAL
         </a>
         <a href="enchantment_calculator.html" class="hotbar-slot">
             <div class="hotbar-icon">📘</div>
-            <div>ENCHANT</div>
+            ENCHANT
         </a>
         <a href="ore_guide_page.html" class="hotbar-slot">
             <div class="hotbar-icon">💎</div>
-            <div>ORES</div>
+            ORES
         </a>
         <a href="world_seeds_page.html" class="hotbar-slot">
             <div class="hotbar-icon">🗺️</div>
-            <div>SEEDS</div>
+            SEEDS
+        </a>
+        <a href="../seed_explorer.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧭</div>
+            EXPLORER
         </a>
         <a href="build_ideas_gallery.html" class="hotbar-slot">
             <div class="hotbar-icon">🗝️</div>
-            <div>BUILDS</div>
+            BUILDS
         </a>
         <a href="minecraft_worlds.html" class="hotbar-slot active">
             <div class="hotbar-icon">🌍</div>
-            <div>WORLDS</div>
+            WORLDS
+        </a>
+        <a href="farm_efficiency_page.html" class="hotbar-slot">
+            <div class="hotbar-icon">🌾</div>
+            FARMS
+        </a>
+        <a href="../potion_brewing_guide.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧪</div>
+            POTIONS
+        </a>
+        <a href="../nether_hub_calculator.html" class="hotbar-slot">
+            <div class="hotbar-icon">🚇</div>
+            NETHER
         </a>
     </div>
+    <button class="hotbar-toggle" id="hotbarToggle" onclick="toggleHotbar()">▼</button>
 
     <script>
         // Global state
@@ -1331,6 +1380,14 @@
                     </div>
                 `).join('');
             }
+        }
+
+        // Toggle hotbar visibility
+        function toggleHotbar() {
+            const hotbar = document.getElementById('hotbar');
+            const toggle = document.getElementById('hotbarToggle');
+            hotbar.classList.toggle('collapsed');
+            toggle.textContent = hotbar.classList.contains('collapsed') ? '▲' : '▼';
         }
     </script>
 </body>

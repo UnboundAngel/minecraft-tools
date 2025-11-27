@@ -225,69 +225,103 @@
             line-height: 1.6;
         }
 
-        /* Hotbar Navigation */
+        /* Hotbar Navigation - EXPLORER Style */
         .hotbar {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 4px;
-            background: rgba(0, 0, 0, 0.8);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(11, 13, 18, 0.98);
+            border-top: 2px solid #A066FF;
             padding: 8px;
-            border: 4px solid #8b8b8b;
-            border-bottom: 4px solid #555;
-            border-right: 4px solid #555;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            gap: 4px;
             z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s ease, opacity 0.5s ease, visibility 0.5s ease;
         }
 
-        .hotbar.visible {
-            opacity: 1;
-            visibility: visible;
+        .hotbar.collapsed {
+            transform: translateY(100%);
+        }
+
+        .hotbar-toggle {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(11, 13, 18, 0.98);
+            border: 2px solid #A066FF;
+            border-bottom: none;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            padding: 4px 20px;
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .hotbar-toggle:hover {
+            background: rgba(160, 102, 255, 0.2);
+            box-shadow: 0 0 12px rgba(160, 102, 255, 0.5);
         }
 
         .hotbar-slot {
-            width: 64px;
-            height: 64px;
-            background: rgba(139, 139, 139, 0.3);
-            border: 2px solid #373737;
-            border-bottom: 2px solid #8b8b8b;
-            border-right: 2px solid #8b8b8b;
+            width: 60px;
+            height: 60px;
+            background: var(--bg-panel, #0b0d12);
+            border: 2px solid var(--border, #1f2937);
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            image-rendering: pixelated;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-muted, #9ca3af);
+            transition: all 0.2s;
+            font-size: 0.65rem;
+            font-weight: 600;
         }
 
         .hotbar-slot:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: #fff;
-            transform: translateY(-4px);
+            border-color: #A066FF;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(160, 102, 255, 0.4);
         }
 
         .hotbar-slot.active {
-            border: 3px solid #fff;
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+            border-color: #06b6d4;
+            background: rgba(160, 102, 255, 0.15);
+            color: var(--text-main, #e8e8f0);
+            box-shadow: 0 0 16px rgba(6, 182, 212, 0.4);
         }
 
         .hotbar-icon {
-            font-size: 2rem;
+            font-size: 1.5rem;
             margin-bottom: 2px;
         }
 
         .hotbar-label {
-            font-size: 0.6rem;
-            color: #fff;
-            text-shadow: 1px 1px 2px #000;
+            font-size: 0.65rem;
+            color: inherit;
             text-align: center;
+        }
+
+        @media (max-width: 968px) {
+            .hotbar {
+                flex-wrap: wrap;
+                padding: 6px;
+            }
+            .hotbar-slot {
+                width: 50px;
+                height: 50px;
+                font-size: 0.6rem;
+            }
+            .hotbar-icon {
+                font-size: 1.3rem;
+            }
         }
 
         /* Animations */
@@ -479,12 +513,12 @@
             <div class="ai-face" id="aiFace">🤖</div>
             <div class="ai-message">Welcome! Where would you like to go today?</div>
             <div class="ai-options">
+                <a href="../minecraft_journal.html" class="ai-option">📖 Minecraft Journal</a>
                 <a href="enchantment_calculator.html" class="ai-option">📘 Enchantment Calculator</a>
-                <a href="ore_guide_page.html" class="ai-option">💎 Ore Coordinate Guide</a>
+                <a href="../seed_explorer.html" class="ai-option">🧭 Seed Explorer</a>
                 <a href="world_seeds_page.html" class="ai-option">🗺️ Seed Finder</a>
                 <a href="build_ideas_gallery.html" class="ai-option">🗝️ Build Ideas Gallery</a>
                 <a href="minecraft_worlds.html" class="ai-option">🌍 Minecraft Worlds</a>
-                <a href="farm_efficiency_page.html" class="ai-option">🌾 Farm Efficiency</a>
                 <div class="ai-option" onclick="hideWelcome()">🌍 Browse All Tools</div>
             </div>
         </div>
@@ -541,48 +575,129 @@
                 <h3>Farm Efficiency Hub</h3>
                 <p>Calculate rates for mob farms, crop farms, and automated systems</p>
             </a>
-            <div class="tool-card" onclick="alert('Coming in future update!')">
+            <a href="../potion_brewing_guide.html" class="tool-card">
                 <div class="hotbar-icon">🧪</div>
                 <h3>Potion Brewing Guide</h3>
                 <p>Master the art of brewing with recipes and effects</p>
-            </div>
-            <div class="tool-card" onclick="alert('Coming in future update!')">
+            </a>
+            <a href="../nether_hub_calculator.html" class="tool-card">
                 <div class="hotbar-icon">🚇</div>
                 <h3>Nether Hub Calculator</h3>
                 <p>Plan your nether highway network and portal coordinates</p>
-            </div>
+            </a>
         </div>
     </section>
 
+    <!-- All Tools Section -->
+    <section class="overworld-section" id="all-tools" style="display:none;">
+        <h2 class="section-title">🌍 ALL TOOLS 🌍</h2>
+        <div class="tools-grid">
+            <a href="index.html" class="tool-card">
+                <div class="hotbar-icon">🏠</div>
+                <h3>Home</h3>
+                <p>Return to the main hub</p>
+            </a>
+            <a href="../minecraft_journal.html" class="tool-card">
+                <div class="hotbar-icon">📖</div>
+                <h3>Minecraft Journal</h3>
+                <p>Document your adventures and progress</p>
+            </a>
+            <a href="enchantment_calculator.html" class="tool-card">
+                <div class="hotbar-icon">📘</div>
+                <h3>Enchantment Calculator</h3>
+                <p>Calculate XP costs and optimal enchanting strategies</p>
+            </a>
+            <a href="ore_guide_page.html" class="tool-card">
+                <div class="hotbar-icon">💎</div>
+                <h3>Ore Coordinate Guide</h3>
+                <p>Find the best Y-levels for mining</p>
+            </a>
+            <a href="world_seeds_page.html" class="tool-card">
+                <div class="hotbar-icon">🗺️</div>
+                <h3>Seed Finder</h3>
+                <p>Discover amazing world seeds</p>
+            </a>
+            <a href="../seed_explorer.html" class="tool-card">
+                <div class="hotbar-icon">🧭</div>
+                <h3>Seed Explorer</h3>
+                <p>Interactive biome and structure explorer</p>
+            </a>
+            <a href="build_ideas_gallery.html" class="tool-card">
+                <div class="hotbar-icon">🗝️</div>
+                <h3>Build Ideas Gallery</h3>
+                <p>Browse creative builds and inspiration</p>
+            </a>
+            <a href="minecraft_worlds.html" class="tool-card">
+                <div class="hotbar-icon">🌍</div>
+                <h3>Minecraft Worlds</h3>
+                <p>Track and manage all your worlds</p>
+            </a>
+            <a href="farm_efficiency_page.html" class="tool-card">
+                <div class="hotbar-icon">🌾</div>
+                <h3>Farm Efficiency Hub</h3>
+                <p>Calculate farm rates and efficiency</p>
+            </a>
+            <a href="../potion_brewing_guide.html" class="tool-card">
+                <div class="hotbar-icon">🧪</div>
+                <h3>Potion Brewing Guide</h3>
+                <p>Master the art of brewing potions</p>
+            </a>
+            <a href="../nether_hub_calculator.html" class="tool-card">
+                <div class="hotbar-icon">🚇</div>
+                <h3>Nether Hub Calculator</h3>
+                <p>Plan your nether highway network</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Hotbar Toggle Button -->
+    <div class="hotbar-toggle" id="hotbarToggle" onclick="toggleHotbar()">▼</div>
+
     <!-- Hotbar Navigation -->
     <div class="hotbar" id="hotbar">
-        <a href="minecraft_tools_hub.html" class="hotbar-slot active" title="Home">
+        <a href="index.html" class="hotbar-slot active">
             <div class="hotbar-icon">🏠</div>
-            <div class="hotbar-label">HOME</div>
+            HOME
         </a>
-        <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
+        <a href="../minecraft_journal.html" class="hotbar-slot">
+            <div class="hotbar-icon">📖</div>
+            JOURNAL
+        </a>
+        <a href="enchantment_calculator.html" class="hotbar-slot">
             <div class="hotbar-icon">📘</div>
-            <div class="hotbar-label">ENCHANT</div>
+            ENCHANT
         </a>
-        <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
+        <a href="ore_guide_page.html" class="hotbar-slot">
             <div class="hotbar-icon">💎</div>
-            <div class="hotbar-label">ORES</div>
+            ORES
         </a>
-        <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
+        <a href="world_seeds_page.html" class="hotbar-slot">
             <div class="hotbar-icon">🗺️</div>
-            <div class="hotbar-label">SEEDS</div>
+            SEEDS
         </a>
-        <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
+        <a href="../seed_explorer.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧭</div>
+            EXPLORER
+        </a>
+        <a href="build_ideas_gallery.html" class="hotbar-slot">
             <div class="hotbar-icon">🗝️</div>
-            <div class="hotbar-label">BUILDS</div>
+            BUILDS
         </a>
-        <a href="minecraft_worlds.html" class="hotbar-slot" title="Minecraft Worlds">
+        <a href="minecraft_worlds.html" class="hotbar-slot">
             <div class="hotbar-icon">🌍</div>
-            <div class="hotbar-label">WORLDS</div>
+            WORLDS
         </a>
-        <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
+        <a href="farm_efficiency_page.html" class="hotbar-slot">
             <div class="hotbar-icon">🌾</div>
-            <div class="hotbar-label">FARMS</div>
+            FARMS
+        </a>
+        <a href="../potion_brewing_guide.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧪</div>
+            POTIONS
+        </a>
+        <a href="../nether_hub_calculator.html" class="hotbar-slot">
+            <div class="hotbar-icon">🚇</div>
+            NETHER
         </a>
     </div>
 
@@ -616,16 +731,33 @@
     }
 }
 
-        // Hide welcome screen and show hotbar
+        // Toggle hotbar
+        function toggleHotbar() {
+            const hotbar = document.getElementById('hotbar');
+            const toggle = document.getElementById('hotbarToggle');
+
+            hotbar.classList.toggle('collapsed');
+            toggle.textContent = hotbar.classList.contains('collapsed') ? '▲' : '▼';
+        }
+
+        // Hide welcome screen and show all tools
         function hideWelcome() {
             const aiWelcome = document.getElementById('aiWelcome');
-            const hotbar = document.getElementById('hotbar');
-            
+            const overworldSection = document.querySelector('.overworld-section');
+            const netherSection = document.querySelector('.nether-section');
+            const allToolsSection = document.getElementById('all-tools');
+
             aiWelcome.classList.add('hidden');
-            
-            setTimeout(() => {
-                hotbar.classList.add('visible');
-            }, 500);
+
+            // Hide main sections and show all tools
+            if (overworldSection) overworldSection.style.display = 'none';
+            if (netherSection) netherSection.style.display = 'none';
+            if (allToolsSection) {
+                allToolsSection.style.display = 'block';
+                setTimeout(() => {
+                    allToolsSection.classList.add('visible');
+                }, 50);
+            }
         }
 
         // Load logo on page load
