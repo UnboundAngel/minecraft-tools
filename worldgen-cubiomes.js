@@ -26,16 +26,14 @@ class CubiomesWorldgen extends WorldgenInterface {
             // Try to load cubiomes WASM module
             // This expects a global CubiomesModule or Module object
             if (typeof CubiomesModule !== 'undefined') {
-                await CubiomesModule.ready;
-                this.cubiomes = CubiomesModule;
+                this.cubiomes = await CubiomesModule;
                 console.log('[Cubiomes] Loaded cubiomes WASM module');
                 this.ready = true;
                 return true;
             }
 
             if (typeof Module !== 'undefined' && Module._setupGenerator) {
-                await Module.ready;
-                this.cubiomes = Module;
+                this.cubiomes = await Module;
                 console.log('[Cubiomes] Loaded cubiomes WASM module');
                 this.ready = true;
                 return true;
@@ -49,13 +47,13 @@ class CubiomesWorldgen extends WorldgenInterface {
                 script.onload = resolve;
                 script.onerror = () => reject(new Error('Failed to load cubiomes.js'));
                 document.head.appendChild(script);
-                setTimeout(() => reject(new Error('Timeout loading cubiomes')), 5000);
+                setTimeout(() => reject(new Error('Timeout loading cubiomes')), 10000);
             });
 
             // Wait for Module to initialize
             if (typeof CubiomesModule !== 'undefined') {
-                await CubiomesModule.ready;
-                this.cubiomes = CubiomesModule;
+                this.cubiomes = await CubiomesModule;
+                console.log('[Cubiomes] WASM module loaded and ready');
                 this.ready = true;
                 return true;
             }
@@ -88,7 +86,8 @@ class CubiomesWorldgen extends WorldgenInterface {
 
         try {
             // Allocate Generator struct in WASM memory
-            const generatorSize = 4096; // Approximate size, should match sizeof(Generator)
+            // Generator struct from cubiomes is large - contains all noise generators and layers
+            const generatorSize = 65536; // 64KB should be more than enough
             const generatorPtr = this.cubiomes._malloc(generatorSize);
 
             if (!generatorPtr) {
