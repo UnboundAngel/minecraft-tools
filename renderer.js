@@ -127,8 +127,14 @@ class Renderer {
                 const screen = Coords.blockToScreen(blockX, blockZ, this.camera, w, h);
                 const size = sampleSpacing * this.camera.pixelsPerBlock;
 
+                // Fill base color
                 ctx.fillStyle = color;
                 ctx.fillRect(screen.x, screen.y, size + 1, size + 1); // +1 to avoid gaps
+
+                // Add texture pattern at high zoom (>= 4x)
+                if (this.camera.zoom >= 4 && size >= 8) {
+                    this.drawBiomeTexture(ctx, biomeId, screen.x, screen.y, size, blockX, blockZ);
+                }
             }
         }
 
@@ -167,6 +173,242 @@ class Renderer {
                 }
             }
         }
+    }
+
+    drawBiomeTexture(ctx, biomeId, x, y, size, blockX, blockZ) {
+        // Use block coordinates for deterministic pseudo-random positioning
+        const hash = (blockX * 374761393 + blockZ * 668265263) & 0x7FFFFFFF;
+        const random = () => {
+            const x = Math.sin(hash + blockX + blockZ) * 10000;
+            return x - Math.floor(x);
+        };
+
+        ctx.save();
+
+        switch (biomeId) {
+            case 'desert':
+                // Sandy dune pattern - light dots
+                ctx.fillStyle = 'rgba(255, 255, 230, 0.15)';
+                for (let i = 0; i < 3; i++) {
+                    const dx = (hash * (i + 1) * 7) % size;
+                    const dy = (hash * (i + 2) * 11) % size;
+                    ctx.fillRect(x + dx, y + dy, 2, 2);
+                }
+                // Darker sand patches
+                ctx.fillStyle = 'rgba(139, 90, 43, 0.1)';
+                const patchX = (hash * 13) % size;
+                const patchY = (hash * 17) % size;
+                ctx.fillRect(x + patchX, y + patchY, size / 3, size / 3);
+                break;
+
+            case 'cherry_grove':
+            case 'cherry_blossom':
+                // Pink cherry petals
+                ctx.fillStyle = 'rgba(255, 182, 193, 0.4)';
+                for (let i = 0; i < 4; i++) {
+                    const dx = (hash * (i + 3) * 5) % size;
+                    const dy = (hash * (i + 4) * 7) % size;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                break;
+
+            case 'snowy_tundra':
+            case 'snowy_taiga':
+            case 'snowy_plains':
+            case 'snowy_slopes':
+            case 'snowy_beach':
+                // Snow sparkles - white dots
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                for (let i = 0; i < 5; i++) {
+                    const dx = (hash * (i + 5) * 9) % size;
+                    const dy = (hash * (i + 6) * 13) % size;
+                    ctx.fillRect(x + dx, y + dy, 1, 1);
+                }
+                break;
+
+            case 'swamp':
+            case 'mangrove_swamp':
+                // Murky water pattern - dark ripples
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
+                ctx.lineWidth = 1;
+                const rippleY = (hash * 19) % size;
+                ctx.beginPath();
+                ctx.moveTo(x, y + rippleY);
+                ctx.lineTo(x + size, y + rippleY);
+                ctx.stroke();
+                break;
+
+            case 'mushroom_fields':
+            case 'mushroom_field_shore':
+                // Mushroom dots - red and brown spots
+                ctx.fillStyle = 'rgba(139, 0, 0, 0.2)';
+                const mushX1 = (hash * 23) % size;
+                const mushY1 = (hash * 29) % size;
+                ctx.beginPath();
+                ctx.arc(x + mushX1, y + mushY1, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'rgba(139, 69, 19, 0.2)';
+                const mushX2 = (hash * 31) % size;
+                const mushY2 = (hash * 37) % size;
+                ctx.beginPath();
+                ctx.arc(x + mushX2, y + mushY2, 2, 0, Math.PI * 2);
+                ctx.fill();
+                break;
+
+            case 'jungle':
+            case 'bamboo_jungle':
+            case 'sparse_jungle':
+                // Dense foliage - dark green patches
+                ctx.fillStyle = 'rgba(0, 50, 0, 0.15)';
+                for (let i = 0; i < 3; i++) {
+                    const dx = (hash * (i + 7) * 11) % size;
+                    const dy = (hash * (i + 8) * 13) % size;
+                    ctx.fillRect(x + dx, y + dy, 4, 4);
+                }
+                break;
+
+            case 'badlands':
+            case 'wooded_badlands':
+            case 'eroded_badlands':
+                // Layered rock pattern - horizontal stripes
+                ctx.fillStyle = 'rgba(139, 69, 19, 0.1)';
+                ctx.fillRect(x, y + size * 0.3, size, 2);
+                ctx.fillStyle = 'rgba(205, 92, 92, 0.1)';
+                ctx.fillRect(x, y + size * 0.6, size, 2);
+                break;
+
+            case 'ocean':
+            case 'deep_ocean':
+            case 'warm_ocean':
+            case 'frozen_ocean':
+                // Wave pattern - light horizontal lines
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.lineWidth = 1;
+                const wave1 = (blockZ * 3) % 8;
+                const wave2 = (blockZ * 5) % 12;
+                ctx.beginPath();
+                ctx.moveTo(x, y + wave1);
+                ctx.lineTo(x + size, y + wave1);
+                ctx.moveTo(x, y + wave2);
+                ctx.lineTo(x + size, y + wave2);
+                ctx.stroke();
+                break;
+
+            case 'beach':
+            case 'stone_shore':
+                // Pebbles - small circles
+                ctx.fillStyle = 'rgba(128, 128, 128, 0.15)';
+                for (let i = 0; i < 2; i++) {
+                    const dx = (hash * (i + 9) * 7) % size;
+                    const dy = (hash * (i + 10) * 11) % size;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                break;
+
+            case 'meadow':
+                // Flower dots - various colors
+                const flowerColors = [
+                    'rgba(255, 0, 0, 0.3)',    // Red
+                    'rgba(255, 255, 0, 0.3)',  // Yellow
+                    'rgba(255, 192, 203, 0.3)' // Pink
+                ];
+                for (let i = 0; i < 3; i++) {
+                    ctx.fillStyle = flowerColors[i];
+                    const dx = (hash * (i + 11) * 9) % size;
+                    const dy = (hash * (i + 12) * 13) % size;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 1, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                break;
+
+            case 'sunflower_plains':
+                // Sunflower heads - yellow dots
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.4)';
+                for (let i = 0; i < 2; i++) {
+                    const dx = (hash * (i + 13) * 11) % size;
+                    const dy = (hash * (i + 14) * 7) % size;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                break;
+
+            case 'ice_spikes':
+            case 'frozen_peaks':
+                // Ice crystals - light blue triangular shapes
+                ctx.strokeStyle = 'rgba(173, 216, 230, 0.3)';
+                ctx.lineWidth = 1;
+                const spikeX = (hash * 41) % size;
+                const spikeY = (hash * 43) % size;
+                ctx.beginPath();
+                ctx.moveTo(x + spikeX, y + spikeY);
+                ctx.lineTo(x + spikeX + 3, y + spikeY + 5);
+                ctx.lineTo(x + spikeX - 3, y + spikeY + 5);
+                ctx.closePath();
+                ctx.stroke();
+                break;
+
+            case 'nether_wastes':
+                // Netherrack texture - dark red patches
+                ctx.fillStyle = 'rgba(80, 20, 20, 0.15)';
+                for (let i = 0; i < 4; i++) {
+                    const dx = (hash * (i + 15) * 7) % size;
+                    const dy = (hash * (i + 16) * 9) % size;
+                    ctx.fillRect(x + dx, y + dy, 2, 2);
+                }
+                break;
+
+            case 'warped_forest':
+                // Warped vegetation - cyan dots
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+                for (let i = 0; i < 3; i++) {
+                    const dx = (hash * (i + 17) * 11) % size;
+                    const dy = (hash * (i + 18) * 13) % size;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                break;
+
+            case 'crimson_forest':
+                // Crimson vegetation - red dots
+                ctx.fillStyle = 'rgba(220, 20, 60, 0.2)';
+                for (let i = 0; i < 3; i++) {
+                    const dx = (hash * (i + 19) * 13) % size;
+                    const dy = (hash * (i + 20) * 7) % size;
+                    ctx.beginPath();
+                    ctx.arc(x + dx, y + dy, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                break;
+
+            case 'soul_sand_valley':
+                // Soul fire - blue flame-like marks
+                ctx.fillStyle = 'rgba(100, 149, 237, 0.15)';
+                const flameX = (hash * 47) % size;
+                const flameY = (hash * 53) % size;
+                ctx.fillRect(x + flameX, y + flameY, 2, 4);
+                break;
+
+            case 'basalt_deltas':
+                // Basalt columns - vertical dark lines
+                ctx.strokeStyle = 'rgba(20, 20, 20, 0.2)';
+                ctx.lineWidth = 1;
+                const colX = (hash * 59) % size;
+                ctx.beginPath();
+                ctx.moveTo(x + colX, y);
+                ctx.lineTo(x + colX, y + size);
+                ctx.stroke();
+                break;
+        }
+
+        ctx.restore();
     }
 
     drawChunkGrid(topLeft, bottomRight, w, h) {

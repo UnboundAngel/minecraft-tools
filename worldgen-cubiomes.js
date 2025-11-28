@@ -95,8 +95,13 @@ class CubiomesWorldgen extends WorldgenInterface {
         }
 
         // CRITICAL: Zero out the memory before use (setupGenerator expects clean memory)
-        for (let i = 0; i < genSize; i++) {
-            this.cubiomes.HEAPU8[ptr + i] = 0;
+        // Use _memset if available, otherwise manually zero via HEAPU8
+        if (this.cubiomes._memset) {
+            this.cubiomes._memset(ptr, 0, genSize);
+        } else if (this.cubiomes.HEAPU8) {
+            for (let i = 0; i < genSize; i++) {
+                this.cubiomes.HEAPU8[ptr + i] = 0;
+            }
         }
 
         let lastGood = 0;
@@ -158,8 +163,13 @@ class CubiomesWorldgen extends WorldgenInterface {
             if (!ptr) throw new Error("malloc failed for Generator");
 
             // CRITICAL: Zero out the memory before use (setupGenerator expects clean memory)
-            for (let i = 0; i < genSize; i++) {
-                this.cubiomes.HEAPU8[ptr + i] = 0;
+            // Use _memset if available, otherwise manually zero via HEAPU8
+            if (this.cubiomes._memset) {
+                this.cubiomes._memset(ptr, 0, genSize);
+            } else if (this.cubiomes.HEAPU8) {
+                for (let i = 0; i < genSize; i++) {
+                    this.cubiomes.HEAPU8[ptr + i] = 0;
+                }
             }
 
             const mcVersionEnum = this.versionToMC(version);

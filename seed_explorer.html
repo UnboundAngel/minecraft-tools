@@ -402,6 +402,79 @@
             border-color: #10b981;
         }
 
+        /* Saved Seeds */
+        .saved-seeds-list {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .saved-seeds-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .saved-seeds-list::-webkit-scrollbar-thumb {
+            background: #a066ff;
+            border-radius: 3px;
+        }
+
+        .saved-seed-item {
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            background: var(--bg-panel-light);
+            border-radius: 4px;
+            margin-bottom: 6px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .saved-seed-item:hover {
+            border-color: #a066ff;
+            background: rgba(160, 102, 255, 0.1);
+        }
+
+        .saved-seed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .saved-seed-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .saved-seed-delete {
+            padding: 2px 6px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: #ef4444;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .saved-seed-delete:hover {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .saved-seed-info {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+        }
+
+        .saved-seed-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
         /* Map Area */
         .map-area {
             flex: 1;
@@ -645,6 +718,7 @@
                 <div class="btn-group" style="margin-bottom: 12px;">
                     <button class="btn btn-secondary" id="randomBtn">🎲 Random</button>
                     <button class="btn" id="generateBtn">✨ Generate</button>
+                    <button class="btn btn-secondary" id="saveSeedBtn">💾 Save</button>
                 </div>
 
                 <div class="form-group">
@@ -713,6 +787,15 @@
                 </div>
 
                 <button class="btn btn-secondary btn-full" id="shareBtn">🔗 Copy View Link</button>
+            </div>
+
+            <!-- Saved Seeds -->
+            <div class="sidebar-section">
+                <h3>⭐ Saved Seeds</h3>
+                <div class="saved-seeds-list" id="savedSeedsList">
+                    <div class="empty-state">No saved seeds</div>
+                </div>
+                <button class="btn btn-secondary btn-full" id="clearSeedsBtn" style="margin-top: 8px;">🗑️ Clear All</button>
             </div>
 
             <!-- Navigation -->
