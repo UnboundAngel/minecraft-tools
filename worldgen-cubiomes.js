@@ -28,7 +28,14 @@ class CubiomesWorldgen extends WorldgenInterface {
 
             // 1) Already-loaded modular build: CubiomesModule() factory
             if (typeof CubiomesModule === "function") {
+                console.log("[Cubiomes] Initializing CubiomesModule...");
                 this.cubiomes = await CubiomesModule();
+
+                // Wait for the module to be fully ready
+                if (this.cubiomes.then) {
+                    this.cubiomes = await this.cubiomes;
+                }
+
                 console.log("[Cubiomes] Loaded cubiomes WASM (CubiomesModule factory)");
             }
             // 2) Global Module object (non-modular build)
@@ -38,6 +45,7 @@ class CubiomesWorldgen extends WorldgenInterface {
             }
             // 3) Dynamically inject script then retry 1/2
             else {
+                console.log("[Cubiomes] Dynamically loading cubiomes.js...");
                 await new Promise((resolve, reject) => {
                     const script = document.createElement("script");
                     script.src = "cubiomes.js";
@@ -46,8 +54,18 @@ class CubiomesWorldgen extends WorldgenInterface {
                     document.head.appendChild(script);
                 });
 
+                // Wait a tick for the script to execute
+                await new Promise(resolve => setTimeout(resolve, 100));
+
                 if (typeof CubiomesModule === "function") {
+                    console.log("[Cubiomes] CubiomesModule factory found, initializing...");
                     this.cubiomes = await CubiomesModule();
+
+                    // Wait for the module to be fully ready
+                    if (this.cubiomes.then) {
+                        this.cubiomes = await this.cubiomes;
+                    }
+
                     console.log("[Cubiomes] Loaded cubiomes WASM after dynamic script (CubiomesModule)");
                 } else if (typeof Module === "object" && Module._setupGenerator) {
                     this.cubiomes = Module;
@@ -56,6 +74,23 @@ class CubiomesWorldgen extends WorldgenInterface {
                     throw new Error("cubiomes.js loaded but Module/CubiomesModule not found");
                 }
             }
+
+            // Wait for module to be fully initialized
+            if (this.cubiomes && typeof this.cubiomes.then === 'function') {
+                console.log("[Cubiomes] Waiting for module promise to resolve...");
+                this.cubiomes = await this.cubiomes;
+            }
+
+            console.log("[Cubiomes] Module initialized, checking exports...");
+            console.log("[Cubiomes] Available functions:", {
+                setupGenerator: typeof this.cubiomes._setupGenerator,
+                applySeed: typeof this.cubiomes._applySeed,
+                getBiomeAt: typeof this.cubiomes._getBiomeAt,
+                malloc: typeof this.cubiomes._malloc,
+                free: typeof this.cubiomes._free,
+                memset: typeof this.cubiomes._memset,
+                HEAPU8: typeof this.cubiomes.HEAPU8
+            });
 
             // Sanity check for required symbols
             if (!this.cubiomes._setupGenerator ||
@@ -73,6 +108,7 @@ class CubiomesWorldgen extends WorldgenInterface {
             return true;
         } catch (err) {
             console.warn("[Cubiomes] Failed to initialize:", err);
+            console.warn("[Cubiomes] Stack trace:", err.stack);
             this.ready = false;
             this.cubiomes = null;
             return false;
