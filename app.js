@@ -342,6 +342,11 @@ class SeedExplorerApp {
 
         document.getElementById('displaySeed').textContent = seedInput || this.renderer.seed;
 
+        // Clear worldgen generator cache to force fresh generation
+        if (this.worldgen && this.worldgen.generators) {
+            this.worldgen.generators.clear();
+        }
+
         this.updateBiomeLegend();
         this.renderer.render();
         this.updateInfo();
