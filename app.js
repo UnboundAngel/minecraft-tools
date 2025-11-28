@@ -59,6 +59,9 @@ class SeedExplorerApp {
         // Load state from URL or localStorage
         this.loadState();
 
+        // Load saved seeds list
+        this.updateSavedSeedsList();
+
         // Generate initial world
         this.generate();
 
@@ -143,6 +146,15 @@ class SeedExplorerApp {
             this.updateMarkerList();
             this.renderer.render();
             this.saveState();
+        };
+
+        // Saved Seeds
+        document.getElementById('saveSeedBtn').onclick = () => this.saveSeed();
+        document.getElementById('clearSeedsBtn').onclick = () => {
+            if (confirm('Clear all saved seeds?')) {
+                localStorage.removeItem('savedSeeds');
+                this.updateSavedSeedsList();
+            }
         };
 
         // Map controls
@@ -556,6 +568,117 @@ class SeedExplorerApp {
                 this.renderer.render();
                 this.saveState();
             };
+
+            listDiv.appendChild(item);
+        });
+    }
+
+    saveSeed() {
+        const seedInput = document.getElementById('seedInput').value.trim();
+        const edition = document.getElementById('editionSelect').value;
+        const version = document.getElementById('versionSelect').value;
+        const dimension = document.querySelector('.dimension-tab.active').dataset.dimension;
+
+        if (!seedInput) {
+            alert('Please enter a seed first!');
+            return;
+        }
+
+        const name = prompt('Name this seed:', `Seed ${seedInput.substring(0, 10)}`);
+        if (!name) return;
+
+        const savedSeeds = this.getSavedSeeds();
+        const newSeed = {
+            id: Date.now(),
+            name,
+            seed: seedInput,
+            edition,
+            version,
+            dimension,
+            savedAt: new Date().toISOString()
+        };
+
+        savedSeeds.push(newSeed);
+        localStorage.setItem('savedSeeds', JSON.stringify(savedSeeds));
+        this.updateSavedSeedsList();
+    }
+
+    getSavedSeeds() {
+        try {
+            const data = localStorage.getItem('savedSeeds');
+            return data ? JSON.parse(data) : [];
+        } catch (e) {
+            console.warn('[App] Failed to load saved seeds:', e);
+            return [];
+        }
+    }
+
+    loadSeed(seedData) {
+        document.getElementById('seedInput').value = seedData.seed;
+        document.getElementById('editionSelect').value = seedData.edition;
+        document.getElementById('versionSelect').value = seedData.version;
+
+        // Set dimension
+        document.querySelectorAll('.dimension-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.dataset.dimension === seedData.dimension) {
+                tab.classList.add('active');
+            }
+        });
+
+        this.generate();
+    }
+
+    deleteSavedSeed(id) {
+        const savedSeeds = this.getSavedSeeds().filter(s => s.id !== id);
+        localStorage.setItem('savedSeeds', JSON.stringify(savedSeeds));
+        this.updateSavedSeedsList();
+    }
+
+    updateSavedSeedsList() {
+        const listDiv = document.getElementById('savedSeedsList');
+        const savedSeeds = this.getSavedSeeds();
+
+        if (savedSeeds.length === 0) {
+            listDiv.innerHTML = '<div class="empty-state">No saved seeds</div>';
+            return;
+        }
+
+        listDiv.innerHTML = '';
+
+        savedSeeds.forEach(seedData => {
+            const item = document.createElement('div');
+            item.className = 'saved-seed-item';
+
+            const dimensionEmoji = {
+                overworld: '🌍',
+                nether: '🔥',
+                end: '🌌'
+            }[seedData.dimension] || '🌍';
+
+            item.innerHTML = `
+                <div class="saved-seed-header">
+                    <div class="saved-seed-name">${dimensionEmoji} ${seedData.name}</div>
+                    <button class="saved-seed-delete">×</button>
+                </div>
+                <div class="saved-seed-info">${seedData.seed}</div>
+                <div class="saved-seed-meta">${seedData.edition} ${seedData.version}</div>
+            `;
+
+            // Click seed item to load it
+            item.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('saved-seed-delete')) {
+                    this.loadSeed(seedData);
+                }
+            });
+
+            // Delete button
+            item.querySelector('.saved-seed-delete').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm(`Delete "${seedData.name}"?`)) {
+                    this.deleteSavedSeed(seedData.id);
+                }
+            });
 
             listDiv.appendChild(item);
         });
