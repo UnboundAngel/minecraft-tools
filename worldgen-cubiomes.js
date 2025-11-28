@@ -1,69 +1,110 @@
 /**
  * Cubiomes Worldgen - Real Minecraft Java Edition worldgen using cubiomes library
+ * Uses cubiomes C library compiled to WASM (cubiomes.js / cubiomes.wasm).
  *
- * This implementation uses the cubiomes C library compiled to WASM.
- * Cubiomes by Cubitect: https://github.com/Cubitect/cubiomes
- *
- * IMPORTANT: This requires cubiomes compiled to WASM with proper function exports.
- * See CUBIOMES_SETUP.md for compilation instructions.
- *
- * The cubiomes library uses a Generator struct approach:
- *   1. setupGenerator(&g, MC_VERSION, flags)
- *   2. applySeed(&g, dimension, seed)
- *   3. getBiomeAt(&g, scale, x, y, z)
+ * Requires:
+ *   - cubiomes.wasm and cubiomes.js in the same directory as seed_explorer.html
+ *   - build_wasm.sh compiled with:
+ *       -s MODULARIZE=1
+ *       -s EXPORT_NAME="CubiomesModule"
+ *       -s EXPORTED_FUNCTIONS="[...]"
  */
+
 class CubiomesWorldgen extends WorldgenInterface {
     constructor() {
         super();
         this.ready = false;
-        this.cubiomes = null;
-        this.generators = new Map(); // Cache generators by seed+version+dimension
+        this.cubiomes = null;          // Emscripten Module instance
+        this.generators = new Map();   // key: seed_version_dim -> {ptr, seed, version, dimension}
         this.biomeData = this.initBiomeData();
+
+        // Auto-detected enum for "latest supported MC version" inside cubiomes
+        this.latestMcEnum = 0;
     }
 
     async init() {
         try {
-            // Try to load cubiomes WASM module
-            // This expects a global CubiomesModule or Module object
-            if (typeof CubiomesModule !== 'undefined') {
-                this.cubiomes = await CubiomesModule;
-                console.log('[Cubiomes] Loaded cubiomes WASM module');
-                this.ready = true;
-                return true;
+            if (this.ready && this.cubiomes) return true;
+
+            // 1) Already-loaded modular build: CubiomesModule() factory
+            if (typeof CubiomesModule === "function") {
+                this.cubiomes = await CubiomesModule();
+                console.log("[Cubiomes] Loaded cubiomes WASM (CubiomesModule factory)");
+            }
+            // 2) Global Module object (non-modular build)
+            else if (typeof Module === "object" && Module._setupGenerator) {
+                this.cubiomes = Module;
+                console.log("[Cubiomes] Loaded cubiomes WASM (global Module)");
+            }
+            // 3) Dynamically inject script then retry 1/2
+            else {
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement("script");
+                    script.src = "cubiomes.js";
+                    script.onload = resolve;
+                    script.onerror = () => reject(new Error("Failed to load cubiomes.js"));
+                    document.head.appendChild(script);
+                });
+
+                if (typeof CubiomesModule === "function") {
+                    this.cubiomes = await CubiomesModule();
+                    console.log("[Cubiomes] Loaded cubiomes WASM after dynamic script (CubiomesModule)");
+                } else if (typeof Module === "object" && Module._setupGenerator) {
+                    this.cubiomes = Module;
+                    console.log("[Cubiomes] Loaded cubiomes WASM after dynamic script (Module)");
+                } else {
+                    throw new Error("cubiomes.js loaded but Module/CubiomesModule not found");
+                }
             }
 
-            if (typeof Module !== 'undefined' && Module._setupGenerator) {
-                this.cubiomes = await Module;
-                console.log('[Cubiomes] Loaded cubiomes WASM module');
-                this.ready = true;
-                return true;
+            // Sanity check for required symbols
+            if (!this.cubiomes._setupGenerator ||
+                !this.cubiomes._applySeed ||
+                !this.cubiomes._getBiomeAt ||
+                !this.cubiomes._malloc ||
+                !this.cubiomes._free) {
+                throw new Error("cubiomes Module missing required exports (_setupGenerator/_applySeed/_getBiomeAt/_malloc/_free)");
             }
 
-            // Try dynamic load
-            const script = document.createElement('script');
-            script.src = 'cubiomes.js';
+            // Auto-detect the highest valid MC version enum inside cubiomes
+            this.detectLatestMcEnum();
 
-            await new Promise((resolve, reject) => {
-                script.onload = resolve;
-                script.onerror = () => reject(new Error('Failed to load cubiomes.js'));
-                document.head.appendChild(script);
-                setTimeout(() => reject(new Error('Timeout loading cubiomes')), 10000);
-            });
-
-            // Wait for Module to initialize
-            if (typeof CubiomesModule !== 'undefined') {
-                this.cubiomes = await CubiomesModule;
-                console.log('[Cubiomes] WASM module loaded and ready');
-                this.ready = true;
-                return true;
-            }
-
-            throw new Error('Cubiomes module not available after loading');
-        } catch (error) {
-            console.warn('[Cubiomes] Failed to initialize:', error.message);
+            this.ready = true;
+            return true;
+        } catch (err) {
+            console.warn("[Cubiomes] Failed to initialize:", err);
             this.ready = false;
+            this.cubiomes = null;
             return false;
         }
+    }
+
+    /**
+     * Probe cubiomes._setupGenerator with candidate version enums and keep
+     * the highest value that returns 0 (success).
+     * This avoids hard-coding internal enum values.
+     */
+    detectLatestMcEnum() {
+        const genSize = 4096;
+        const ptr = this.cubiomes._malloc(genSize);
+        if (!ptr) {
+            console.warn("[Cubiomes] Could not allocate probe generator; defaulting mc enum to 0");
+            this.latestMcEnum = 0;
+            return;
+        }
+
+        let lastGood = 0;
+        // Reasonable scan range – cubiomes does not use huge enums
+        for (let v = 0; v < 64; v++) {
+            const r = this.cubiomes._setupGenerator(ptr, v, 0);
+            if (r === 0) {
+                lastGood = v;
+            }
+        }
+
+        this.cubiomes._free(ptr);
+        this.latestMcEnum = lastGood;
+        console.log("[Cubiomes] Auto-detected latest MC version enum:", this.latestMcEnum);
     }
 
     getName() {
@@ -75,122 +116,99 @@ class CubiomesWorldgen extends WorldgenInterface {
     }
 
     /**
-     * Get or create a generator for a specific seed/version/dimension combination
+     * Map UI version string to cubiomes internal enum.
+     * For now, all 1.18+ versions share the latest enum value we probed.
+     */
+    versionToMC(version) {
+        if (!this.cubiomes) return 0;
+
+        // If you later want finer control, you can branch here:
+        // e.g. if (version.startsWith("1.16")) return someEnumFor116;
+        // For now: use the highest working enum for everything.
+        return this.latestMcEnum;
+    }
+
+    dimensionToValue(dimension) {
+        // These are the usual cubiomes values; they match upstream defaults.
+        const dimMap = {
+            overworld: 0,   // DIM_OVERWORLD
+            nether:   -1,   // DIM_NETHER
+            end:       1,   // DIM_END
+        };
+        return dimMap[dimension] ?? 0;
+    }
+
+    /**
+     * Get or create a generator for a specific seed/version/dimension combination.
      */
     getGenerator(seed, version, dimension) {
         const key = `${seed}_${version}_${dimension}`;
-
-        if (this.generators.has(key)) {
-            return this.generators.get(key);
-        }
+        if (this.generators.has(key)) return this.generators.get(key);
 
         try {
-            // Allocate Generator struct in WASM memory
-            // Generator struct from cubiomes is large - contains all noise generators and layers
-            const generatorSize = 65536; // 64KB should be more than enough
-            const generatorPtr = this.cubiomes._malloc(generatorSize);
+            const genSize = 4096;
+            const ptr = this.cubiomes._malloc(genSize);
+            if (!ptr) throw new Error("malloc failed for Generator");
 
-            if (!generatorPtr) {
-                throw new Error('Failed to allocate generator memory');
+            const mcVersionEnum = this.versionToMC(version);
+            const dimEnum = this.dimensionToValue(dimension);
+
+            const r = this.cubiomes._setupGenerator(ptr, mcVersionEnum, 0);
+            if (r !== 0) {
+                this.cubiomes._free(ptr);
+                throw new Error("setupGenerator failed");
             }
 
-            // Get MC version enum
-            const mcVersion = this.versionToMC(version);
+            const seedValue = typeof seed === "string" ? this.hashString(seed) : Number(seed);
+            this.cubiomes._applySeed(ptr, dimEnum, seedValue);
 
-            // Get dimension enum
-            const dimValue = this.dimensionToValue(dimension);
-
-            // Call setupGenerator(Generator *g, int mcversion, uint flags)
-            const setupResult = this.cubiomes._setupGenerator(generatorPtr, mcVersion, 0);
-
-            if (setupResult !== 0) {
-                this.cubiomes._free(generatorPtr);
-                throw new Error('setupGenerator failed');
-            }
-
-            // Convert seed to number (cubiomes uses uint64_t)
-            const seedValue = typeof seed === 'string' ? this.hashString(seed) : Number(seed);
-
-            // Call applySeed(Generator *g, int dim, uint64_t seed)
-            // Note: For 64-bit seed, we might need to split into high/low 32-bit parts
-            this.cubiomes._applySeed(generatorPtr, dimValue, seedValue);
-
-            const generator = { ptr: generatorPtr, seed, version, dimension };
-            this.generators.set(key, generator);
-
-            return generator;
-        } catch (error) {
-            console.error('[Cubiomes] Failed to create generator:', error);
+            const gen = { ptr, seed, version, dimension };
+            this.generators.set(key, gen);
+            return gen;
+        } catch (err) {
+            console.error("[Cubiomes] Failed to create generator:", err);
             return null;
         }
     }
 
     getBiomeAt(seed, edition, version, dimension, blockX, blockZ) {
-        if (!this.ready || edition !== 'Java') {
-            return 'plains'; // Fallback
-        }
+        if (!this.ready || edition !== "Java") return "plains";
 
         try {
-            const generator = this.getGenerator(seed, version, dimension);
-            if (!generator) {
-                return 'plains';
-            }
+            const gen = this.getGenerator(seed, version, dimension);
+            if (!gen) return "plains";
 
-            // Call getBiomeAt(Generator *g, int scale, int x, int y, int z)
-            // scale=1 for block coordinates, scale=4 for biome coordinates
             const scale = 1;
-            const y = 64; // Y-level for biome sampling
-
-            const biomeId = this.cubiomes._getBiomeAt(generator.ptr, scale, blockX, y, blockZ);
-
-            return this.biomeIdToString(biomeId);
-        } catch (error) {
-            console.error('[Cubiomes] getBiomeAt error:', error);
-            return 'plains';
+            const y = 64;
+            const biomeId = this.cubiomes._getBiomeAt(gen.ptr, scale, blockX | 0, y, blockZ | 0);
+            return this.biomeIdToString(biomeId | 0);
+        } catch (err) {
+            console.error("[Cubiomes] getBiomeAt error:", err);
+            return "plains";
         }
     }
 
-    getStructuresInArea(seed, edition, version, dimension, minBlockX, minBlockZ, maxBlockX, maxBlockZ) {
-        if (!this.ready || edition !== 'Java') {
-            return [];
-        }
+    getStructuresInArea(seed, edition, version, dimension,
+                        minBlockX, minBlockZ, maxBlockX, maxBlockZ) {
+        if (!this.ready || edition !== "Java") return [];
 
         try {
-            const generator = this.getGenerator(seed, version, dimension);
-            if (!generator) {
-                return [];
-            }
+            const gen = this.getGenerator(seed, version, dimension);
+            if (!gen) return [];
 
             const structures = [];
-            const mcVersion = this.versionToMC(version);
-
-            // Structure types and their cubiomes IDs
-            const structureTypes = this.getStructureTypesForDimension(dimension);
-
-            // Convert block coordinates to chunk coordinates for structure finding
-            const minChunkX = Math.floor(minBlockX / 16);
-            const minChunkZ = Math.floor(minBlockZ / 16);
-            const maxChunkX = Math.floor(maxBlockX / 16);
-            const maxChunkZ = Math.floor(maxBlockZ / 16);
-
-            // For each structure type, find positions in the region
-            // This would require proper cubiomes bindings for:
-            // - getStructurePos()
-            // - isViableStructurePos()
-            // For now, return empty as these functions need careful memory management
-
+            // TODO: wire to cubiomes getStructurePos / isViableStructurePos
+            // For now, leave structure search empty but non-crashing.
             return structures;
-        } catch (error) {
-            console.error('[Cubiomes] getStructuresInArea error:', error);
+        } catch (err) {
+            console.error("[Cubiomes] getStructuresInArea error:", err);
             return [];
         }
     }
 
     isSlimeChunk(seed, edition, version, chunkX, chunkZ) {
-        if (edition !== 'Java') return false;
-
-        // Use the correct Java algorithm from worldgen-interface.js
-        const seedValue = typeof seed === 'string' ? this.hashString(seed) : seed;
+        if (edition !== "Java") return false;
+        const seedValue = typeof seed === "string" ? this.hashString(seed) : seed;
         return isJavaSlimeChunk(seedValue, chunkX, chunkZ);
     }
 
@@ -198,58 +216,15 @@ class CubiomesWorldgen extends WorldgenInterface {
         return this.biomeData[dimension] || this.biomeData.overworld;
     }
 
-    // Cleanup
     destroy() {
-        // Free all generator memory
-        for (const [key, gen] of this.generators.entries()) {
-            if (gen.ptr && this.cubiomes && this.cubiomes._free) {
-                this.cubiomes._free(gen.ptr);
-            }
+        if (!this.cubiomes) return;
+        for (const [, gen] of this.generators.entries()) {
+            if (gen.ptr) this.cubiomes._free(gen.ptr);
         }
         this.generators.clear();
     }
 
-    // Helper methods
-
-    versionToMC(version) {
-        // MC version enum values from cubiomes
-        // See cubiomes.h for exact values
-        const versionMap = {
-            '1.21': 21,   // MC_1_21
-            '1.20': 20,   // MC_1_20
-            '1.19': 19,   // MC_1_19
-            '1.18': 18,   // MC_1_18
-            '1.17': 17,   // MC_1_17
-            '1.16': 16,   // MC_1_16
-            '1.15': 15,   // MC_1_15
-            '1.14': 14,   // MC_1_14
-            '1.13': 13,   // MC_1_13
-        };
-        return versionMap[version] || 20; // Default to 1.20
-    }
-
-    dimensionToValue(dimension) {
-        // Dimension enum values
-        const dimMap = {
-            'overworld': 0,   // DIM_OVERWORLD
-            'nether': -1,     // DIM_NETHER
-            'end': 1,         // DIM_END
-        };
-        return dimMap[dimension] || 0;
-    }
-
-    getStructureTypesForDimension(dimension) {
-        const types = {
-            overworld: ['village', 'desert_pyramid', 'jungle_temple', 'swamp_hut',
-                       'igloo', 'ocean_monument', 'mansion', 'outpost', 'shipwreck', 'ruined_portal'],
-            nether: ['fortress', 'bastion', 'ruined_portal'],
-            end: ['end_city']
-        };
-        return types[dimension] || types.overworld;
-    }
-
     biomeIdToString(id) {
-        // Cubiomes biome IDs - from cubiomes biomes.h
         const biomeMap = {
             0: 'ocean',
             1: 'plains',
@@ -291,17 +266,14 @@ class CubiomesWorldgen extends WorldgenInterface {
             37: 'badlands',
             38: 'wooded_badlands_plateau',
             39: 'badlands_plateau',
-            // 1.16+ Nether biomes
             170: 'soul_sand_valley',
             171: 'crimson_forest',
             172: 'warped_forest',
             173: 'basalt_deltas',
-            // 1.16+ End biomes
             40: 'small_end_islands',
             41: 'end_midlands',
             42: 'end_highlands',
             43: 'end_barrens',
-            // 1.18+ biomes
             129: 'sunflower_plains',
             140: 'ice_spikes',
             149: 'modified_jungle',
@@ -318,7 +290,6 @@ class CubiomesWorldgen extends WorldgenInterface {
             167: 'eroded_badlands',
             168: 'modified_wooded_badlands_plateau',
             169: 'modified_badlands_plateau',
-            // 1.18 mountain biomes
             174: 'meadow',
             175: 'grove',
             176: 'snowy_slopes',
@@ -333,7 +304,7 @@ class CubiomesWorldgen extends WorldgenInterface {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
             hash = ((hash << 5) - hash) + str.charCodeAt(i);
-            hash = hash & hash;
+            hash |= 0;
         }
         return hash;
     }
