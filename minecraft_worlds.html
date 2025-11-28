@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Worlds Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 120px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d5a3d 0%, #1a3d2a 100%);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 4px solid #4ade80;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #4ade80;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #a0f0b0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Tutorial Overlay */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tutorial-content {
+            background: linear-gradient(135deg, #2d5a3d 0%, #1a3d2a 100%);
+            padding: 40px;
+            border-radius: 15px;
+            border: 4px solid #4ade80;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .tutorial-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .tutorial-content h2 {
+            color: #4ade80;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #a0f0b0;
+        }
+
+        .tutorial-steps {
+            text-align: left;
+            margin: 25px 0;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .tutorial-step {
+            margin: 15px 0;
+            padding-left: 10px;
+            color: #fff;
+            font-size: 1.1em;
+        }
+
+        .tutorial-step::before {
+            content: '⛏️ ';
+            margin-right: 10px;
+        }
+
+        .tutorial-btn {
+            background: #4ade80;
+            color: #1a472a;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .tutorial-btn:hover {
+            background: #22c55e;
+            transform: scale(1.05);
+        }
+
+        /* Welcome Back Message */
+        .welcome-message {
+            background: linear-gradient(135deg, #2d5a3d 0%, #1a3d2a 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #4ade80;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideDown 0.5s ease;
+        }
+
+        .welcome-message h2 {
+            color: #4ade80;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid #4ade80;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .search-input::placeholder {
+            color: #a0f0b0;
+        }
+
+        /* Worlds List */
+        .worlds-list {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .world-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 40px;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #4ade80;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .world-row:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+        }
+
+        .world-thumbnail {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #2d5a3d 0%, #1a3d2a 100%);
+            border: 2px solid #4ade80;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            overflow: hidden;
+        }
+
+        .world-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .world-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .world-title {
+            font-size: 1.4em;
+            color: #4ade80;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .world-meta {
+            font-size: 0.9em;
+            color: #a0f0b0;
+            margin: 3px 0;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            transition: transform 0.3s;
+            padding: 0;
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0f0b0;
+        }
+
+        .empty-state-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #4ade80;
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background: #4ade80;
+            color: #1a472a;
+            border: 3px solid #8b8b8b;
+            border-top-color: #ffffff;
+            border-left-color: #ffffff;
+            border-bottom-color: #555555;
+            border-right-color: #555555;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #22c55e;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            border-top-color: #555555;
+            border-left-color: #555555;
+            border-bottom-color: #ffffff;
+            border-right-color: #ffffff;
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Create World Form */
+        .create-world-screen {
+            display: none;
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4ade80;
+        }
+
+        .tab-btn {
+            background: rgba(0,0,0,0.3);
+            color: #a0f0b0;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #4ade80;
+            color: #1a472a;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #4ade80;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid #4ade80;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .radio-option {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border: 2px solid #4ade80;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .radio-option:hover {
+            background: rgba(74, 222, 128, 0.2);
+        }
+
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .radio-option label {
+            cursor: pointer;
+            display: block;
+            margin: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #6b7280;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4ade80;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .thumbnail-upload {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .thumbnail-preview {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #2d5a3d 0%, #1a3d2a 100%);
+            border: 2px solid #4ade80;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            overflow: hidden;
+        }
+
+        .thumbnail-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading-animation {
+            font-size: 5em;
+            animation: spin 2s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 1.5em;
+            color: #4ade80;
+            margin-top: 20px;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2d5a3d 0%, #1a3d2a 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border: 4px solid #4ade80;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            color: #4ade80;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            color: #a0f0b0;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        /* Hotbar - EXPLORER Style */
+        .hotbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(11, 13, 18, 0.98);
+            border-top: 2px solid #A066FF;
+            padding: 8px;
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            z-index: 1000;
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .hotbar.collapsed {
+            transform: translateY(100%);
+        }
+
+        .hotbar-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, rgba(160, 102, 255, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(160, 102, 255, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .hotbar-slot:hover {
+            background: linear-gradient(135deg, rgba(160, 102, 255, 0.3), rgba(6, 182, 212, 0.3));
+            border-color: #A066FF;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .hotbar-slot.active {
+            background: linear-gradient(135deg, #A066FF, #06b6d4);
+            border-color: #A066FF;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(160, 102, 255, 0.5);
+        }
+
+        .hotbar-icon {
+            font-size: 1.8em;
+            margin-bottom: 2px;
+        }
+
+        .hotbar-toggle {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            background: linear-gradient(135deg, #A066FF, #06b6d4);
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            cursor: pointer;
+            font-size: 1.2em;
+            border-radius: 8px 8px 0 0;
+            z-index: 999;
+            transition: transform 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hotbar.collapsed + .hotbar-toggle {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .world-row {
+                grid-template-columns: 80px 1fr 30px;
+            }
+
+            .world-thumbnail {
+                width: 80px;
+                height: 80px;
+                font-size: 2em;
+            }
+
+            .hotbar {
+                flex-wrap: wrap;
+                max-width: 90%;
+            }
+
+            .hotbar-slot {
+                width: 48px;
+                height: 48px;
+                font-size: 0.6em;
+            }
+
+            .hotbar-icon {
+                font-size: 1.5em;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🌍 Minecraft Worlds Manager</h1>
+        <p>Track, organize, and manage all your Minecraft worlds</p>
+    </div>
+
+    <!-- Tutorial Overlay (First Time) -->
+    <div class="tutorial-overlay hidden" id="tutorialOverlay">
+        <div class="tutorial-content">
+            <div class="tutorial-icon">🎮</div>
+            <h2>Welcome to Minecraft Worlds!</h2>
+            <p>Let's get you started with managing your Minecraft worlds</p>
+
+            <div class="tutorial-steps">
+                <div class="tutorial-step">Create and track multiple Minecraft worlds</div>
+                <div class="tutorial-step">Star your favorite worlds to keep them at the top</div>
+                <div class="tutorial-step">Add custom thumbnails, seeds, and coordinates</div>
+                <div class="tutorial-step">Track playtime, version, and launcher type</div>
+                <div class="tutorial-step">Search and filter your world collection</div>
+            </div>
+
+            <button class="tutorial-btn" onclick="completeTutorial()">Create My First World!</button>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-animation">⚒️</div>
+        <div class="loading-text">Generating world...</div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h3>⚠️ Delete World?</h3>
+            <p id="deleteWorldName"></p>
+            <p>This action cannot be undone!</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Main Worlds Screen -->
+        <div id="mainScreen">
+            <!-- Welcome Message (Returning Users) -->
+            <div class="welcome-message hidden" id="welcomeMessage">
+                <h2>👋 Welcome back!</h2>
+                <p>You have <span id="worldCount">0</span> world(s) in your collection</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search worlds by name..." oninput="filterWorlds()">
+            </div>
+
+            <!-- Worlds List -->
+            <div class="worlds-list" id="worldsList">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">🌲</div>
+                    <h3>No Worlds Yet</h3>
+                    <p>Create your first Minecraft world to get started!</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button class="btn" onclick="showCreateWorld()">➕ Create New World</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Back to Hub</button>
+            </div>
+        </div>
+
+        <!-- Create/Edit World Screen -->
+        <div class="create-world-screen" id="createWorldScreen">
+            <h2 style="color: #4ade80; font-size: 2em; margin-bottom: 20px; text-align: center;" id="formTitle">Create New World</h2>
+
+            <!-- Tabs -->
+            <div class="form-tabs">
+                <button class="tab-btn active" onclick="switchTab('game')">🎮 Game</button>
+                <button class="tab-btn" onclick="switchTab('world')">🌍 World</button>
+                <button class="tab-btn" onclick="switchTab('more')">⚙️ More</button>
+            </div>
+
+            <!-- Game Tab -->
+            <div class="tab-content active" id="gameTab">
+                <div class="form-group">
+                    <label>World Name</label>
+                    <input type="text" id="worldName" placeholder="My Awesome World">
+                </div>
+
+                <div class="form-group">
+                    <label>Game Mode</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="gameMode" value="Survival" id="modeSurvival" checked>
+                            <label for="modeSurvival">⚔️ Survival</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="gameMode" value="Creative" id="modeCreative">
+                            <label for="modeCreative">🎨 Creative</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="gameMode" value="Adventure" id="modeAdventure">
+                            <label for="modeAdventure">🗺️ Adventure</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="gameMode" value="Hardcore" id="modeHardcore">
+                            <label for="modeHardcore">💀 Hardcore</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Difficulty</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="difficulty" value="Peaceful" id="diffPeaceful">
+                            <label for="diffPeaceful">😊 Peaceful</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="difficulty" value="Easy" id="diffEasy" checked>
+                            <label for="diffEasy">🙂 Easy</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="difficulty" value="Normal" id="diffNormal">
+                            <label for="diffNormal">😐 Normal</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="difficulty" value="Hard" id="diffHard">
+                            <label for="diffHard">😈 Hard</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        Enable Commands
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="commandsToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </label>
+                </div>
+            </div>
+
+            <!-- World Tab -->
+            <div class="tab-content" id="worldTab">
+                <div class="form-group">
+                    <label>World Seed (Optional)</label>
+                    <input type="text" id="worldSeed" placeholder="e.g., 123456789 or leave blank for random">
+                </div>
+
+                <div class="form-group">
+                    <label>Spawn Coordinates (Optional)</label>
+                    <input type="text" id="spawnCoords" placeholder="e.g., X: 100, Y: 64, Z: -200">
+                </div>
+
+                <div class="form-group">
+                    <label>Important Coordinates (Optional)</label>
+                    <textarea id="importantCoords" placeholder="Village: X: 500, Z: 300&#10;Stronghold: X: -1200, Z: 800&#10;Add as many as you like..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Custom Thumbnail</label>
+                    <div class="thumbnail-upload">
+                        <div class="thumbnail-preview" id="thumbnailPreview">
+                            🖼️
+                        </div>
+                        <div>
+                            <div class="file-input-wrapper">
+                                <button class="btn">📁 Upload Image</button>
+                                <input type="file" id="thumbnailInput" accept="image/*" onchange="handleThumbnailUpload(event)">
+                            </div>
+                            <p style="color: #a0f0b0; margin-top: 10px; font-size: 0.9em;">Optional: Add a screenshot of your world</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More Tab -->
+            <div class="tab-content" id="moreTab">
+                <div class="form-group">
+                    <label>Minecraft Version</label>
+                    <select id="mcVersion">
+                        <option value="1.21.5">1.21.5</option>
+                        <option value="1.21.4">1.21.4</option>
+                        <option value="1.21.3">1.21.3</option>
+                        <option value="1.21.2">1.21.2</option>
+                        <option value="1.21.1">1.21.1</option>
+                        <option value="1.21.0">1.21.0</option>
+                        <option value="1.20.6">1.20.6</option>
+                        <option value="1.20.5">1.20.5</option>
+                        <option value="1.20.4">1.20.4</option>
+                        <option value="1.20.3">1.20.3</option>
+                        <option value="1.20.2">1.20.2</option>
+                        <option value="1.20.1">1.20.1</option>
+                        <option value="Snapshot">Latest Snapshot</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Launcher Type</label>
+                    <select id="launcherType">
+                        <option value="Java">Java Edition</option>
+                        <option value="Bedrock">Bedrock Edition</option>
+                        <option value="Fabric">Fabric</option>
+                        <option value="Forge">Forge</option>
+                        <option value="Quilt">Quilt</option>
+                        <option value="NeoForge">NeoForge</option>
+                        <option value="Paper">Paper</option>
+                        <option value="Spigot">Spigot</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Mods Used (Optional)</label>
+                    <textarea id="modsUsed" placeholder="List your mods here (one per line)&#10;e.g., OptiFine&#10;JEI&#10;Biomes O' Plenty"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Datapacks (Optional)</label>
+                    <textarea id="datapacks" placeholder="List your datapacks here (one per line)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags (Optional)</label>
+                    <input type="text" id="worldTags" placeholder="e.g., survival, modded, skyblock">
+                </div>
+
+                <div class="form-group">
+                    <label>Total Playtime (Hours)</label>
+                    <input type="number" id="playtime" value="0" min="0" step="0.1">
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="actions" style="margin-top: 30px;">
+                <button class="btn" onclick="saveWorld()">💾 Save World</button>
+                <button class="btn btn-secondary" onclick="cancelCreate()">❌ Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hotbar Navigation -->
+    <div class="hotbar" id="hotbar">
+        <a href="index.html" class="hotbar-slot">
+            <div class="hotbar-icon">🏠</div>
+            HOME
+        </a>
+        <a href="minecraft_journal.html" class="hotbar-slot">
+            <div class="hotbar-icon">📖</div>
+            JOURNAL
+        </a>
+        <a href="enchantment_calculator.html" class="hotbar-slot">
+            <div class="hotbar-icon">📘</div>
+            ENCHANT
+        </a>
+        <a href="ore_guide_page.html" class="hotbar-slot">
+            <div class="hotbar-icon">💎</div>
+            ORES
+        </a>
+        <a href="world_seeds_page.html" class="hotbar-slot">
+            <div class="hotbar-icon">🗺️</div>
+            SEEDS
+        </a>
+        <a href="seed_explorer.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧭</div>
+            EXPLORER
+        </a>
+        <a href="build_ideas_gallery.html" class="hotbar-slot">
+            <div class="hotbar-icon">🗝️</div>
+            BUILDS
+        </a>
+        <a href="minecraft_worlds.html" class="hotbar-slot active">
+            <div class="hotbar-icon">🌍</div>
+            WORLDS
+        </a>
+        <a href="farm_efficiency_page.html" class="hotbar-slot">
+            <div class="hotbar-icon">🌾</div>
+            FARMS
+        </a>
+        <a href="potion_brewing_guide.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧪</div>
+            POTIONS
+        </a>
+        <a href="nether_hub_calculator.html" class="hotbar-slot">
+            <div class="hotbar-icon">🚇</div>
+            NETHER
+        </a>
+    </div>
+    <button class="hotbar-toggle" id="hotbarToggle" onclick="toggleHotbar()">▼</button>
+
+    <script>
+        // Global state
+        let worlds = [];
+        let editingWorldId = null;
+        let worldToDelete = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWorlds();
+            checkFirstVisit();
+        });
+
+        // Check if first visit
+        function checkFirstVisit() {
+            const hasVisited = localStorage.getItem('minecraftWorldsVisited');
+            if (!hasVisited) {
+                document.getElementById('tutorialOverlay').classList.remove('hidden');
+            } else {
+                showWelcomeMessage();
+            }
+        }
+
+        // Complete tutorial
+        function completeTutorial() {
+            localStorage.setItem('minecraftWorldsVisited', 'true');
+            document.getElementById('tutorialOverlay').classList.add('hidden');
+            showCreateWorld();
+        }
+
+        // Show welcome message
+        function showWelcomeMessage() {
+            const welcomeMsg = document.getElementById('welcomeMessage');
+            document.getElementById('worldCount').textContent = worlds.length;
+            if (worlds.length > 0) {
+                welcomeMsg.classList.remove('hidden');
+                setTimeout(() => {
+                    welcomeMsg.style.opacity = '0';
+                    setTimeout(() => welcomeMsg.classList.add('hidden'), 500);
+                }, 3000);
+            }
+        }
+
+        // Load worlds from localStorage
+        function loadWorlds() {
+            const savedWorlds = localStorage.getItem('minecraftWorlds');
+            if (savedWorlds) {
+                worlds = JSON.parse(savedWorlds);
+            }
+            renderWorlds();
+        }
+
+        // Save worlds to localStorage
+        function saveWorlds() {
+            localStorage.setItem('minecraftWorlds', JSON.stringify(worlds));
+        }
+
+        // Render worlds list
+        function renderWorlds(filteredWorlds = null) {
+            const worldsList = document.getElementById('worldsList');
+            const emptyState = document.getElementById('emptyState');
+            const displayWorlds = filteredWorlds || worlds;
+
+            // Sort: starred first, then by last modified
+            const sortedWorlds = [...displayWorlds].sort((a, b) => {
+                if (a.starred && !b.starred) return -1;
+                if (!a.starred && b.starred) return 1;
+                return new Date(b.lastModified) - new Date(a.lastModified);
+            });
+
+            if (sortedWorlds.length === 0) {
+                emptyState.classList.remove('hidden');
+                worldsList.innerHTML = '';
+                worldsList.appendChild(emptyState);
+            } else {
+                emptyState.classList.add('hidden');
+                worldsList.innerHTML = sortedWorlds.map(world => `
+                    <div class="world-row" onclick="editWorld('${world.id}')">
+                        <div class="world-thumbnail">
+                            ${world.thumbnail ? `<img src="${world.thumbnail}" alt="${world.name}">` : '🌲'}
+                        </div>
+                        <div class="world-info">
+                            <div class="world-title">${world.name}</div>
+                            <div class="world-meta">📅 ${formatDate(world.lastModified)}</div>
+                            <div class="world-meta">🎮 ${world.gameMode} | ${world.difficulty}</div>
+                            <div class="world-meta">📦 ${world.version} (${world.launcher})</div>
+                            <div class="world-meta">⏱️ ${world.playtime}h playtime</div>
+                        </div>
+                        <button class="star-btn" onclick="toggleStar('${world.id}', event)">${world.starred ? '⭐' : '☆'}</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Filter worlds by search
+        function filterWorlds() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (searchTerm === '') {
+                renderWorlds();
+            } else {
+                const filtered = worlds.filter(world =>
+                    world.name.toLowerCase().includes(searchTerm) ||
+                    world.tags.toLowerCase().includes(searchTerm)
+                );
+                renderWorlds(filtered);
+            }
+        }
+
+        // Toggle star
+        function toggleStar(worldId, event) {
+            event.stopPropagation();
+            const world = worlds.find(w => w.id === worldId);
+            if (world) {
+                world.starred = !world.starred;
+                saveWorlds();
+                renderWorlds();
+            }
+        }
+
+        // Show create world screen
+        function showCreateWorld() {
+            editingWorldId = null;
+            document.getElementById('formTitle').textContent = 'Create New World';
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('createWorldScreen').style.display = 'block';
+            resetForm();
+
+            // Show loading animation
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.style.display = 'flex';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1500);
+        }
+
+        // Edit world
+        function editWorld(worldId) {
+            const world = worlds.find(w => w.id === worldId);
+            if (!world) return;
+
+            editingWorldId = worldId;
+            document.getElementById('formTitle').textContent = 'Edit World';
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('createWorldScreen').style.display = 'block';
+
+            // Populate form
+            document.getElementById('worldName').value = world.name;
+            document.querySelector(`input[name="gameMode"][value="${world.gameMode}"]`).checked = true;
+            document.querySelector(`input[name="difficulty"][value="${world.difficulty}"]`).checked = true;
+            document.getElementById('commandsToggle').checked = world.commands;
+            document.getElementById('worldSeed').value = world.seed;
+            document.getElementById('spawnCoords').value = world.spawnCoords;
+            document.getElementById('importantCoords').value = world.importantCoords;
+            document.getElementById('mcVersion').value = world.version;
+            document.getElementById('launcherType').value = world.launcher;
+            document.getElementById('modsUsed').value = world.mods;
+            document.getElementById('datapacks').value = world.datapacks;
+            document.getElementById('worldTags').value = world.tags;
+            document.getElementById('playtime').value = world.playtime;
+
+            // Show thumbnail if exists
+            if (world.thumbnail) {
+                const preview = document.getElementById('thumbnailPreview');
+                preview.innerHTML = `<img src="${world.thumbnail}" alt="Thumbnail">`;
+            }
+        }
+
+        // Save world (create or update)
+        function saveWorld() {
+            const worldName = document.getElementById('worldName').value.trim();
+            if (!worldName) {
+                alert('Please enter a world name!');
+                return;
+            }
+
+            const worldData = {
+                id: editingWorldId || generateId(),
+                name: worldName,
+                gameMode: document.querySelector('input[name="gameMode"]:checked').value,
+                difficulty: document.querySelector('input[name="difficulty"]:checked').value,
+                commands: document.getElementById('commandsToggle').checked,
+                seed: document.getElementById('worldSeed').value,
+                spawnCoords: document.getElementById('spawnCoords').value,
+                importantCoords: document.getElementById('importantCoords').value,
+                version: document.getElementById('mcVersion').value,
+                launcher: document.getElementById('launcherType').value,
+                mods: document.getElementById('modsUsed').value,
+                datapacks: document.getElementById('datapacks').value,
+                tags: document.getElementById('worldTags').value,
+                playtime: parseFloat(document.getElementById('playtime').value) || 0,
+                thumbnail: document.getElementById('thumbnailPreview').querySelector('img')?.src || '',
+                lastModified: new Date().toISOString(),
+                starred: editingWorldId ? worlds.find(w => w.id === editingWorldId).starred : false
+            };
+
+            if (editingWorldId) {
+                // Update existing world
+                const index = worlds.findIndex(w => w.id === editingWorldId);
+                worlds[index] = worldData;
+            } else {
+                // Create new world
+                worlds.push(worldData);
+            }
+
+            saveWorlds();
+            cancelCreate();
+            renderWorlds();
+        }
+
+        // Delete world
+        function deleteWorld(worldId) {
+            const world = worlds.find(w => w.id === worldId);
+            if (!world) return;
+
+            worldToDelete = worldId;
+            document.getElementById('deleteWorldName').textContent = `Are you sure you want to delete "${world.name}"?`;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        // Confirm delete
+        function confirmDelete() {
+            if (worldToDelete) {
+                worlds = worlds.filter(w => w.id !== worldToDelete);
+                saveWorlds();
+                renderWorlds();
+                worldToDelete = null;
+            }
+            closeDeleteModal();
+            cancelCreate();
+        }
+
+        // Close delete modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            worldToDelete = null;
+        }
+
+        // Re-create world (duplicate)
+        function recreateWorld(worldId) {
+            const world = worlds.find(w => w.id === worldId);
+            if (!world) return;
+
+            const newWorld = {
+                ...world,
+                id: generateId(),
+                name: world.name + ' (Copy)',
+                lastModified: new Date().toISOString(),
+                starred: false
+            };
+
+            worlds.push(newWorld);
+            saveWorlds();
+            renderWorlds();
+        }
+
+        // Cancel create/edit
+        function cancelCreate() {
+            document.getElementById('mainScreen').style.display = 'block';
+            document.getElementById('createWorldScreen').style.display = 'none';
+            editingWorldId = null;
+            resetForm();
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('worldName').value = '';
+            document.querySelector('input[name="gameMode"][value="Survival"]').checked = true;
+            document.querySelector('input[name="difficulty"][value="Easy"]').checked = true;
+            document.getElementById('commandsToggle').checked = false;
+            document.getElementById('worldSeed').value = '';
+            document.getElementById('spawnCoords').value = '';
+            document.getElementById('importantCoords').value = '';
+            document.getElementById('mcVersion').value = '1.21.5';
+            document.getElementById('launcherType').value = 'Java';
+            document.getElementById('modsUsed').value = '';
+            document.getElementById('datapacks').value = '';
+            document.getElementById('worldTags').value = '';
+            document.getElementById('playtime').value = '0';
+            document.getElementById('thumbnailPreview').innerHTML = '🖼️';
+            switchTab('game');
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Handle thumbnail upload
+        function handleThumbnailUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('thumbnailPreview');
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Thumbnail">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Utility functions
+        function generateId() {
+            return 'world_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 60) return `${diffMins} min ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        // Add action buttons to each world row
+        function renderWorlds(filteredWorlds = null) {
+            const worldsList = document.getElementById('worldsList');
+            const emptyState = document.getElementById('emptyState');
+            const displayWorlds = filteredWorlds || worlds;
+
+            // Sort: starred first, then by last modified
+            const sortedWorlds = [...displayWorlds].sort((a, b) => {
+                if (a.starred && !b.starred) return -1;
+                if (!a.starred && b.starred) return 1;
+                return new Date(b.lastModified) - new Date(a.lastModified);
+            });
+
+            if (sortedWorlds.length === 0) {
+                emptyState.classList.remove('hidden');
+                worldsList.innerHTML = '';
+                worldsList.appendChild(emptyState);
+            } else {
+                emptyState.classList.add('hidden');
+                worldsList.innerHTML = sortedWorlds.map(world => `
+                    <div class="world-row">
+                        <div class="world-thumbnail">
+                            ${world.thumbnail ? `<img src="${world.thumbnail}" alt="${world.name}">` : '🌲'}
+                        </div>
+                        <div class="world-info">
+                            <div class="world-title">${world.name}</div>
+                            <div class="world-meta">📅 ${formatDate(world.lastModified)}</div>
+                            <div class="world-meta">🎮 ${world.gameMode} | ${world.difficulty}</div>
+                            <div class="world-meta">📦 ${world.version} (${world.launcher})</div>
+                            <div class="world-meta">⏱️ ${world.playtime}h playtime</div>
+                            <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="btn" style="padding: 8px 15px; font-size: 0.9em;" onclick="event.stopPropagation(); editWorld('${world.id}')">✏️ Edit</button>
+                                <button class="btn btn-secondary" style="padding: 8px 15px; font-size: 0.9em;" onclick="event.stopPropagation(); recreateWorld('${world.id}')">🔄 Re-Create</button>
+                                <button class="btn btn-danger" style="padding: 8px 15px; font-size: 0.9em;" onclick="event.stopPropagation(); deleteWorld('${world.id}')">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        <button class="star-btn" onclick="toggleStar('${world.id}', event)">${world.starred ? '⭐' : '☆'}</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Toggle hotbar visibility
+        function toggleHotbar() {
+            const hotbar = document.getElementById('hotbar');
+            const toggle = document.getElementById('hotbarToggle');
+            hotbar.classList.toggle('collapsed');
+            toggle.textContent = hotbar.classList.contains('collapsed') ? '▲' : '▼';
+        }
+    </script>
+</body>
+</html>
