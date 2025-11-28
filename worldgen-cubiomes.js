@@ -94,6 +94,11 @@ class CubiomesWorldgen extends WorldgenInterface {
             return;
         }
 
+        // CRITICAL: Zero out the memory before use (setupGenerator expects clean memory)
+        for (let i = 0; i < genSize; i++) {
+            this.cubiomes.HEAPU8[ptr + i] = 0;
+        }
+
         let lastGood = 0;
         // Reasonable scan range – cubiomes does not use huge enums
         for (let v = 0; v < 64; v++) {
@@ -151,6 +156,11 @@ class CubiomesWorldgen extends WorldgenInterface {
             const genSize = 131072; // 128KB
             const ptr = this.cubiomes._malloc(genSize);
             if (!ptr) throw new Error("malloc failed for Generator");
+
+            // CRITICAL: Zero out the memory before use (setupGenerator expects clean memory)
+            for (let i = 0; i < genSize; i++) {
+                this.cubiomes.HEAPU8[ptr + i] = 0;
+            }
 
             const mcVersionEnum = this.versionToMC(version);
             const dimEnum = this.dimensionToValue(dimension);
