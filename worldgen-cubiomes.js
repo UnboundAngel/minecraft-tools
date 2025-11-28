@@ -116,6 +116,51 @@ class CubiomesWorldgen extends WorldgenInterface {
     }
 
     /**
+     * Zero out memory at the given pointer.
+     * Tries multiple methods to access and zero the WASM memory.
+     */
+    zeroMemory(ptr, size) {
+        // Method 1: Use _memset if available
+        if (this.cubiomes._memset) {
+            this.cubiomes._memset(ptr, 0, size);
+            return;
+        }
+
+        // Method 2: Access memory buffer directly
+        let memoryBuffer = null;
+
+        // Try to get memory buffer from various possible locations
+        if (this.cubiomes.memory && this.cubiomes.memory.buffer) {
+            memoryBuffer = this.cubiomes.memory.buffer;
+        } else if (this.cubiomes.wasmMemory && this.cubiomes.wasmMemory.buffer) {
+            memoryBuffer = this.cubiomes.wasmMemory.buffer;
+        } else if (this.cubiomes.HEAP8 && this.cubiomes.HEAP8.buffer) {
+            memoryBuffer = this.cubiomes.HEAP8.buffer;
+        } else if (this.cubiomes.HEAPU8 && this.cubiomes.HEAPU8.buffer) {
+            memoryBuffer = this.cubiomes.HEAPU8.buffer;
+        }
+
+        if (memoryBuffer) {
+            const view = new Uint8Array(memoryBuffer);
+            for (let i = 0; i < size; i++) {
+                view[ptr + i] = 0;
+            }
+            return;
+        }
+
+        // Method 3: Try HEAPU8 directly (might be available)
+        if (this.cubiomes.HEAPU8) {
+            for (let i = 0; i < size; i++) {
+                this.cubiomes.HEAPU8[ptr + i] = 0;
+            }
+            return;
+        }
+
+        console.error("[Cubiomes] Cannot zero memory - no method available!");
+        console.error("[Cubiomes] Available properties:", Object.keys(this.cubiomes).filter(k => k.includes('mem') || k.includes('HEAP')));
+    }
+
+    /**
      * Probe cubiomes._setupGenerator with candidate version enums and keep
      * the highest value that returns 0 (success).
      * This avoids hard-coding internal enum values.
@@ -141,13 +186,7 @@ class CubiomesWorldgen extends WorldgenInterface {
         for (let v = 0; v < 64; v++) {
             // CRITICAL: Zero out the memory BEFORE EACH CALL
             // setupGenerator modifies the memory, so we must reset it each time
-            if (this.cubiomes._memset) {
-                this.cubiomes._memset(ptr, 0, genSize);
-            } else if (this.cubiomes.HEAPU8) {
-                for (let i = 0; i < genSize; i++) {
-                    this.cubiomes.HEAPU8[ptr + i] = 0;
-                }
-            }
+            this.zeroMemory(ptr, genSize);
 
             const r = this.cubiomes._setupGenerator(ptr, v, 0);
             if (r === 0) {
@@ -219,21 +258,9 @@ class CubiomesWorldgen extends WorldgenInterface {
 
             // CRITICAL: Zero out the memory before use (setupGenerator expects clean memory)
             console.log(`[Cubiomes] Zeroing memory at ptr=${ptr}, size=${genSize}...`);
+            this.zeroMemory(ptr, genSize);
+            console.log(`[Cubiomes] Memory zeroed successfully`);
 
-            // Use _memset if available, otherwise manually zero via HEAPU8
-            if (this.cubiomes._memset) {
-                console.log(`[Cubiomes] Using _memset to zero memory`);
-                const memsetResult = this.cubiomes._memset(ptr, 0, genSize);
-                console.log(`[Cubiomes] _memset returned: ${memsetResult}`);
-            } else if (this.cubiomes.HEAPU8) {
-                console.log(`[Cubiomes] Using HEAPU8 to zero memory`);
-                for (let i = 0; i < genSize; i++) {
-                    this.cubiomes.HEAPU8[ptr + i] = 0;
-                }
-                console.log(`[Cubiomes] HEAPU8 zeroing complete`);
-            } else {
-                console.warn(`[Cubiomes] No method available to zero memory!`);
-            }
 
             const mcVersionEnum = this.versionToMC(version);
             const dimEnum = this.dimensionToValue(dimension);
