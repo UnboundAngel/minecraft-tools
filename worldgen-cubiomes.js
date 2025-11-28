@@ -121,6 +121,8 @@ class CubiomesWorldgen extends WorldgenInterface {
      * This avoids hard-coding internal enum values.
      */
     detectLatestMcEnum() {
+        console.log("[Cubiomes] Starting MC version enum detection...");
+
         // cubiomes Generator struct is LARGE - needs ~128KB
         const genSize = 131072; // 128KB should be plenty
         const ptr = this.cubiomes._malloc(genSize);
@@ -130,28 +132,41 @@ class CubiomesWorldgen extends WorldgenInterface {
             return;
         }
 
-        // CRITICAL: Zero out the memory before use (setupGenerator expects clean memory)
-        // Use _memset if available, otherwise manually zero via HEAPU8
-        if (this.cubiomes._memset) {
-            this.cubiomes._memset(ptr, 0, genSize);
-        } else if (this.cubiomes.HEAPU8) {
-            for (let i = 0; i < genSize; i++) {
-                this.cubiomes.HEAPU8[ptr + i] = 0;
-            }
-        }
+        console.log(`[Cubiomes] Allocated ${genSize} bytes at ptr=${ptr} for version probing`);
 
-        let lastGood = 0;
+        let lastGood = -1;
+        let successCount = 0;
+
         // Reasonable scan range – cubiomes does not use huge enums
         for (let v = 0; v < 64; v++) {
+            // CRITICAL: Zero out the memory BEFORE EACH CALL
+            // setupGenerator modifies the memory, so we must reset it each time
+            if (this.cubiomes._memset) {
+                this.cubiomes._memset(ptr, 0, genSize);
+            } else if (this.cubiomes.HEAPU8) {
+                for (let i = 0; i < genSize; i++) {
+                    this.cubiomes.HEAPU8[ptr + i] = 0;
+                }
+            }
+
             const r = this.cubiomes._setupGenerator(ptr, v, 0);
             if (r === 0) {
                 lastGood = v;
+                successCount++;
+                console.log(`[Cubiomes] Version enum ${v} succeeded`);
             }
         }
 
         this.cubiomes._free(ptr);
-        this.latestMcEnum = lastGood;
-        console.log("[Cubiomes] Auto-detected latest MC version enum:", this.latestMcEnum);
+
+        // If no version worked, default to 0
+        if (lastGood === -1) {
+            console.warn("[Cubiomes] No version enum succeeded! Defaulting to 0");
+            this.latestMcEnum = 0;
+        } else {
+            this.latestMcEnum = lastGood;
+            console.log(`[Cubiomes] Auto-detected latest MC version enum: ${this.latestMcEnum} (${successCount} versions succeeded)`);
+        }
     }
 
     getName() {
@@ -193,35 +208,53 @@ class CubiomesWorldgen extends WorldgenInterface {
         if (this.generators.has(key)) return this.generators.get(key);
 
         try {
+            console.log(`[Cubiomes] Creating generator for seed=${seed}, version=${version}, dimension=${dimension}`);
+
             // cubiomes Generator struct is LARGE - needs ~128KB
             const genSize = 131072; // 128KB
             const ptr = this.cubiomes._malloc(genSize);
+            console.log(`[Cubiomes] malloc(${genSize}) returned ptr=${ptr}`);
+
             if (!ptr) throw new Error("malloc failed for Generator");
 
             // CRITICAL: Zero out the memory before use (setupGenerator expects clean memory)
+            console.log(`[Cubiomes] Zeroing memory at ptr=${ptr}, size=${genSize}...`);
+
             // Use _memset if available, otherwise manually zero via HEAPU8
             if (this.cubiomes._memset) {
-                this.cubiomes._memset(ptr, 0, genSize);
+                console.log(`[Cubiomes] Using _memset to zero memory`);
+                const memsetResult = this.cubiomes._memset(ptr, 0, genSize);
+                console.log(`[Cubiomes] _memset returned: ${memsetResult}`);
             } else if (this.cubiomes.HEAPU8) {
+                console.log(`[Cubiomes] Using HEAPU8 to zero memory`);
                 for (let i = 0; i < genSize; i++) {
                     this.cubiomes.HEAPU8[ptr + i] = 0;
                 }
+                console.log(`[Cubiomes] HEAPU8 zeroing complete`);
+            } else {
+                console.warn(`[Cubiomes] No method available to zero memory!`);
             }
 
             const mcVersionEnum = this.versionToMC(version);
             const dimEnum = this.dimensionToValue(dimension);
 
+            console.log(`[Cubiomes] Calling _setupGenerator(ptr=${ptr}, mcVersion=${mcVersionEnum}, flags=0)`);
             const r = this.cubiomes._setupGenerator(ptr, mcVersionEnum, 0);
+            console.log(`[Cubiomes] _setupGenerator returned: ${r}`);
+
             if (r !== 0) {
                 this.cubiomes._free(ptr);
-                throw new Error("setupGenerator failed");
+                throw new Error(`setupGenerator failed with return code ${r}`);
             }
 
             const seedValue = typeof seed === "string" ? this.hashString(seed) : Number(seed);
+            console.log(`[Cubiomes] Calling _applySeed(ptr=${ptr}, dim=${dimEnum}, seed=${seedValue})`);
             this.cubiomes._applySeed(ptr, dimEnum, seedValue);
+            console.log(`[Cubiomes] _applySeed complete`);
 
             const gen = { ptr, seed, version, dimension };
             this.generators.set(key, gen);
+            console.log(`[Cubiomes] Generator created successfully and cached`);
             return gen;
         } catch (err) {
             console.error("[Cubiomes] Failed to create generator:", err);
