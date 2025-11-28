@@ -382,60 +382,85 @@
             background: #ff8c00;
         }
 
-        /* Hotbar */
+        /* Hotbar - EXPLORER Style */
         .hotbar {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 4px;
-            background: rgba(0, 0, 0, 0.9);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(11, 13, 18, 0.98);
+            border-top: 2px solid #A066FF;
             padding: 8px;
-            border: 4px solid #8b8b8b;
-            border-bottom: 4px solid #555;
-            border-right: 4px solid #555;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            gap: 4px;
             z-index: 1000;
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .hotbar.collapsed {
+            transform: translateY(100%);
         }
 
         .hotbar-slot {
-            width: 64px;
-            height: 64px;
-            background: rgba(139, 139, 139, 0.3);
-            border: 2px solid #373737;
-            border-bottom: 2px solid #8b8b8b;
-            border-right: 2px solid #8b8b8b;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            justify-content: center;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, rgba(160, 102, 255, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(160, 102, 255, 0.3);
+            border-radius: 6px;
+            color: #e0e0e0;
             text-decoration: none;
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            min-width: 60px;
+            text-align: center;
         }
 
         .hotbar-slot:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: #fff;
-            transform: translateY(-4px);
+            background: linear-gradient(135deg, rgba(160, 102, 255, 0.3), rgba(6, 182, 212, 0.3));
+            border-color: #A066FF;
+            transform: translateY(-2px);
+            color: #fff;
         }
 
         .hotbar-slot.active {
-            border: 3px solid #fff;
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, #A066FF, #06b6d4);
+            border-color: #A066FF;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(160, 102, 255, 0.5);
         }
 
         .hotbar-icon {
-            font-size: 2rem;
+            font-size: 1.8em;
             margin-bottom: 2px;
         }
 
-        .hotbar-label {
-            font-size: 0.6rem;
-            color: #fff;
-            text-shadow: 1px 1px 2px #000;
-            text-align: center;
+        .hotbar-toggle {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            background: linear-gradient(135deg, #A066FF, #06b6d4);
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            cursor: pointer;
+            font-size: 1.2em;
+            border-radius: 8px 8px 0 0;
+            z-index: 999;
+            transition: transform 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hotbar.collapsed + .hotbar-toggle {
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Responsive */
@@ -535,48 +560,54 @@
         </div>
     </div>
 
-    <div class="hotbar">
-    <a href="index.html" class="hotbar-slot" title="Home">
-        <div class="hotbar-icon">🏠</div>
-        <div class="hotbar-label">HOME</div>
-    </a>
-    <a href="minecraft_journal.html" class="hotbar-slot" title="Journal">
-        <div class="hotbar-icon">📖</div>
-        <div class="hotbar-label">JOURNAL</div>
-    </a>
-    <a href="enchantment_calculator.html" class="hotbar-slot" title="Enchantments">
-        <div class="hotbar-icon">📘</div>
-        <div class="hotbar-label">ENCHANT</div>
-    </a>
-    <a href="ore_guide_page.html" class="hotbar-slot" title="Ore Guide">
-        <div class="hotbar-icon">💎</div>
-        <div class="hotbar-label">ORES</div>
-    </a>
-    <a href="world_seeds_page.html" class="hotbar-slot" title="Seeds">
-        <div class="hotbar-icon">🗺️</div>
-        <div class="hotbar-label">SEEDS</div>
-    </a>
-    <a href="seed_explorer.html" class="hotbar-slot" title="Seed Explorer">
-        <div class="hotbar-icon">🧭</div>
-        <div class="hotbar-label">EXPLORER</div>
-    </a>
-    <a href="build_ideas_gallery.html" class="hotbar-slot" title="Builds">
-        <div class="hotbar-icon">🗝️</div>
-        <div class="hotbar-label">BUILDS</div>
-    </a>
-    <a href="farm_efficiency_page.html" class="hotbar-slot" title="Farms">
-        <div class="hotbar-icon">🌾</div>
-        <div class="hotbar-label">FARMS</div>
-    </a>
-    <a href="potion_brewing_guide.html" class="hotbar-slot" title="Potions">
-        <div class="hotbar-icon">🧪</div>
-        <div class="hotbar-label">POTIONS</div>
-    </a>
-    <a href="nether_hub_calculator.html" class="hotbar-slot" title="Nether Hub">
-        <div class="hotbar-icon">🚇</div>
-        <div class="hotbar-label">NETHER</div>
-    </a>
-</div>
+    <!-- Hotbar Navigation -->
+    <div class="hotbar" id="hotbar">
+        <a href="index.html" class="hotbar-slot">
+            <div class="hotbar-icon">🏠</div>
+            HOME
+        </a>
+        <a href="minecraft_journal.html" class="hotbar-slot">
+            <div class="hotbar-icon">📖</div>
+            JOURNAL
+        </a>
+        <a href="enchantment_calculator.html" class="hotbar-slot">
+            <div class="hotbar-icon">📘</div>
+            ENCHANT
+        </a>
+        <a href="ore_guide_page.html" class="hotbar-slot">
+            <div class="hotbar-icon">💎</div>
+            ORES
+        </a>
+        <a href="world_seeds_page.html" class="hotbar-slot">
+            <div class="hotbar-icon">🗺️</div>
+            SEEDS
+        </a>
+        <a href="seed_explorer.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧭</div>
+            EXPLORER
+        </a>
+        <a href="build_ideas_gallery.html" class="hotbar-slot">
+            <div class="hotbar-icon">🗝️</div>
+            BUILDS
+        </a>
+        <a href="minecraft_worlds.html" class="hotbar-slot">
+            <div class="hotbar-icon">🌍</div>
+            WORLDS
+        </a>
+        <a href="farm_efficiency_page.html" class="hotbar-slot active">
+            <div class="hotbar-icon">🌾</div>
+            FARMS
+        </a>
+        <a href="potion_brewing_guide.html" class="hotbar-slot">
+            <div class="hotbar-icon">🧪</div>
+            POTIONS
+        </a>
+        <a href="nether_hub_calculator.html" class="hotbar-slot">
+            <div class="hotbar-icon">🚇</div>
+            NETHER
+        </a>
+    </div>
+    <button class="hotbar-toggle" id="hotbarToggle" onclick="toggleHotbar()">▼</button>
 
     <script>
         // Farm data
@@ -1077,6 +1108,14 @@
         renderFarms();
         renderSchematics();
         renderVideos();
+
+        // Toggle hotbar visibility
+        function toggleHotbar() {
+            const hotbar = document.getElementById('hotbar');
+            const toggle = document.getElementById('hotbarToggle');
+            hotbar.classList.toggle('collapsed');
+            toggle.textContent = hotbar.classList.contains('collapsed') ? '▲' : '▼';
+        }
     </script>
 </body>
 </html>
