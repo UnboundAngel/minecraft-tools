@@ -85,7 +85,8 @@ class CubiomesWorldgen extends WorldgenInterface {
      * This avoids hard-coding internal enum values.
      */
     detectLatestMcEnum() {
-        const genSize = 4096;
+        // cubiomes Generator struct is LARGE - needs ~128KB
+        const genSize = 131072; // 128KB should be plenty
         const ptr = this.cubiomes._malloc(genSize);
         if (!ptr) {
             console.warn("[Cubiomes] Could not allocate probe generator; defaulting mc enum to 0");
@@ -146,7 +147,8 @@ class CubiomesWorldgen extends WorldgenInterface {
         if (this.generators.has(key)) return this.generators.get(key);
 
         try {
-            const genSize = 4096;
+            // cubiomes Generator struct is LARGE - needs ~128KB
+            const genSize = 131072; // 128KB
             const ptr = this.cubiomes._malloc(genSize);
             if (!ptr) throw new Error("malloc failed for Generator");
 
