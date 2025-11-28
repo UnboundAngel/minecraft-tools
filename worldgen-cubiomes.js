@@ -89,8 +89,21 @@ class CubiomesWorldgen extends WorldgenInterface {
                 malloc: typeof this.cubiomes._malloc,
                 free: typeof this.cubiomes._free,
                 memset: typeof this.cubiomes._memset,
-                HEAPU8: typeof this.cubiomes.HEAPU8
+                ccall: typeof this.cubiomes.ccall,
+                cwrap: typeof this.cubiomes.cwrap,
+                HEAPU8: typeof this.cubiomes.HEAPU8,
+                HEAP8: typeof this.cubiomes.HEAP8
             });
+
+            // Log ALL module properties for debugging
+            const allProps = Object.keys(this.cubiomes);
+            console.log("[Cubiomes] Total properties:", allProps.length);
+            console.log("[Cubiomes] First 50 properties:", allProps.slice(0, 50));
+            console.log("[Cubiomes] Memory-related properties:", allProps.filter(k =>
+                k.toLowerCase().includes('mem') ||
+                k.toLowerCase().includes('heap') ||
+                k.toLowerCase().includes('buffer')
+            ));
 
             // Sanity check for required symbols
             if (!this.cubiomes._setupGenerator ||
@@ -188,7 +201,14 @@ class CubiomesWorldgen extends WorldgenInterface {
             // setupGenerator modifies the memory, so we must reset it each time
             this.zeroMemory(ptr, genSize);
 
-            const r = this.cubiomes._setupGenerator(ptr, v, 0);
+            // Use ccall for proper marshalling if available
+            let r;
+            if (this.cubiomes.ccall) {
+                r = this.cubiomes.ccall('setupGenerator', 'number', ['number', 'number', 'number'], [ptr, v, 0]);
+            } else {
+                r = this.cubiomes._setupGenerator(ptr, v, 0);
+            }
+
             if (r === 0) {
                 lastGood = v;
                 successCount++;
@@ -266,8 +286,18 @@ class CubiomesWorldgen extends WorldgenInterface {
             const dimEnum = this.dimensionToValue(dimension);
 
             console.log(`[Cubiomes] Calling _setupGenerator(ptr=${ptr}, mcVersion=${mcVersionEnum}, flags=0)`);
-            const r = this.cubiomes._setupGenerator(ptr, mcVersionEnum, 0);
-            console.log(`[Cubiomes] _setupGenerator returned: ${r}`);
+
+            // Try ccall first (proper Emscripten marshalling), then fall back to direct call
+            let r;
+            if (this.cubiomes.ccall) {
+                console.log(`[Cubiomes] Using ccall for setupGenerator`);
+                r = this.cubiomes.ccall('setupGenerator', 'number', ['number', 'number', 'number'], [ptr, mcVersionEnum, 0]);
+            } else {
+                console.log(`[Cubiomes] Using direct call for setupGenerator`);
+                r = this.cubiomes._setupGenerator(ptr, mcVersionEnum, 0);
+            }
+
+            console.log(`[Cubiomes] _setupGenerator returned: ${r} (type: ${typeof r})`);
 
             if (r !== 0) {
                 this.cubiomes._free(ptr);
